@@ -64,6 +64,7 @@ LIBS        = $(shell $(NCURSES_CONFIG) --libs) -lm -lmenuw
 
 SRC_LIBS = \
 	$(SRC_DIR)/lib_logging.c \
+	$(SRC_DIR)/lib_color.c \
 
 OBJ_LIBS = $(subst $(SRC_DIR),$(BUILD_DIR),$(subst .c,.o,$(SRC_LIBS)))
 
