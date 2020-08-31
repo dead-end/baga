@@ -109,6 +109,8 @@ static void cp_color_pair_sort() {
  * The function adds a color pair to the array. The array is not sorted. If you
  * want to add more than one color pair, you can do this without sorting the
  * array every time.
+ *
+ * (Unit tested)
  ******************************************************************************/
 
 short cp_color_pair_add(const short fg, const short bg) {
@@ -152,6 +154,8 @@ short cp_color_pair_add(const short fg, const short bg) {
  * The function searches a color pair in our array of registered color pairs. If
  * the color pair was not found, a new color pair is created and added to the
  * array.
+ *
+ * (Unit tested)
  ******************************************************************************/
 
 short cp_color_pair_get(const short fg, const short bg) {
@@ -170,8 +174,7 @@ short cp_color_pair_get(const short fg, const short bg) {
 	//
 	// Do the searching.
 	//
-	const s_color_pair *result = bsearch(&key, _cp_array, _cp_num,
-			sizeof(s_color_pair), col_color_pair_comp);
+	const s_color_pair *result = bsearch(&key, _cp_array, _cp_num, sizeof(s_color_pair), col_color_pair_comp);
 
 	//
 	// If the color pair was found, we can return the id.
