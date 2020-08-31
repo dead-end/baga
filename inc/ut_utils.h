@@ -41,4 +41,6 @@ void ut_check_bool(const bool current, const bool expected, const char *msg);
 
 void ut_check_s_point(const s_point *current, const s_point *expected, const char *msg);
 
+void ut_check_char_str(const char *current, const char *expected, const char *msg);
+
 #endif /* INC_UT_UTILS_H_ */
