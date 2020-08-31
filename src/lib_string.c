@@ -25,6 +25,7 @@
 #include "lib_s_point.h"
 
 #include <string.h>
+#include <ctype.h>
 
 /******************************************************************************
  * The function is called with an array of strings, which is NULL terminated.
@@ -47,4 +48,34 @@ s_point strs_dim(const char *strs[]) {
 	}
 
 	return dim;
+}
+
+/******************************************************************************
+ * The function removes leading and tailing spaces. The process changes the
+ * argument string. So do not call the function with a literal string.
+ *
+ * char chr[] = "test"; // OK
+ * char *chr  = "test"; // does not work
+ *
+ * (Unit tested)
+ *****************************************************************************/
+
+char* trim(char *str) {
+	char *ptr;
+
+	//
+	// skip leading white spaces
+	//
+	for (ptr = str; isspace(*ptr); ptr++)
+		;
+
+	//
+	// skip tailing white spaces by overwriting them with '\0'
+	//
+	size_t len = strlen(ptr);
+	for (int i = len - 1; i >= 0 && isspace(ptr[i]); i--) {
+		ptr[i] = '\0';
+	}
+
+	return ptr;
 }

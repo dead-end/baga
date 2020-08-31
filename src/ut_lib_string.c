@@ -25,10 +25,8 @@
 #include "ut_utils.h"
 #include "lib_string.h"
 
-//
-// NULL
-//
-#include <stddef.h>
+#include <string.h>
+#include <stdio.h>
 
 /******************************************************************************
  * The function checks the strs_dim() function.
@@ -43,10 +41,38 @@ static void test_strs_dim() {
 }
 
 /******************************************************************************
+ * The function tests the trimming function. Remember that the trim function
+ * changes the parameter, so you cannot use a literal string as an argument.
+ *
+ * char chr[] = "test"; // OK
+ * char *chr  = "test"; // does not work
+ *****************************************************************************/
+
+#define STR "hallo"
+#define WHITE " \t\n "
+
+static void test_trim() {
+
+	char chr1[] = STR WHITE;
+	const char *tr1 = trim(chr1);
+	ut_check_char_str(tr1, STR, "trim-end");
+
+	char chr2[] = WHITE STR;
+	const char *tr2 = trim(chr2);
+	ut_check_char_str(tr2, STR, "trim-start");
+
+	char chr3[] = WHITE STR WHITE;
+	const char *tr3 = trim(chr3);
+	ut_check_char_str(tr3, STR, "trim-both");
+}
+
+/******************************************************************************
  * The function is the a wrapper, that triggers the internal unit tests.
  *****************************************************************************/
 
 void ut_lib_string_exec() {
 
 	test_strs_dim();
+
+	test_trim();
 }

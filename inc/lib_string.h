@@ -39,4 +39,6 @@
 
 s_point strs_dim(const char *strs[]);
 
+char* trim(char *str);
+
 #endif /* INC_LIB_STRING_H_ */
