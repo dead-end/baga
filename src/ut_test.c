@@ -26,6 +26,7 @@
 #include <locale.h>
 
 #include "lib_logging.h"
+#include "ut_color_pair.h"
 
 /******************************************************************************
  * The main function delegates the call to the individual unit test functions.
@@ -39,6 +40,8 @@ int main() {
 	if (setlocale(LC_CTYPE, "") == NULL) {
 		log_exit_str("Unable to set the locale.");
 	}
+
+	ut_color_pair_exec();
 
 	return EXIT_SUCCESS;
 }
