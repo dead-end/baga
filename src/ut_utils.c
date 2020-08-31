@@ -27,6 +27,7 @@
 #include "lib_s_point.h"
 
 #include <stdbool.h>
+#include <string.h>
 
 /******************************************************************************
  * The function checks whether an int parameter has the expected value or not.
@@ -58,13 +59,13 @@ void ut_check_short(const short current, const short expected, const char *msg) 
  * The function checks whether a bool parameter has the expected value or not.
  *****************************************************************************/
 
-void ut_check_bool(const bool cur, const bool exp, const char *msg) {
+void ut_check_bool(const bool current, const bool expected, const char *msg) {
 
-	if (cur != exp) {
-		log_exit("[%s] current: %s expected: %s", msg, bool_str(cur), bool_str(exp));
+	if (current != expected) {
+		log_exit("[%s] current: %s expected: %s", msg, bool_str(current), bool_str(expected));
 	}
 
-	log_debug("[%s] OK current: %s", msg, bool_str(cur));
+	log_debug("[%s] OK current: %s", msg, bool_str(current));
 }
 
 /******************************************************************************
@@ -72,11 +73,25 @@ void ut_check_bool(const bool cur, const bool exp, const char *msg) {
  * not.
  *****************************************************************************/
 
-void ut_check_s_point(const s_point *cur, const s_point *exp, const char *msg) {
+void ut_check_s_point(const s_point *current, const s_point *expected, const char *msg) {
 
-	if (cur->row != exp->row || cur->col != exp->col) {
-		log_exit("[%s] current: %d/%d expected: %d/%d", msg, cur->row, cur->col, exp->row, exp->col);
+	if (current->row != expected->row || current->col != expected->col) {
+		log_exit("[%s] current: %d/%d expected: %d/%d", msg, current->row, current->col, expected->row, expected->col);
 	}
 
-	log_debug("[%s] OK current: %d/%d", msg, cur->row, cur->col);
+	log_debug("[%s] OK current: %d/%d", msg, current->row, current->col);
+}
+
+/******************************************************************************
+ * The function checks whether a string parameter has the expected value or
+ * not.
+ *****************************************************************************/
+
+void ut_check_char_str(const char *current, const char *expected, const char *msg) {
+
+	if (strcmp(current, expected) != 0) {
+		log_exit("[%s] current: '%s' expected: '%s'", msg, current, expected);
+	}
+
+	log_debug("[%s] OK - Strings are equal: '%s'", msg, current);
 }
