@@ -132,7 +132,7 @@ short cp_color_pair_add(const short fg, const short bg) {
 	cp_ptr->cp = _cp_num + CP_START;
 
 	if (init_pair(cp_ptr->cp, cp_ptr->fg, cp_ptr->bg)) {
-		log_exit_str("Unable to create color pair!");
+		log_exit("Unable to create color pair: %d fg: %d bg: %d", cp_ptr->cp, cp_ptr->fg, cp_ptr->bg);
 	}
 
 	log_color_pair(cp_ptr);
