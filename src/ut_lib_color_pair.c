@@ -77,7 +77,7 @@ static void test_color_pair_add_get() {
  * The function is the a wrapper, that triggers the internal unit tests.
  *****************************************************************************/
 
-void ut_color_pair_exec() {
+void ut_lib_color_pair_exec() {
 
 	//
 	// Initialize screen.
