@@ -25,6 +25,10 @@
 #ifndef INC_LIB_COLOR_PAIR_H_
 #define INC_LIB_COLOR_PAIR_H_
 
+/******************************************************************************
+ * The definitions of the functions.
+ *****************************************************************************/
+
 short cp_color_pair_add(const short fg, const short bg);
 
 short cp_color_pair_get(const short fg, const short bg);
