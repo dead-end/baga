@@ -26,7 +26,9 @@
 #include <locale.h>
 
 #include "lib_logging.h"
-#include "ut_color_pair.h"
+
+#include "ut_lib_color_pair.h"
+#include "ut_lib_string.h"
 
 /******************************************************************************
  * The main function delegates the call to the individual unit test functions.
@@ -41,7 +43,9 @@ int main() {
 		log_exit_str("Unable to set the locale.");
 	}
 
-	ut_color_pair_exec();
+	ut_lib_color_pair_exec();
+
+	ut_lib_string_exec();
 
 	return EXIT_SUCCESS;
 }
