@@ -22,13 +22,13 @@
  * SOFTWARE.
  */
 
-#ifndef INC_UT_COLOR_PAIR_H_
-#define INC_UT_COLOR_PAIR_H_
+#ifndef INC_UT_LIB_COLOR_PAIR_H_
+#define INC_UT_LIB_COLOR_PAIR_H_
 
 /******************************************************************************
  * Declaration of the test function.
  *****************************************************************************/
 
-void ut_color_pair_exec();
+void ut_lib_color_pair_exec();
 
-#endif /* INC_UT_COLOR_PAIR_H_ */
+#endif /* INC_UT_LIB_COLOR_PAIR_H_ */

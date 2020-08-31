@@ -25,13 +25,18 @@
 #ifndef INC_LIB_STRING_H_
 #define INC_LIB_STRING_H_
 
+#include "lib_s_point.h"
+
 /******************************************************************************
  * Definition of the macros.
  *****************************************************************************/
 
-//
-// Print bool value as a string
-//
 #define bool_str(b) ((b) ? "true" : "false")
+
+/******************************************************************************
+ * The definition of the functions.
+ *****************************************************************************/
+
+s_point strs_dim(const char *strs[]);
 
 #endif /* INC_LIB_STRING_H_ */
