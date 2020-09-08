@@ -32,7 +32,7 @@
 
 typedef struct {
 
-	wchar_t *chr;
+	wchar_t chr;
 
 	short fg;
 
