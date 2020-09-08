@@ -43,7 +43,7 @@ typedef struct {
  * We define an array for the registered colors pairs.
  ******************************************************************************/
 
-#define CP_MAX 64
+#define CP_MAX 128
 
 static size_t _cp_num = 0;
 

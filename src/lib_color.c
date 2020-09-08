@@ -49,7 +49,7 @@ typedef struct {
  * We define an array for the registered colors.
  ******************************************************************************/
 
-#define _COLOR_MAX 64
+#define _COLOR_MAX 128
 
 static size_t _color_num = 0;
 
@@ -136,10 +136,8 @@ short col_color_create(const short r, const short g, const short b) {
 	// In DEBUG mode we ensure that the same color is not registered. A linear
 	// search should be ok in DEBUG mode.
 	//
-	if (lfind(col_ptr, _color_array, &_color_num, sizeof(s_color),
-			col_color_comp) != NULL) {
-		log_exit("Color already defined: %d r: %d g: %d b: %d", col_ptr->color,
-				col_ptr->red, col_ptr->green, col_ptr->blue);
+	if (lfind(col_ptr, _color_array, &_color_num, sizeof(s_color), col_color_comp) != NULL) {
+		log_exit("Color already defined: %d r: %d g: %d b: %d", col_ptr->color, col_ptr->red, col_ptr->green, col_ptr->blue);
 	}
 
 #endif
@@ -147,8 +145,7 @@ short col_color_create(const short r, const short g, const short b) {
 	//
 	// Initialize the color.
 	//
-	if (init_color(col_ptr->color, col_ptr->red, col_ptr->green,
-			col_ptr->blue)) {
+	if (init_color(col_ptr->color, col_ptr->red, col_ptr->green, col_ptr->blue)) {
 		log_exit_str("Unable to create color!");
 	}
 
