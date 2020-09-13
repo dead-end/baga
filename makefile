@@ -66,10 +66,12 @@ SRC_LIBS = \
 	$(SRC_DIR)/lib_logging.c \
 	$(SRC_DIR)/lib_color.c \
 	$(SRC_DIR)/lib_color_pair.c \
-	$(SRC_DIR)/lib_string.c \
-	$(SRC_DIR)/ut_utils.c \
 	$(SRC_DIR)/ut_lib_color_pair.c \
+	$(SRC_DIR)/lib_string.c \
 	$(SRC_DIR)/ut_lib_string.c \
+	$(SRC_DIR)/s_color_def.c \
+	$(SRC_DIR)/ut_s_color_def.c \
+	$(SRC_DIR)/ut_utils.c \
 
 OBJ_LIBS = $(subst $(SRC_DIR),$(BUILD_DIR),$(subst .c,.o,$(SRC_LIBS)))
 
