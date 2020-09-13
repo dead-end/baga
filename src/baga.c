@@ -26,11 +26,15 @@
 #include <ncurses.h>
 #include <math.h>
 
+#include <string.h>
+
 #include "lib_logging.h"
 #include "lib_color.h"
 #include "lib_color_pair.h"
 #include "lib_s_tchar.h"
 #include "lib_s_point.h"
+
+#include "s_color_def.h"
 
 /******************************************************************************
  * The exit callback function resets the terminal and frees the memory.
@@ -71,56 +75,6 @@ static void init() {
 }
 
 // --------------------------------------------
-
-/******************************************************************************
- *
- *****************************************************************************/
-
-typedef struct {
-
-	short r;
-	short g;
-	short b;
-
-} s_color_def;
-
-/******************************************************************************
- *
- *****************************************************************************/
-
-void s_color_def_hex(s_color_def *color_def, const int color) {
-
-	if (color < 0 || color > 0xFFFFFF) {
-		log_exit("Invalid color definition: %d (min: 0 max: %d)", color, 0xFFFFFF);
-	}
-
-	color_def->r = round(((color >> 16) & 0xFF) * 1000.0 / 255.0);
-	color_def->g = round(((color >> 8) & 0xFF) * 1000.0 / 255.0);
-	color_def->b = round(((color) & 0xFF) * 1000.0 / 255.0);
-}
-
-/******************************************************************************
- *
- *****************************************************************************/
-
-void color_gradient(short *colors, const int num, const s_color_def *start, const s_color_def *end) {
-
-	short r, g, b;
-	double x;
-
-	const double n = num - 1;
-
-	for (int i = 0; i < num; i++) {
-
-		x = i / n;
-
-		r = end->r * x + start->r * (1 - x);
-		g = end->g * x + start->g * (1 - x);
-		b = end->b * x + start->b * (1 - x);
-
-		colors[i] = col_color_create(r, g, b);
-	}
-}
 
 /******************************************************************************
  * Definition of the characters used by the triangles.
@@ -438,51 +392,40 @@ int main() {
 
 	init();
 
-	s_color_def start, end;
-
-	short bg[HALF_BOARD_HEIGHT];
-	short tri_light[TRIANGLE_HIGH];
-	short tri_dark[TRIANGLE_HIGH];
-
-	short color_board_bg[ROWS_TOTAL];
-
-	s_color_def_hex(&start, 0xffe6cc);
-	s_color_def_hex(&end, 0xff9933);
-	color_gradient(bg, HALF_BOARD_HEIGHT, &start, &end);
-
-	//
-	// Light triangle
-	//
-	s_color_def_hex(&start, 0xff8000);
-	s_color_def_hex(&end, 0xcc6600);
-	color_gradient(tri_light, TRIANGLE_HIGH, &start, &end);
-
-	//
-	// Dark triangle
-	//
-	s_color_def_hex(&start, 0x804000);
-	s_color_def_hex(&end, 0x4d2800);
-	color_gradient(tri_dark, TRIANGLE_HIGH, &start, &end);
+	short color_board_bg[HALF_BOARD_HEIGHT];
+	short color_tri_light[TRIANGLE_HIGH];
+	short color_tri_dark[TRIANGLE_HIGH];
+	short color_bar_bg[ROWS_TOTAL];
 
 	//
 	// Board
 	//
-	s_color_def_hex(&end, 0x663500);
-	s_color_def_hex(&start, 0x1a0d00);
-	color_gradient(color_board_bg, ROWS_TOTAL, &start, &end);
+	s_color_def_gradient(color_board_bg, HALF_BOARD_HEIGHT, "#ffe6cc", "#ff9933");
+
+	//
+	// Light and dark triangle
+	//
+	s_color_def_gradient(color_tri_light, TRIANGLE_HIGH, "#ff8000", "#cc6600");
+
+	s_color_def_gradient(color_tri_dark, TRIANGLE_HIGH, "#804000", "#4d2800");
+
+	//
+	// Bar
+	//
+	s_color_def_gradient(color_bar_bg, ROWS_TOTAL, "#1a0d00", "#663500");
 
 	//
 	// Initialize the board
 	//
-	s_board_init(&_board, T___, 0, color_board_bg);
+	s_board_init(&_board, T___, 0, color_bar_bg);
 
-	s_board_set_area_bg(&_board, &_area_board_outer, bg);
+	s_board_set_area_bg(&_board, &_area_board_outer, color_board_bg);
 
-	s_board_set_area_bg(&_board, &_area_board_inner, bg);
+	s_board_set_area_bg(&_board, &_area_board_inner, color_board_bg);
 
 	triangle_set_pos(&_area_board_outer, &_area_board_inner);
 
-	s_board_triangle_add(&_board, &_tri_tmpl, tri_pos, tri_light, tri_dark);
+	s_board_triangle_add(&_board, &_tri_tmpl, tri_pos, color_tri_light, color_tri_dark);
 
 	//
 	// Print the initialized board
