@@ -54,4 +54,9 @@
 //
 #define reverse_idx(t,i) ((t) - 1 - (i))
 
+//
+// Empty wchar_t
+//
+#define EMPTY L' '
+
 #endif /* INC_BG_DEFS_H_ */
