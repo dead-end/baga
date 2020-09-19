@@ -25,6 +25,8 @@
 #ifndef INC_LIB_S_TCHAR_H_
 #define INC_LIB_S_TCHAR_H_
 
+#include <wchar.h>
+
 /******************************************************************************
  * The s_tchar struct represents a terminal character, which consists of a
  * foreground and a background color and a wide character.
@@ -46,6 +48,6 @@ typedef struct {
 
 #define s_tchar_set(t,c,f,b) (t)->chr = (c) ; (t)->fg = (f) ; (t)->bg = (b)
 
-#define s_tchar_is_defined(t) ((t)->chr != '\0'L)
+#define s_tchar_is_defined(t) ((t)->chr != L'\0')
 
 #endif /* INC_LIB_S_TCHAR_H_ */
