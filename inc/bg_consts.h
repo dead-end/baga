@@ -30,6 +30,16 @@
  * where they should be defined without having circular dependencies.
  *****************************************************************************/
 
+//
+// The number of points (triangles) of the backgammon game.
+//
 #define POINTS_NUM 24
+
+//
+// The dimension of a checker (gaming piece)
+//
+#define CHECKER_ROW 2
+
+#define CHECKER_COL 4
 
 #endif /* INC_BG_CONSTS_H_ */
