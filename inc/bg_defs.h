@@ -22,8 +22,8 @@
  * SOFTWARE.
  */
 
-#ifndef INC_BG_CONSTS_H_
-#define INC_BG_CONSTS_H_
+#ifndef INC_BG_DEFS_H_
+#define INC_BG_DEFS_H_
 
 /******************************************************************************
  * Definition of constants, which are widely used. It is not easy to define
@@ -36,10 +36,22 @@
 #define POINTS_NUM 24
 
 //
+// The dimension of the points (triangles) of the backgammon game.
+//
+#define POINTS_ROW 10
+
+#define POINTS_COL 6
+
+//
 // The dimension of a checker (gaming piece)
 //
 #define CHECKER_ROW 2
 
 #define CHECKER_COL 4
 
-#endif /* INC_BG_CONSTS_H_ */
+//
+// The macro returns the reverse index given a total number and an index.
+//
+#define reverse_idx(t,i) ((t) - 1 - (i))
+
+#endif /* INC_BG_DEFS_H_ */
