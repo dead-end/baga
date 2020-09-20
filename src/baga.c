@@ -22,11 +22,14 @@
  * SOFTWARE.
  */
 
+#include <bg_board.h>
 #include <locale.h>
 #include <ncurses.h>
 #include <math.h>
-
 #include <string.h>
+
+#include "nc_board.h"
+#include "s_tmpl_points.h"
 
 #include "lib_logging.h"
 #include "lib_color.h"
@@ -35,6 +38,7 @@
 #include "lib_s_point.h"
 
 #include "s_color_def.h"
+#include "s_tmpl_checker.h"
 
 /******************************************************************************
  * The exit callback function resets the terminal and frees the memory.
@@ -77,121 +81,6 @@ static void init() {
 // --------------------------------------------
 
 /******************************************************************************
- * Definition of the characters used by the triangles.
- *****************************************************************************/
-
-//
-// Full block
-//
-#define T_II L'\u2588'
-
-//
-// Left half block
-//
-#define T_I_ L'\u258C'
-
-//
-// Right half block
-//
-#define T__I L'\u2590'
-
-//
-// Empty
-//
-#define T___ L' '
-
-/******************************************************************************
- * Triangles
- *****************************************************************************/
-
-#define TRIANGLE_HIGH 10
-
-#define TRIANGLE_WIDTH 6
-
-#define triangle_reverse(r) (TRIANGLE_HIGH - 1 - (r))
-
-/******************************************************************************
- *
- *****************************************************************************/
-
-typedef struct {
-
-	wchar_t arr[TRIANGLE_HIGH][TRIANGLE_WIDTH];
-
-	s_point dim;
-
-} s_templ;
-
-/******************************************************************************
- *
- *****************************************************************************/
-
-s_templ _tri_tmpl = {
-
-.dim = { .row = TRIANGLE_HIGH, .col = TRIANGLE_WIDTH },
-
-.arr = {
-
-{ T___, T___, T__I, T_I_, T___, T___ },
-
-{ T___, T___, T__I, T_I_, T___, T___ },
-
-{ T___, T___, T_II, T_II, T___, T___ },
-
-{ T___, T___, T_II, T_II, T___, T___ },
-
-{ T___, T__I, T_II, T_II, T_I_, T___ },
-
-{ T___, T__I, T_II, T_II, T_I_, T___ },
-
-{ T___, T_II, T_II, T_II, T_II, T___ },
-
-{ T___, T_II, T_II, T_II, T_II, T___ },
-
-{ T__I, T_II, T_II, T_II, T_II, T_I_ },
-
-{ T__I, T_II, T_II, T_II, T_II, T_I_ },
-
-}
-
-};
-
-/******************************************************************************
- *
- *****************************************************************************/
-
-#define BORDER_ROW 1
-
-#define BORDER_COL 2
-
-#define PIECE_ROW 2
-
-#define PIECE_COL 4
-
-#define HALF_BOARD_WIDTH 36
-
-#define HALF_BOARD_HEIGHT 24
-
-//
-// Total rows and columns
-//
-#define ROWS_TOTAL BORDER_ROW + HALF_BOARD_HEIGHT + BORDER_ROW
-
-#define COLS_TOTAL BORDER_COL + HALF_BOARD_WIDTH + BORDER_COL + PIECE_COL + BORDER_COL + HALF_BOARD_WIDTH + BORDER_COL+ PIECE_COL + BORDER_COL
-
-/******************************************************************************
- * The definition of an area which consists of a position and a dimension.
- *****************************************************************************/
-
-typedef struct {
-
-	s_point pos;
-
-	s_point dim;
-
-} s_area;
-
-/******************************************************************************
  *
  *****************************************************************************/
 
@@ -202,7 +91,7 @@ s_area _area_board_outer = {
 
 .pos = { .row = BORDER_ROW, .col = BORDER_COL },
 
-.dim = { .row = HALF_BOARD_HEIGHT, .col = HALF_BOARD_WIDTH }
+.dim = { .row = BOARD_HALF_ROW, .col = BOARD_HALF_COL }
 
 };
 
@@ -211,9 +100,9 @@ s_area _area_board_outer = {
 //
 s_area _area_bar_inner = {
 
-.pos = { .row = BORDER_ROW, .col = BORDER_COL + HALF_BOARD_WIDTH + BORDER_COL },
+.pos = { .row = BORDER_ROW, .col = BORDER_COL + BOARD_HALF_COL + BORDER_COL },
 
-.dim = { .row = HALF_BOARD_HEIGHT, .col = PIECE_COL }
+.dim = { .row = BOARD_HALF_ROW, .col = CHECKER_COL }
 
 };
 
@@ -222,9 +111,9 @@ s_area _area_bar_inner = {
 //
 s_area _area_board_inner = {
 
-.pos = { .row = BORDER_ROW, .col = BORDER_COL + HALF_BOARD_WIDTH + BORDER_COL + PIECE_COL + BORDER_COL },
+.pos = { .row = BORDER_ROW, .col = BORDER_COL + BOARD_HALF_COL + BORDER_COL + CHECKER_COL + BORDER_COL },
 
-.dim = { .row = HALF_BOARD_HEIGHT, .col = HALF_BOARD_WIDTH }
+.dim = { .row = BOARD_HALF_ROW, .col = BOARD_HALF_COL }
 
 };
 
@@ -233,9 +122,9 @@ s_area _area_board_inner = {
 //
 s_area _area_bar_exit = {
 
-.pos = { .row = BORDER_ROW, .col = BORDER_COL + HALF_BOARD_WIDTH + BORDER_COL + PIECE_COL + BORDER_COL + HALF_BOARD_WIDTH + BORDER_COL },
+.pos = { .row = BORDER_ROW, .col = BORDER_COL + BOARD_HALF_COL + BORDER_COL + CHECKER_COL + BORDER_COL + BOARD_HALF_COL + BORDER_COL },
 
-.dim = { .row = HALF_BOARD_HEIGHT, .col = PIECE_COL }
+.dim = { .row = BOARD_HALF_ROW, .col = CHECKER_COL }
 
 };
 
@@ -243,68 +132,32 @@ s_area _area_bar_exit = {
  *
  *****************************************************************************/
 
-#define TRI_NUM 24
+// TODO:
+/******************************************************************************
+ *
+ *****************************************************************************/
 
-#define TRI_NUM_QUARTER 6
+static s_nc_board _nc_board_bg;
 
-s_point tri_pos[TRI_NUM];
-
-void triangle_set_pos(const s_area *area_board_outer, const s_area *area_board_inner) {
-
-	for (int i = 0; i < TRI_NUM_QUARTER; i++) {
-
-		//
-		// Upper right triangles
-		//
-		tri_pos[0 * TRI_NUM_QUARTER + i].row = area_board_inner->pos.row;
-		tri_pos[0 * TRI_NUM_QUARTER + i].col = area_board_inner->pos.col + i * TRIANGLE_WIDTH;
-
-		//
-		// Upper left triangles
-		//
-		tri_pos[1 * TRI_NUM_QUARTER + i].row = area_board_outer->pos.row;
-		tri_pos[1 * TRI_NUM_QUARTER + i].col = area_board_outer->pos.col + i * TRIANGLE_WIDTH;
-
-		//
-		// Lower left triangles
-		//
-		tri_pos[2 * TRI_NUM_QUARTER + i].row = area_board_outer->pos.row + area_board_outer->dim.row - TRIANGLE_HIGH;
-		tri_pos[2 * TRI_NUM_QUARTER + i].col = area_board_outer->pos.col + i * TRIANGLE_WIDTH;
-
-		//
-		// Lower right triangles
-		//
-		tri_pos[3 * TRI_NUM_QUARTER + i].row = area_board_inner->pos.row + area_board_inner->dim.row - TRIANGLE_HIGH;
-		tri_pos[3 * TRI_NUM_QUARTER + i].col = area_board_inner->pos.col + i * TRIANGLE_WIDTH;
-	}
-}
+static s_nc_board _nc_board_fg;
 
 /******************************************************************************
  *
  *****************************************************************************/
 
-typedef struct {
+void s_board_add_checker(s_nc_board *board, const s_point *checker_pos, const s_checker_tchar *templ) {
 
-	s_tchar arr[ROWS_TOTAL][COLS_TOTAL];
+	s_point point;
 
-	s_point dim;
+	point.row = checker_pos->row + 0;
+	point.col = checker_pos->col + 1;
 
-} s_board;
+	for (int row = 0; row < CHECKER_ROW; row++) {
+		for (int col = 0; col < CHECKER_COL; col++) {
 
-static s_board _board = { .dim = { .row = ROWS_TOTAL, .col = COLS_TOTAL } };
-
-/******************************************************************************
- *
- *****************************************************************************/
-
-static void s_board_init(s_board *board, const wchar_t chr, const short fg_color, const short *bg_colors) {
-
-	for (int row = 0; row < board->dim.row; row++) {
-		for (int col = 0; col < board->dim.col; col++) {
-
-			board->arr[row][col].fg = fg_color;
-			board->arr[row][col].bg = bg_colors[row];
-			board->arr[row][col].chr = chr;
+			board->arr[point.row + row][point.col + col].fg = templ->tchar[row][col].fg;
+			board->arr[point.row + row][point.col + col].bg = templ->tchar[row][col].bg;
+			board->arr[point.row + row][point.col + col].chr = templ->tchar[row][col].chr;
 		}
 	}
 }
@@ -313,60 +166,24 @@ static void s_board_init(s_board *board, const wchar_t chr, const short fg_color
  *
  *****************************************************************************/
 
-static void s_board_set_area_bg(s_board *board, const s_area *area_board, const short *bg_colors) {
+static void s_board_add_templ(s_nc_board *board, const s_points_tchar *points_tchar, const bool reverse, const s_point *pos) {
 
-	//
-	// Store the position of the area.
-	//
-	const int pos_row = area_board->pos.row;
-	const int pos_col = area_board->pos.col;
+	s_tchar *b_chr;
+	const s_tchar *p_chr;
 
-	for (int row = 0; row < area_board->dim.row; row++) {
-		for (int col = 0; col < area_board->dim.col; col++) {
+	for (int row = 0; row < POINTS_ROW; row++) {
+		for (int col = 0; col < POINTS_COL; col++) {
 
-			board->arr[pos_row + row][pos_col + col].bg = bg_colors[row];
-		}
-	}
-}
-
-/******************************************************************************
- *
- *****************************************************************************/
-
-static void s_board_print(const s_board *board) {
-	short cp;
-
-	for (int row = 0; row < board->dim.row; row++) {
-		for (int col = 0; col < board->dim.col; col++) {
-
-			cp = cp_color_pair_get(board->arr[row][col].fg, board->arr[row][col].bg);
-			attrset(COLOR_PAIR(cp));
-
-			mvprintw(row, col, "%lc", board->arr[row][col].chr);
-		}
-	}
-}
-
-/******************************************************************************
- *
- *****************************************************************************/
-
-static void s_board_add_templ(s_board *board, const s_templ *tri_templ, const bool reverse, const s_point *pos, const short *fg_colors) {
-
-	s_tchar *tchr;
-
-	for (int row = 0; row < tri_templ->dim.row; row++) {
-		for (int col = 0; col < tri_templ->dim.col; col++) {
-
-			tchr = &board->arr[pos->row + row][pos->col + col];
+			b_chr = &board->arr[pos->row + row][pos->col + col];
 
 			if (reverse) {
-				tchr->chr = tri_templ->arr[triangle_reverse(row)][col];
+				p_chr = &points_tchar->tchar[reverse_idx(POINTS_ROW, row)][col];
 			} else {
-				tchr->chr = tri_templ->arr[row][col];
+				p_chr = &points_tchar->tchar[row][col];
 			}
 
-			tchr->fg = fg_colors[row];
+			b_chr->chr = p_chr->chr;
+			b_chr->fg = p_chr->fg;
 		}
 	}
 }
@@ -375,11 +192,10 @@ static void s_board_add_templ(s_board *board, const s_templ *tri_templ, const bo
  *
  *****************************************************************************/
 
-static void s_board_triangle_add(s_board *board, const s_templ *tri_templ, const s_point *tri_pos, const short *tri_light, const short *tri_dark) {
+static void s_board_triangle_add(s_nc_board *board, const s_tmpl_points *points_templ, const s_point *points_pos) {
 
-	for (int i = 0; i < TRI_NUM; i++) {
-
-		s_board_add_templ(board, tri_templ, (i < 12), &tri_pos[i], (i % 2) ? tri_light : tri_dark);
+	for (int i = 0; i < POINTS_NUM; i++) {
+		s_board_add_templ(board, &points_templ->points[i % 2], (i < 12), &points_pos[i]);
 	}
 }
 
@@ -392,45 +208,44 @@ int main() {
 
 	init();
 
-	short color_board_bg[HALF_BOARD_HEIGHT];
-	short color_tri_light[TRIANGLE_HIGH];
-	short color_tri_dark[TRIANGLE_HIGH];
-	short color_bar_bg[ROWS_TOTAL];
+	//
+	// Checker template
+	//
+	s_tmpl_checker tmpl_checker;
+	s_tmpl_checker_init(&tmpl_checker);
 
 	//
-	// Board
+	// Points template
 	//
-	s_color_def_gradient(color_board_bg, HALF_BOARD_HEIGHT, "#ffe6cc", "#ff9933");
+	s_tmpl_points tmpl_points;
+	s_tmpl_points_init(&tmpl_points);
 
-	//
-	// Light and dark triangle
-	//
-	s_color_def_gradient(color_tri_light, TRIANGLE_HIGH, "#ff8000", "#cc6600");
+	s_bg_board bg_board;
+	bg_board_new_game(&bg_board);
 
-	s_color_def_gradient(color_tri_dark, TRIANGLE_HIGH, "#804000", "#4d2800");
-
-	//
-	// Bar
-	//
-	s_color_def_gradient(color_bar_bg, ROWS_TOTAL, "#1a0d00", "#663500");
+	nc_board_init_bg(&_nc_board_bg, &_area_board_outer, &_area_board_inner);
 
 	//
-	// Initialize the board
+	// Points positions
 	//
-	s_board_init(&_board, T___, 0, color_bar_bg);
+	s_point points_pos[POINTS_NUM];
+	s_tmpl_points_set_pos(points_pos, &_area_board_outer, &_area_board_inner);
 
-	s_board_set_area_bg(&_board, &_area_board_outer, color_board_bg);
+	s_board_triangle_add(&_nc_board_bg, &tmpl_points, points_pos);
 
-	s_board_set_area_bg(&_board, &_area_board_inner, color_board_bg);
+	//
+	//
+	//
+	nc_board_init_empty(&_nc_board_fg, ( s_tchar ) { EMPTY, 0, 0 });
 
-	triangle_set_pos(&_area_board_outer, &_area_board_inner);
+	s_board_add_checker(&_nc_board_fg, &points_pos[23], &tmpl_checker.checker[OWNER_BLACK]);
 
-	s_board_triangle_add(&_board, &_tri_tmpl, tri_pos, color_tri_light, color_tri_dark);
+	s_board_add_checker(&_nc_board_fg, &points_pos[1], &tmpl_checker.checker[OWNER_WHITE]);
 
 	//
 	// Print the initialized board
 	//
-	s_board_print(&_board);
+	nc_board_print(&_nc_board_fg, &_nc_board_bg);
 
 	getch();
 
