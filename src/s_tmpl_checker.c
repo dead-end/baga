@@ -22,8 +22,6 @@
  * SOFTWARE.
  */
 
-#include <wchar.h>
-
 #include "s_color_def.h"
 #include "s_tmpl_checker.h"
 
@@ -75,7 +73,7 @@ static const wchar_t template[CHECKER_ROW][CHECKER_COL] = {
  * struct.
  *****************************************************************************/
 
-static void copy_colors(s_checker_tchar *tmpl_checker, const short *colors) {
+static void checker_copy_colors(s_checker_tchar *tmpl_checker, const short *colors) {
 
 	for (int row = 0; row < CHECKER_ROW; row++) {
 		for (int col = 0; col < CHECKER_COL; col++) {
@@ -85,15 +83,17 @@ static void copy_colors(s_checker_tchar *tmpl_checker, const short *colors) {
 		}
 	}
 }
+
 /******************************************************************************
  * The function copies the wchar_t characters from the template to the checker
  * struct.
  *****************************************************************************/
 
-static void copy_tmpl(s_checker_tchar *tmpl_checker, const wchar_t tmpl[][CHECKER_COL]) {
+static void checker_copy_tmpl(s_checker_tchar *tmpl_checker, const wchar_t tmpl[CHECKER_ROW][CHECKER_COL]) {
 
 	for (int row = 0; row < CHECKER_ROW; row++) {
 		for (int col = 0; col < CHECKER_COL; col++) {
+
 			tmpl_checker->tchar[row][col].chr = tmpl[row][col];
 		}
 	}
@@ -115,16 +115,16 @@ void s_tmpl_checker_init(s_tmpl_checker *templ_checker) {
 	//
 	s_color_def_gradient(colors, _COLOR_NUM, "#111111", "#555555");
 
-	copy_colors(&templ_checker->checker[OWNER_BLACK], colors);
+	checker_copy_colors(&templ_checker->checker[OWNER_BLACK], colors);
 
-	copy_tmpl(&templ_checker->checker[OWNER_BLACK], template);
+	checker_copy_tmpl(&templ_checker->checker[OWNER_BLACK], template);
 
 	//
 	// White checker
 	//
 	s_color_def_gradient(colors, _COLOR_NUM, "#aaaaaa", "#eeeeee");
 
-	copy_colors(&templ_checker->checker[OWNER_WHITE], colors);
+	checker_copy_colors(&templ_checker->checker[OWNER_WHITE], colors);
 
-	copy_tmpl(&templ_checker->checker[OWNER_WHITE], template);
+	checker_copy_tmpl(&templ_checker->checker[OWNER_WHITE], template);
 }
