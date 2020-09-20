@@ -36,18 +36,18 @@
 #define POINTS_NUM 24
 
 //
-// The dimension of the points (triangles) of the backgammon game.
-//
-#define POINTS_ROW 10
-
-#define POINTS_COL 6
-
-//
 // The dimension of a checker (gaming piece)
 //
 #define CHECKER_ROW 2
 
 #define CHECKER_COL 4
+
+//
+// The dimension of the points (triangles) of the backgammon game.
+//
+#define POINTS_ROW (5 * CHECKER_ROW)
+
+#define POINTS_COL (CHECKER_COL + 2)
 
 //
 // The macro returns the reverse index given a total number and an index.
