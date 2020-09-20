@@ -63,19 +63,29 @@ LIBS        = $(shell $(NCURSES_CONFIG) --libs) -lm -lmenuw
 ################################################################################
 
 SRC_LIBS = \
-	$(SRC_DIR)/lib_logging.c \
-	$(SRC_DIR)/lib_color.c \
+	$(SRC_DIR)/lib_logging.c    \
+	$(SRC_DIR)/lib_color.c      \
 	$(SRC_DIR)/lib_color_pair.c \
-	$(SRC_DIR)/ut_lib_color_pair.c \
-	$(SRC_DIR)/lib_string.c \
-	$(SRC_DIR)/ut_lib_string.c \
+	$(SRC_DIR)/lib_string.c     \
 	$(SRC_DIR)/s_color_def.c \
-	$(SRC_DIR)/ut_s_color_def.c \
-	$(SRC_DIR)/ut_utils.c \
+	$(SRC_DIR)/bg_board.c  \
+	$(SRC_DIR)/nc_board.c  \
+	$(SRC_DIR)/s_tmpl_checker.c \
+	$(SRC_DIR)/s_tmpl_points.c  \
+	$(SRC_DIR)/ut_utils.c          \
+	$(SRC_DIR)/ut_lib_color_pair.c \
+	$(SRC_DIR)/ut_lib_string.c     \
+	$(SRC_DIR)/ut_s_color_def.c    \
+
+INC_ADD = \
+	$(INCLUDE_DIR)/lib_s_point.h \
+	$(INCLUDE_DIR)/lib_s_tchar.h \
+	$(INCLUDE_DIR)/bg_defs.h   \
+	$(INCLUDE_DIR)/s_area.h      \
 
 OBJ_LIBS = $(subst $(SRC_DIR),$(BUILD_DIR),$(subst .c,.o,$(SRC_LIBS)))
 
-INC_LIBS = $(subst $(SRC_DIR),$(INCLUDE_DIR),$(subst .c,.h,$(SRC_LIBS)))
+INC_LIBS = $(subst $(SRC_DIR),$(INCLUDE_DIR),$(subst .c,.h,$(SRC_LIBS))) $(INC_ADD)
 
 ################################################################################
 # The main program.
