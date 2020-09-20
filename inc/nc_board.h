@@ -39,16 +39,16 @@
 
 #define BORDER_COL 2
 
-#define HALF_BOARD_WIDTH 36
+#define BOARD_HALF_ROW (2 * POINTS_ROW + CHECKER_ROW + 2 * BORDER_ROW)
 
-#define HALF_BOARD_HEIGHT 24
+#define BOARD_HALF_COL (6 * POINTS_COL)
 
 //
 // Total rows and columns
 //
-#define BOARD_ROW BORDER_ROW + HALF_BOARD_HEIGHT + BORDER_ROW
+#define BOARD_ROW (2 * BORDER_ROW + BOARD_HALF_ROW)
 
-#define BOARD_COL BORDER_COL + HALF_BOARD_WIDTH + BORDER_COL + CHECKER_COL + BORDER_COL + HALF_BOARD_WIDTH + BORDER_COL + CHECKER_COL + BORDER_COL
+#define BOARD_COL (5 * BORDER_COL + 2 * BOARD_HALF_COL  + 2 * CHECKER_COL)
 
 /******************************************************************************
  * The struct contains the definition of the board.
