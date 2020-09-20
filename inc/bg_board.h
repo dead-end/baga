@@ -57,13 +57,13 @@ typedef struct {
 	// The number of checkers that are in the bear off area for black and
 	// white. We use e_owner as an index.
 	//
-	int bear_off[2];
+	int bear_off[NUM_PLAYER];
 
 	//
 	// The number of checkers that have to reenter for black and white. We use
 	// e_owner as an index.
 	//
-	int reenter[2];
+	int reenter[NUM_PLAYER];
 
 } s_bg_board;
 

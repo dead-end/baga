@@ -59,6 +59,11 @@
 //
 #define EMPTY L' '
 
+//
+// The number of players (which is trivial).
+//
+#define NUM_PLAYER 2
+
 /******************************************************************************
  * The enum defines an owner of a checker which can be black or white or none
  * if there is no checker. The owner can be used as an index for some arrays.
