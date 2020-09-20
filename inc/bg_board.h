@@ -28,19 +28,6 @@
 #include "bg_defs.h"
 
 /******************************************************************************
- * The enum defines an owner of a checker which can be black or white or none
- * if there is no checker. The owner can be used as an index for some arrays.
- *****************************************************************************/
-
-typedef enum {
-
-	OWNER_BLACK = 0, OWNER_WHITE = 1, OWNER_NONE = -1
-
-} e_owner;
-
-#define e_owner_has_owner(o) ((o) != -1)
-
-/******************************************************************************
  * The struct contains the number of checkers on a point and the owner of the
  * checkers (black / white) or none if there are no checkers on the point.
  *****************************************************************************/
