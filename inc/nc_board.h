@@ -64,10 +64,10 @@ typedef struct {
  * Function definitions that are only used for unit tests.
  *****************************************************************************/
 
-void s_nc_board_init_empty(s_nc_board *board, const s_tchar tchar);
+void nc_board_init_empty(s_nc_board *board, const s_tchar tchar);
 
-void s_nc_board_init_gradient(s_nc_board *board, const wchar_t chr, const short fg_color, const short *bg_colors);
+void nc_board_init_bg(s_nc_board *board_bg, const s_area *area_board_outer, const s_area *area_board_inner);
 
-void s_nc_board_set_area_bg(s_nc_board *board, const s_area *area_board, const short *bg_colors);
+void nc_board_print(const s_nc_board *board_fg, const s_nc_board *board_bg);
 
 #endif /* INC_NC_BOARD_H_ */
