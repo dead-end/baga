@@ -22,10 +22,9 @@
  * SOFTWARE.
  */
 
-#include "../inc/bg_board.h"
+#include "bg_board.h"
 
 #include "lib_logging.h"
-
 
 /******************************************************************************
  * The definition of the index for black and white. White is playing from upper
