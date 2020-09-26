@@ -64,7 +64,7 @@ typedef struct {
  * Function definitions that are only used for unit tests.
  *****************************************************************************/
 
-void nc_board_init_empty(s_nc_board *board, const s_tchar tchar);
+void nc_board_set_tchar(s_nc_board *board, const s_tchar tchar);
 
 void nc_board_init_bg(s_nc_board *board_bg, const s_area *area_board_outer, const s_area *area_board_inner);
 
