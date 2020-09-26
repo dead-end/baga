@@ -43,6 +43,13 @@
 #define CHECKER_COL 4
 
 //
+// Checker is smaller than the points.
+//
+#define CHECKER_OFFSET_ROW 0
+
+#define CHECKER_OFFSET_COL 1
+
+//
 // The dimension of the points (triangles) of the backgammon game.
 //
 #define POINTS_ROW (5 * CHECKER_ROW)
