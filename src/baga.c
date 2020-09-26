@@ -141,6 +141,10 @@ static s_nc_board _nc_board_bg;
 
 static s_nc_board _nc_board_fg;
 
+static s_tmpl_checker _tmpl_checker;
+
+static s_point _points_pos[POINTS_NUM];
+
 /******************************************************************************
  *
  *****************************************************************************/
@@ -148,7 +152,11 @@ static s_nc_board _nc_board_fg;
 // TODO: comments
 #define CHECKER_OFFSET_COL 1
 
-void s_board_add_checker(s_nc_board *board, const s_point *checker_pos, const s_checker_tchar *templ) {
+void s_board_add_checker(const int checker_idx, const e_owner owner) {
+
+	const s_checker_tchar *templ = &_tmpl_checker.checker[owner];
+
+	const s_point *checker_pos = &_points_pos[checker_idx];
 
 	for (int row = 0; row < CHECKER_ROW; row++) {
 		for (int col = 0; col < CHECKER_COL; col++) {
@@ -156,7 +164,7 @@ void s_board_add_checker(s_nc_board *board, const s_point *checker_pos, const s_
 			//
 			// copy the struct
 			//
-			board->arr[checker_pos->row + row][checker_pos->col + CHECKER_OFFSET_COL + col] = templ->tchar[row][col];
+			_nc_board_fg.arr[checker_pos->row + row][checker_pos->col + CHECKER_OFFSET_COL + col] = templ->tchar[row][col];
 		}
 	}
 }
@@ -210,8 +218,8 @@ int main() {
 	//
 	// Checker template
 	//
-	s_tmpl_checker tmpl_checker;
-	s_tmpl_checker_init(&tmpl_checker);
+	//s_tmpl_checker _tmpl_checker;
+	s_tmpl_checker_init(&_tmpl_checker);
 
 	//
 	// Points template
@@ -227,19 +235,19 @@ int main() {
 	//
 	// Points positions
 	//
-	s_point points_pos[POINTS_NUM];
-	s_tmpl_points_set_pos(points_pos, &_area_board_outer, &_area_board_inner);
+	//s_point points_pos[POINTS_NUM];
+	s_tmpl_points_set_pos(_points_pos, &_area_board_outer, &_area_board_inner);
 
-	s_board_triangle_add(&_nc_board_bg, &tmpl_points, points_pos);
+	s_board_triangle_add(&_nc_board_bg, &tmpl_points, _points_pos);
 
 	//
 	//
 	//
 	nc_board_set_tchar(&_nc_board_fg, ( s_tchar ) { EMPTY, 0, 0 });
 
-	s_board_add_checker(&_nc_board_fg, &points_pos[23], &tmpl_checker.checker[OWNER_BLACK]);
+	s_board_add_checker(23, OWNER_BLACK);
 
-	s_board_add_checker(&_nc_board_fg, &points_pos[1], &tmpl_checker.checker[OWNER_WHITE]);
+	s_board_add_checker(1, OWNER_WHITE);
 
 	//
 	// Print the initialized board
