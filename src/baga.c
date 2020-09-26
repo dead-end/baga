@@ -29,16 +29,8 @@
 #include <string.h>
 
 #include "nc_board.h"
-#include "s_tmpl_points.h"
 
 #include "lib_logging.h"
-#include "lib_color.h"
-#include "lib_color_pair.h"
-#include "lib_s_tchar.h"
-#include "lib_s_point.h"
-
-#include "s_color_def.h"
-#include "s_tmpl_checker.h"
 
 /******************************************************************************
  * The exit callback function resets the terminal and frees the memory.
@@ -78,134 +70,6 @@ static void init() {
 	curs_set(0);
 }
 
-// --------------------------------------------
-
-/******************************************************************************
- *
- *****************************************************************************/
-
-//
-// Outer board
-//
-s_area _area_board_outer = {
-
-.pos = { .row = BORDER_ROW, .col = BORDER_COL },
-
-.dim = { .row = BOARD_HALF_ROW, .col = BOARD_HALF_COL }
-
-};
-
-//
-// Inner bar
-//
-s_area _area_bar_inner = {
-
-.pos = { .row = BORDER_ROW, .col = BORDER_COL + BOARD_HALF_COL + BORDER_COL },
-
-.dim = { .row = BOARD_HALF_ROW, .col = CHECKER_COL }
-
-};
-
-//
-// Inner board
-//
-s_area _area_board_inner = {
-
-.pos = { .row = BORDER_ROW, .col = BORDER_COL + BOARD_HALF_COL + BORDER_COL + CHECKER_COL + BORDER_COL },
-
-.dim = { .row = BOARD_HALF_ROW, .col = BOARD_HALF_COL }
-
-};
-
-//
-// bear off area (right bar)
-//
-s_area _area_bar_exit = {
-
-.pos = { .row = BORDER_ROW, .col = BORDER_COL + BOARD_HALF_COL + BORDER_COL + CHECKER_COL + BORDER_COL + BOARD_HALF_COL + BORDER_COL },
-
-.dim = { .row = BOARD_HALF_ROW, .col = CHECKER_COL }
-
-};
-
-/******************************************************************************
- *
- *****************************************************************************/
-
-// TODO:
-/******************************************************************************
- *
- *****************************************************************************/
-
-static s_nc_board _nc_board_bg;
-
-static s_nc_board _nc_board_fg;
-
-static s_tmpl_checker _tmpl_checker;
-
-static s_point _points_pos[POINTS_NUM];
-
-/******************************************************************************
- *
- *****************************************************************************/
-
-// TODO: comments
-#define CHECKER_OFFSET_COL 1
-
-void s_board_add_checker(const int checker_idx, const e_owner owner) {
-
-	const s_checker_tchar *templ = &_tmpl_checker.checker[owner];
-
-	const s_point *checker_pos = &_points_pos[checker_idx];
-
-	for (int row = 0; row < CHECKER_ROW; row++) {
-		for (int col = 0; col < CHECKER_COL; col++) {
-
-			//
-			// copy the struct
-			//
-			_nc_board_fg.arr[checker_pos->row + row][checker_pos->col + CHECKER_OFFSET_COL + col] = templ->tchar[row][col];
-		}
-	}
-}
-
-/******************************************************************************
- *
- *****************************************************************************/
-
-static void s_board_add_templ(s_nc_board *board, const s_points_tchar *points_tchar, const bool reverse, const s_point *pos) {
-
-	s_tchar *b_chr;
-	const s_tchar *p_chr;
-
-	for (int row = 0; row < POINTS_ROW; row++) {
-		for (int col = 0; col < POINTS_COL; col++) {
-
-			b_chr = &board->arr[pos->row + row][pos->col + col];
-
-			if (reverse) {
-				p_chr = &points_tchar->tchar[reverse_idx(POINTS_ROW, row)][col];
-			} else {
-				p_chr = &points_tchar->tchar[row][col];
-			}
-
-			b_chr->chr = p_chr->chr;
-			b_chr->fg = p_chr->fg;
-		}
-	}
-}
-
-/******************************************************************************
- *
- *****************************************************************************/
-
-static void s_board_triangle_add(s_nc_board *board, const s_tmpl_points *points_templ, const s_point *points_pos) {
-
-	for (int i = 0; i < POINTS_NUM; i++) {
-		s_board_add_templ(board, &points_templ->points[i % 2], (i < 12), &points_pos[i]);
-	}
-}
-
 /******************************************************************************
  * The main function.
  *****************************************************************************/
@@ -216,34 +80,15 @@ int main() {
 	init();
 
 	//
-	// Checker template
+	// Initialize the ncurses board function
 	//
-	//s_tmpl_checker _tmpl_checker;
-	s_tmpl_checker_init(&_tmpl_checker);
+	nc_board_init();
 
 	//
-	// Points template
+	// Initialize the game board function
 	//
-	s_tmpl_points tmpl_points;
-	s_tmpl_points_init(&tmpl_points);
-
 	s_bg_board bg_board;
 	bg_board_new_game(&bg_board);
-
-	nc_board_init_bg(&_nc_board_bg, &_area_board_outer, &_area_board_inner);
-
-	//
-	// Points positions
-	//
-	//s_point points_pos[POINTS_NUM];
-	s_tmpl_points_set_pos(_points_pos, &_area_board_outer, &_area_board_inner);
-
-	s_board_triangle_add(&_nc_board_bg, &tmpl_points, _points_pos);
-
-	//
-	//
-	//
-	nc_board_set_tchar(&_nc_board_fg, ( s_tchar ) { EMPTY, 0, 0 });
 
 	s_board_add_checker(23, OWNER_BLACK);
 
@@ -252,7 +97,7 @@ int main() {
 	//
 	// Print the initialized board
 	//
-	nc_board_print(&_nc_board_fg, &_nc_board_bg);
+	nc_board_print();
 
 	getch();
 

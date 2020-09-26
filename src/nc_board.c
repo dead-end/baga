@@ -26,12 +26,82 @@
 
 #include "lib_color_pair.h"
 
+#include "s_tmpl_points.h"
+#include "s_tmpl_checker.h"
 #include "nc_board.h"
 #include "s_color_def.h"
 
 /******************************************************************************
+ * Definitions of the various areas of the board. An area has a position and a
+ * dimension. The main board has the following four areas:
+ *
+ * outer | inner | inner | bear
+ * board | bar   | board | off
+ *****************************************************************************/
+
+// TODO: static for currently unused
+//
+// Outer board
+//
+static s_area _area_board_outer = {
+
+.pos = { .row = BORDER_ROW, .col = BORDER_COL },
+
+.dim = { .row = BOARD_HALF_ROW, .col = BOARD_HALF_COL } };
+
+//
+// Inner bar
+//
+s_area _area_bar_inner = {
+
+.pos = { .row = BORDER_ROW, .col = BORDER_COL + BOARD_HALF_COL + BORDER_COL },
+
+.dim = { .row = BOARD_HALF_ROW, .col = CHECKER_COL } };
+
+//
+// Inner board
+//
+static s_area _area_board_inner = {
+
+.pos = { .row = BORDER_ROW, .col = BORDER_COL + BOARD_HALF_COL + BORDER_COL + CHECKER_COL + BORDER_COL },
+
+.dim = { .row = BOARD_HALF_ROW, .col = BOARD_HALF_COL } };
+
+//
+// bear off area (right bar)
+//
+s_area _area_bear_off = {
+
+.pos = { .row = BORDER_ROW, .col = BORDER_COL + BOARD_HALF_COL + BORDER_COL + CHECKER_COL + BORDER_COL + BOARD_HALF_COL + BORDER_COL },
+
+.dim = { .row = BOARD_HALF_ROW, .col = CHECKER_COL } };
+
+/******************************************************************************
  *
  *****************************************************************************/
+
+static s_nc_board _nc_board_bg;
+
+static s_nc_board _nc_board_fg;
+
+static s_tmpl_checker _tmpl_checker;
+
+static s_point _points_pos[POINTS_NUM];
+
+/******************************************************************************
+ * The function sets the board with a default character and a foreground and
+ * background color.
+ *****************************************************************************/
+
+static void nc_board_set_tchar(s_nc_board *board, const s_tchar tchar) {
+
+	for (int row = 0; row < BOARD_ROW; row++) {
+		for (int col = 0; col < BOARD_COL; col++) {
+
+			board->arr[row][col] = tchar;
+		}
+	}
+}
 
 /******************************************************************************
  * The function sets the board with a default color and a foreground color and
@@ -70,18 +140,42 @@ static void nc_board_set_area_bg(s_nc_board *board, const s_area *area_board, co
 	}
 }
 
+// --------------------------
+
 /******************************************************************************
- * The function sets the board with a default character and a foreground and
- * background color.
+ *
  *****************************************************************************/
 
-void nc_board_set_tchar(s_nc_board *board, const s_tchar tchar) {
+static void s_board_add_templ(s_nc_board *board, const s_points_tchar *points_tchar, const bool reverse, const s_point *pos) {
 
-	for (int row = 0; row < BOARD_ROW; row++) {
-		for (int col = 0; col < BOARD_COL; col++) {
+	s_tchar *b_chr;
+	const s_tchar *p_chr;
 
-			board->arr[row][col] = tchar;
+	for (int row = 0; row < POINTS_ROW; row++) {
+		for (int col = 0; col < POINTS_COL; col++) {
+
+			b_chr = &board->arr[pos->row + row][pos->col + col];
+
+			if (reverse) {
+				p_chr = &points_tchar->tchar[reverse_idx(POINTS_ROW, row)][col];
+			} else {
+				p_chr = &points_tchar->tchar[row][col];
+			}
+
+			b_chr->chr = p_chr->chr;
+			b_chr->fg = p_chr->fg;
 		}
+	}
+}
+
+/******************************************************************************
+ *
+ *****************************************************************************/
+
+static void s_board_points_add(s_nc_board *board, const s_tmpl_points *points_templ, const s_point *points_pos) {
+
+	for (int i = 0; i < POINTS_NUM; i++) {
+		s_board_add_templ(board, &points_templ->points[i % 2], (i < 12), &points_pos[i]);
 	}
 }
 
@@ -112,25 +206,89 @@ void nc_board_init_bg(s_nc_board *board_bg, const s_area *area_board_outer, cons
 	nc_board_set_area_bg(board_bg, area_board_inner, color_board_bg);
 }
 
+// --------------------------
+
 /******************************************************************************
  *
  *****************************************************************************/
 
-void nc_board_print(const s_nc_board *board_fg, const s_nc_board *board_bg) {
+void nc_board_init() {
+
+	//
+	// Checker template
+	//
+	s_tmpl_checker_init(&_tmpl_checker);
+
+	//
+	// Points template
+	//
+	s_tmpl_points tmpl_points;
+	s_tmpl_points_init(&tmpl_points);
+
+	nc_board_init_bg(&_nc_board_bg, &_area_board_outer, &_area_board_inner);
+
+	//
+	// Points positions
+	//
+	s_tmpl_points_set_pos(_points_pos, &_area_board_outer, &_area_board_inner);
+
+	s_board_points_add(&_nc_board_bg, &tmpl_points, _points_pos);
+
+	//
+	//
+	//
+	nc_board_set_tchar(&_nc_board_fg, ( s_tchar ) { EMPTY, 0, 0 });
+}
+
+/******************************************************************************
+ *
+ *****************************************************************************/
+
+// TODO: comments
+#define CHECKER_OFFSET_COL 1
+
+void s_board_add_checker(const int checker_idx, const e_owner owner) {
+
+	const s_checker_tchar *templ = &_tmpl_checker.checker[owner];
+
+	const s_point *checker_pos = &_points_pos[checker_idx];
+
+	for (int row = 0; row < CHECKER_ROW; row++) {
+		for (int col = 0; col < CHECKER_COL; col++) {
+
+			//
+			// copy the struct
+			//
+			_nc_board_fg.arr[checker_pos->row + row][checker_pos->col + CHECKER_OFFSET_COL + col] = templ->tchar[row][col];
+		}
+	}
+}
+
+/******************************************************************************
+ *
+ *****************************************************************************/
+
+void nc_board_print() {
 	short cp;
 	wchar_t chr;
+
+	s_tchar *bg, *fg;
 
 	for (int row = 0; row < BOARD_ROW; row++) {
 		for (int col = 0; col < BOARD_COL; col++) {
 
-			if (board_fg->arr[row][col].chr == EMPTY) {
+			fg = &_nc_board_fg.arr[row][col];
 
-				cp = cp_color_pair_get(board_bg->arr[row][col].fg, board_bg->arr[row][col].bg);
-				chr = board_bg->arr[row][col].chr;
+			if (fg->chr == EMPTY) {
+
+				bg = &_nc_board_bg.arr[row][col];
+
+				cp = cp_color_pair_get(bg->fg, bg->bg);
+				chr = bg->chr;
 
 			} else {
-				cp = cp_color_pair_get(board_fg->arr[row][col].fg, board_fg->arr[row][col].bg);
-				chr = board_fg->arr[row][col].chr;
+				cp = cp_color_pair_get(fg->fg, fg->bg);
+				chr = _nc_board_fg.arr[row][col].chr;
 			}
 
 			attrset(COLOR_PAIR(cp));
