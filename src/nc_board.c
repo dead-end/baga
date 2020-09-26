@@ -30,6 +30,10 @@
 #include "s_color_def.h"
 
 /******************************************************************************
+ *
+ *****************************************************************************/
+
+/******************************************************************************
  * The function sets the board with a default color and a foreground color and
  * a background color gradient.
  *****************************************************************************/
@@ -71,7 +75,7 @@ static void nc_board_set_area_bg(s_nc_board *board, const s_area *area_board, co
  * background color.
  *****************************************************************************/
 
-void nc_board_init_empty(s_nc_board *board, const s_tchar tchar) {
+void nc_board_set_tchar(s_nc_board *board, const s_tchar tchar) {
 
 	for (int row = 0; row < BOARD_ROW; row++) {
 		for (int col = 0; col < BOARD_COL; col++) {
