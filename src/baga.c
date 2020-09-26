@@ -145,19 +145,18 @@ static s_nc_board _nc_board_fg;
  *
  *****************************************************************************/
 
+// TODO: comments
+#define CHECKER_OFFSET_COL 1
+
 void s_board_add_checker(s_nc_board *board, const s_point *checker_pos, const s_checker_tchar *templ) {
-
-	s_point point;
-
-	point.row = checker_pos->row + 0;
-	point.col = checker_pos->col + 1;
 
 	for (int row = 0; row < CHECKER_ROW; row++) {
 		for (int col = 0; col < CHECKER_COL; col++) {
 
-			board->arr[point.row + row][point.col + col].fg = templ->tchar[row][col].fg;
-			board->arr[point.row + row][point.col + col].bg = templ->tchar[row][col].bg;
-			board->arr[point.row + row][point.col + col].chr = templ->tchar[row][col].chr;
+			//
+			// copy the struct
+			//
+			board->arr[checker_pos->row + row][checker_pos->col + CHECKER_OFFSET_COL + col] = templ->tchar[row][col];
 		}
 	}
 }
@@ -236,7 +235,7 @@ int main() {
 	//
 	//
 	//
-	nc_board_init_empty(&_nc_board_fg, ( s_tchar ) { EMPTY, 0, 0 });
+	nc_board_set_tchar(&_nc_board_fg, ( s_tchar ) { EMPTY, 0, 0 });
 
 	s_board_add_checker(&_nc_board_fg, &points_pos[23], &tmpl_checker.checker[OWNER_BLACK]);
 
