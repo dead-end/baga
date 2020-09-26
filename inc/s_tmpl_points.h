@@ -55,6 +55,8 @@ typedef struct {
  * Declaration of the functions.
  *****************************************************************************/
 
+#define s_tmpl_point_get(t,i) &((t)->points[(i) % 2])
+
 void s_tmpl_points_init(s_tmpl_points *tmpl_point);
 
 void s_tmpl_points_set_pos(s_point *point_pos, const s_area *area_board_outer, const s_area *area_board_inner);
