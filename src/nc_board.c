@@ -143,27 +143,31 @@ static void nc_board_set_area_bg(s_nc_board *board, const s_area *area_board, co
 // --------------------------
 
 /******************************************************************************
- *
+ * The function adds a points template to the background board. The lower
+ * points have to be added upside down.
  *****************************************************************************/
 
-static void s_board_add_templ(s_nc_board *board, const s_points_tchar *points_tchar, const bool reverse, const s_point *pos) {
+static void s_board_points_add_templ(s_nc_board *board, const s_points_tchar *points_tchar, const bool reverse, const s_point *pos) {
 
-	s_tchar *b_chr;
-	const s_tchar *p_chr;
+	s_tchar *board_tchar;
+	const s_tchar *tmpl_tchar;
 
 	for (int row = 0; row < POINTS_ROW; row++) {
 		for (int col = 0; col < POINTS_COL; col++) {
 
-			b_chr = &board->arr[pos->row + row][pos->col + col];
+			board_tchar = &board->arr[pos->row + row][pos->col + col];
 
+			//
+			// Get the template character for an index, which may be reversed.
+			//
 			if (reverse) {
-				p_chr = &points_tchar->tchar[reverse_idx(POINTS_ROW, row)][col];
+				tmpl_tchar = &points_tchar->tchar[reverse_idx(POINTS_ROW, row)][col];
 			} else {
-				p_chr = &points_tchar->tchar[row][col];
+				tmpl_tchar = &points_tchar->tchar[row][col];
 			}
 
-			b_chr->chr = p_chr->chr;
-			b_chr->fg = p_chr->fg;
+			board_tchar->chr = tmpl_tchar->chr;
+			board_tchar->fg = tmpl_tchar->fg;
 		}
 	}
 }
@@ -175,7 +179,7 @@ static void s_board_add_templ(s_nc_board *board, const s_points_tchar *points_tc
 static void s_board_points_add(s_nc_board *board, const s_tmpl_points *points_templ, const s_point *points_pos) {
 
 	for (int i = 0; i < POINTS_NUM; i++) {
-		s_board_add_templ(board, &points_templ->points[i % 2], (i < 12), &points_pos[i]);
+		s_board_points_add_templ(board, s_tmpl_point_get(points_templ, i), (i < 12), &points_pos[i]);
 	}
 }
 
@@ -206,7 +210,9 @@ void nc_board_init_bg(s_nc_board *board_bg, const s_area *area_board_outer, cons
 	nc_board_set_area_bg(board_bg, area_board_inner, color_board_bg);
 }
 
-// --------------------------
+// ---------------------------------------------------------------------------
+// Interface functions
+// ---------------------------------------------------------------------------
 
 /******************************************************************************
  *
@@ -219,18 +225,18 @@ void nc_board_init() {
 	//
 	s_tmpl_checker_init(&_tmpl_checker);
 
-	//
-	// Points template
-	//
-	s_tmpl_points tmpl_points;
-	s_tmpl_points_init(&tmpl_points);
-
 	nc_board_init_bg(&_nc_board_bg, &_area_board_outer, &_area_board_inner);
 
 	//
 	// Points positions
 	//
 	s_tmpl_points_set_pos(_points_pos, &_area_board_outer, &_area_board_inner);
+
+	//
+	// Points template
+	//
+	s_tmpl_points tmpl_points;
+	s_tmpl_points_init(&tmpl_points);
 
 	s_board_points_add(&_nc_board_bg, &tmpl_points, _points_pos);
 
@@ -265,14 +271,25 @@ void s_board_add_checker(const int checker_idx, const e_owner owner) {
 }
 
 /******************************************************************************
- *
+ * The function prints the board. This is done with the fixed background board
+ * and the foreground board, which contains the checkers. If there is a non
+ * space character in the foreground, we print the foreground, otherwise we
+ * print the background.
  *****************************************************************************/
 
 void nc_board_print() {
+
+	//
+	// The color pair.
+	//
 	short cp;
+
+	//
+	// The character to be printed.
+	//
 	wchar_t chr;
 
-	s_tchar *bg, *fg;
+	const s_tchar *bg, *fg;
 
 	for (int row = 0; row < BOARD_ROW; row++) {
 		for (int col = 0; col < BOARD_COL; col++) {
