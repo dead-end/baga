@@ -22,8 +22,13 @@
  * SOFTWARE.
  */
 
+#include <stdbool.h>
+
+#include "lib_logging.h"
+
 #include "s_tmpl_points.h"
 #include "s_color_def.h"
+#include "bg_defs.h"
 
 /******************************************************************************
  * Definition of the characters used by the triangles.
@@ -55,44 +60,35 @@
 
 static const wchar_t template[POINTS_ROW][POINTS_COL] = {
 
-{ T___, T___, T__I, T_I_, T___, T___ },
+{ T__I, T_II, T_II, T_II, T_II, T_I_ },
 
-{ T___, T___, T__I, T_I_, T___, T___ },
-
-{ T___, T___, T_II, T_II, T___, T___ },
-
-{ T___, T___, T_II, T_II, T___, T___ },
-
-{ T___, T__I, T_II, T_II, T_I_, T___ },
-
-{ T___, T__I, T_II, T_II, T_I_, T___ },
+{ T__I, T_II, T_II, T_II, T_II, T_I_ },
 
 { T___, T_II, T_II, T_II, T_II, T___ },
 
 { T___, T_II, T_II, T_II, T_II, T___ },
 
-{ T__I, T_II, T_II, T_II, T_II, T_I_ },
+{ T___, T__I, T_II, T_II, T_I_, T___ },
 
-{ T__I, T_II, T_II, T_II, T_II, T_I_ },
+{ T___, T__I, T_II, T_II, T_I_, T___ },
+
+{ T___, T___, T_II, T_II, T___, T___ },
+
+{ T___, T___, T_II, T_II, T___, T___ },
+
+{ T___, T___, T__I, T_I_, T___, T___ },
+
+{ T___, T___, T__I, T_I_, T___, T___ },
 
 };
 
 /******************************************************************************
- * The function copies the template character and the foreground color to the
- * struct.
+ * The array with the four templates for the points:
+ *
+ * black / white - top / bottom.
  *****************************************************************************/
 
-static void points_init_tmpl(s_points_tchar *tmpl_points, const wchar_t tmpl[POINTS_ROW][POINTS_COL], const short *fg) {
-
-	for (int row = 0; row < POINTS_ROW; row++) {
-		for (int col = 0; col < POINTS_COL; col++) {
-
-			tmpl_points->tchar[row][col].chr = tmpl[row][col];
-			tmpl_points->tchar[row][col].fg = fg[row];
-			tmpl_points->tchar[row][col].bg = -1;
-		}
-	}
-}
+s_tmpl _tmpls[NUM_PLAYER][NUM_ORIENT];
 
 /******************************************************************************
  * The functions computes the positions of the points.
@@ -102,8 +98,10 @@ void s_tmpl_points_set_pos(s_point *point_pos, const s_area *area_board_outer, c
 
 	const int quarter = POINTS_NUM / 4;
 
-	const int lower_inner_row = area_board_inner->pos.row + area_board_inner->dim.row - POINTS_ROW;
-	const int lower_outer_row = area_board_outer->pos.row + area_board_outer->dim.row - POINTS_ROW;
+	log_debug("inner board - pos: %d/%d dim: %d/%d", area_board_inner->pos.row, area_board_inner->pos.col, area_board_inner->dim.row, area_board_inner->dim.col);
+
+	const int lower_inner_row = area_board_inner->pos.row + area_board_inner->dim.row - 1;
+	const int lower_outer_row = area_board_outer->pos.row + area_board_outer->dim.row - 1;
 
 	for (int i = 0; i < quarter; i++) {
 
@@ -135,10 +133,40 @@ void s_tmpl_points_set_pos(s_point *point_pos, const s_area *area_board_outer, c
 }
 
 /******************************************************************************
- * The function initializes the templates for the points.
+ * The function copies the character template to the template structure.
  *****************************************************************************/
 
-void s_tmpl_points_init(s_tmpl_points *tmpl_point) {
+static void s_tmpl_point_cp(s_tmpl *tmpl, const wchar_t chr_tmpl[POINTS_ROW][POINTS_COL], const short *fg, const bool reverse) {
+
+	s_tchar *tchr;
+	int row_reverse;
+
+	for (int row = 0; row < POINTS_ROW; row++) {
+		for (int col = 0; col < POINTS_COL; col++) {
+
+			//
+			// The s_tmpl structure is not an 2 dim array, so we have to call
+			// the function to get the element.
+			//
+			tchr = s_tmpl_get_ptr(tmpl, row, col);
+
+			//
+			// If required, we copy the characters with reversed rows.
+			//
+			row_reverse = reverse ? reverse_idx(POINTS_ROW, row) : row;
+
+			tchr->chr = chr_tmpl[row_reverse][col];
+			tchr->fg = fg[row];
+			tchr->bg = -1;
+		}
+	}
+}
+
+/******************************************************************************
+ * The function initializes the four templates for the points.
+ *****************************************************************************/
+
+void s_tmpl_point_create() {
 
 	//
 	// An array for the color gradient.
@@ -150,13 +178,50 @@ void s_tmpl_points_init(s_tmpl_points *tmpl_point) {
 	//
 	s_color_def_gradient(colors, POINTS_ROW, "#ff8000", "#cc6600");
 
-	points_init_tmpl(&tmpl_point->points[OWNER_BLACK], template, colors);
+	s_tmpl_create(&_tmpls[OWNER_BLACK][ORIENT_TOP], POINTS_ROW, POINTS_COL);
+
+	s_tmpl_point_cp(&_tmpls[OWNER_BLACK][ORIENT_TOP], template, colors, false);
+
+	s_tmpl_create(&_tmpls[OWNER_BLACK][ORIENT_BOT], POINTS_ROW, POINTS_COL);
+
+	s_tmpl_point_cp(&_tmpls[OWNER_BLACK][ORIENT_BOT], template, colors, true);
 
 	//
 	// White points
 	//
 	s_color_def_gradient(colors, POINTS_ROW, "#804000", "#4d2800");
 
-	points_init_tmpl(&tmpl_point->points[OWNER_WHITE], template, colors);
+	s_tmpl_create(&_tmpls[OWNER_WHITE][ORIENT_TOP], POINTS_ROW, POINTS_COL);
+
+	s_tmpl_point_cp(&_tmpls[OWNER_WHITE][ORIENT_TOP], template, colors, false);
+
+	s_tmpl_create(&_tmpls[OWNER_WHITE][ORIENT_BOT], POINTS_ROW, POINTS_COL);
+
+	s_tmpl_point_cp(&_tmpls[OWNER_WHITE][ORIENT_BOT], template, colors, true);
+
 }
 
+/******************************************************************************
+ * The function frees the four templates for the points.
+ *****************************************************************************/
+
+void s_tmpl_point_free() {
+
+	s_tmpl_free(&_tmpls[OWNER_BLACK][ORIENT_TOP]);
+
+	s_tmpl_free(&_tmpls[OWNER_BLACK][ORIENT_BOT]);
+
+	s_tmpl_free(&_tmpls[OWNER_WHITE][ORIENT_TOP]);
+
+	s_tmpl_free(&_tmpls[OWNER_WHITE][ORIENT_BOT]);
+}
+
+/******************************************************************************
+ * The function returns the template for the points index. The color toggles
+ * and the orientation is reversed on the second half.
+ *****************************************************************************/
+
+s_tmpl* s_tmpl_point_get_tmpl(const int idx) {
+
+	return &_tmpls[idx % NUM_PLAYER][idx < POINTS_HALF ? 0 : 1];
+}
