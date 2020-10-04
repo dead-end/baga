@@ -27,37 +27,6 @@
 #include "s_tmpl_checker.h"
 
 /******************************************************************************
- * Definition of the characters used by the checker.
- *****************************************************************************/
-
-//
-// Full block
-//
-#define T_FU L'\u2588'
-
-//
-// Upper half block
-//
-#define T_UP L'\u2580'
-
-//
-// Lower half block
-//
-#define T_LO L'\u2584'
-
-/******************************************************************************
- * Definition of the characters for the checker.
- *****************************************************************************/
-
-static const wchar_t _tchar_checker[CHECKER_ROW][CHECKER_COL] = {
-
-{ T_FU, T_UP, T_UP, T_FU },
-
-{ T_FU, T_LO, T_LO, T_FU },
-
-};
-
-/******************************************************************************
  * The definition of the template structure, we have one structure for the full
  * and one for the half template.
  *****************************************************************************/
@@ -76,11 +45,137 @@ static s_tmpl _tmpls[NUM_SIZES];
  * The array with the color definition.
  *****************************************************************************/
 
-#define BG_OFFSET 2
-
-#define _COLOR_NUM CHECKER_ROW + CHECKER_ROW
+#define _COLOR_NUM 9
 
 short _colors[NUM_PLAYER][_COLOR_NUM];
+
+/******************************************************************************
+ * The function returns the number of checkers that will be displayed as half
+ * for a given number of checkers on a point.
+ *****************************************************************************/
+
+static int s_tmpl_checker_num_half(const int total) {
+
+	//
+	// 5 checker can be displayed on a point completely.
+	//
+	if (total < 6) {
+		return 0;
+	}
+
+	if (total < 10) {
+		return (total - 5) * 2;
+	}
+
+	//
+	// 8 half and one complete checker.
+	//
+	return 8;
+}
+
+/******************************************************************************
+ *
+ *****************************************************************************/
+
+static wchar_t wchar_t_map[] = { L'0', L'1', L'2', L'3', L'4', L'5', L'6', L'7', L'8', L'9' };
+
+static void s_tmpl_checker_set_label(s_tmpl *tmpl, const int total, const bool reverse) {
+	short tmp;
+	s_tchar *tchar;
+
+	tchar = s_tmpl_get_ptr(tmpl, reverse ? 0 : 1, 1);
+	tchar->chr = total < 10 ? L'0' : L'1';
+
+	tmp = tchar->fg;
+	tchar->fg = tchar->bg;
+	tchar->bg = tmp;
+
+	tchar = s_tmpl_get_ptr(tmpl, reverse ? 0 : 1, 2);
+	tchar->chr = total < 10 ? wchar_t_map[total] : wchar_t_map[total - 10];
+
+	tmp = tchar->fg;
+	tchar->fg = tchar->bg;
+	tchar->bg = tmp;
+}
+
+/******************************************************************************
+ * The function returns the color index of a checker. If the index is not
+ * visible the function returns -1.
+ *
+ * Example: total 12 => 1-8 and 12 are visible, the others not.
+ *****************************************************************************/
+
+static int s_tmpl_checker_color_idx(const int total, const int idx) {
+
+#ifdef DEBUG
+
+	//
+	// Ensure that the total number of checkers is valid.
+	//
+	if (total < 0 || total > CHECKER_NUM) {
+		log_exit("Invalid number of checkers on the point: %d", total);
+	}
+
+	//
+	// Ensure that the index is valid.
+	//
+	if (idx < 0 || idx > total) {
+		log_exit("Invalid index: %d", total);
+	}
+#endif
+
+	//
+	// The last checker on the point is always visible.
+	//
+	if (idx == total - 1) {
+		return 0;
+	}
+
+	//
+	// The first 8 checker are visible.
+	//
+	if (idx < 8) {
+		return reverse_idx(max(_COLOR_NUM, total), idx);
+	}
+
+	//
+	// All other checkers are not visible.
+	//
+	return -1;
+}
+
+// ----------------------- INTERFACE ------------------------------------------
+
+/******************************************************************************
+ *
+ *****************************************************************************/
+
+const s_tmpl* s_tmpl_checker_get_tmpl(const e_owner owner, const int total, const int idx, const bool reverse) {
+
+	//
+	// We get the color index for the current checker
+	//
+	const int color_idx = s_tmpl_checker_color_idx(total, idx);
+
+	//
+	// If the index is negative, the the checker will not be displayed.
+	//
+	if (color_idx < 0) {
+		return NULL;
+	}
+
+	const bool half = idx < s_tmpl_checker_num_half(total);
+
+	s_tmpl *tmpl = half ? &_tmpls[TS_HALF] : &_tmpls[TS_FULL];
+
+	s_tmpl_set(tmpl, (s_tchar ) { .chr = FULL, .bg = 0, .fg = _colors[owner][color_idx] });
+
+	if (idx == total - 1 && total > 5) {
+		s_tmpl_checker_set_label(tmpl, total, reverse);
+	}
+
+	return tmpl;
+}
 
 /******************************************************************************
  * The function initializes the template structures and the color array.
@@ -91,9 +186,9 @@ void s_tmpl_checker_create() {
 	//
 	// Create color
 	//
-	s_color_def_gradient(_colors[OWNER_BLACK], _COLOR_NUM, "#222222", "#555555");
+	s_color_def_gradient(_colors[OWNER_BLACK], _COLOR_NUM, "#777777", "#111111");
 
-	s_color_def_gradient(_colors[OWNER_WHITE], _COLOR_NUM, "#bbbbbb", "#eeeeee");
+	s_color_def_gradient(_colors[OWNER_WHITE], _COLOR_NUM, "#ffffff", "#999999");
 
 	//
 	// Create templates
@@ -104,7 +199,7 @@ void s_tmpl_checker_create() {
 }
 
 /******************************************************************************
- *
+ * The function frees the template structures.
  *****************************************************************************/
 
 void s_tmpl_checker_free() {
@@ -114,141 +209,3 @@ void s_tmpl_checker_free() {
 	s_tmpl_free(&_tmpls[TS_HALF]);
 }
 
-/******************************************************************************
- *
- *****************************************************************************/
-
-static int s_tmpl_checker_num_half(const int total) {
-
-	//
-	//
-	//
-	if (total < 6) {
-		return 0;
-	}
-
-	if (total < 10) {
-		return (total - 5) * 2;
-	}
-
-	return 8;
-}
-
-static void s_tmpl_checker_labeled(s_tmpl *tmpl, const int total, const bool reverse, const short fg, const short bg) {
-
-	s_tchar *tchar;
-
-	for (int row = 0; row < tmpl->dim.row; row++) {
-		for (int col = 0; col < tmpl->dim.col; col++) {
-
-			tchar = s_tmpl_get_ptr(tmpl, row, col);
-
-			tchar->chr = T_FU;
-			tchar->fg = fg;
-			tchar->bg = bg;
-		}
-	}
-
-	tchar = s_tmpl_get_ptr(tmpl, reverse ? 0 : 1, 1);
-	tchar->chr = L'1';
-
-	tchar = s_tmpl_get_ptr(tmpl, reverse ? 0 : 1, 2);
-
-	switch (total - 10) {
-	case 0:
-		tchar->chr = L'0';
-		break;
-	case 1:
-		tchar->chr = L'1';
-		break;
-	case 2:
-		tchar->chr = L'2';
-		break;
-	case 3:
-		tchar->chr = L'3';
-		break;
-	case 4:
-		tchar->chr = L'4';
-		break;
-	case 5:
-		tchar->chr = L'5';
-		break;
-	case 60:
-		tchar->chr = L'6';
-		break;
-
-	default:
-		log_exit("Invalid number: %d", total)
-		;
-	}
-}
-
-/******************************************************************************
- *
- *****************************************************************************/
-
-static void s_tmpl_checker_cp(s_tmpl *tmpl, const int row_start, const wchar_t char_tmpl[CHECKER_ROW][CHECKER_COL], const short fg, const short bg) {
-
-	s_tchar *tchar;
-
-	for (int row = 0; row < tmpl->dim.row; row++) {
-		for (int col = 0; col < tmpl->dim.col; col++) {
-
-			tchar = s_tmpl_get_ptr(tmpl, row, col);
-
-			tchar->chr = char_tmpl[row_start + row][col];
-			tchar->fg = fg;
-			tchar->bg = bg;
-		}
-	}
-}
-
-/******************************************************************************
- *
- *****************************************************************************/
-
-static void s_tmpl_checker_colors(const e_owner owner, const int idx, short *fg, short *bg) {
-
-	//
-	// Only up to 9 checkers are printed in points, so the last valid index is
-	// 8.
-	//
-	const int i = idx < 9 ? idx : 8;
-
-	const int color = (i % 2 ? 1 : 0);
-	*fg = _colors[owner][color];
-	*bg = _colors[owner][color + BG_OFFSET];
-}
-
-/******************************************************************************
- * The function returns a template for the checker. Depending on the input
- * data, a full or half template is chosen and filled.
- *****************************************************************************/
-
-const s_tmpl* s_tmpl_checker_get_tmpl(const e_owner owner, const int total, const int idx, const bool reverse) {
-
-	short fg, bg;
-	s_tmpl_checker_colors(owner, idx, &fg, &bg);
-
-	const bool half = idx < s_tmpl_checker_num_half(total);
-
-	const int row_start = half && reverse ? 1 : 0;
-
-	//
-	// Get the template, that we will update and return. Here only the size
-	// matters.
-	//
-	s_tmpl *tmpl = NULL;
-
-	if (total < 10 || idx < 8) {
-
-		tmpl = half ? &_tmpls[TS_HALF] : &_tmpls[TS_FULL];
-		s_tmpl_checker_cp(tmpl, row_start, _tchar_checker, fg, bg);
-
-	} else if (idx == total - 1) {
-		tmpl = &_tmpls[TS_FULL];
-		s_tmpl_checker_labeled(tmpl, total, reverse, fg, bg);
-	}
-
-	return tmpl;
-}
