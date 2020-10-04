@@ -49,10 +49,14 @@ void s_tmpl_create(s_tmpl *tmpl, const int row, const int col);
 
 void s_tmpl_free(s_tmpl *tmpl);
 
+void s_tmpl_set(s_tmpl *tmpl, const s_tchar tchar);
+
 /******************************************************************************
  * The macro to access the element of the array.
  *****************************************************************************/
 
 #define s_tmpl_get_ptr(t,r,c) (&((t)->arr[ (r) * (t)->dim.col + (c)]))
+
+#define s_tmpl_get(t,r,c) ((t)->arr[ (r) * (t)->dim.col + (c)])
 
 #endif /* INC_S_TMPL_H_ */

@@ -63,3 +63,17 @@ void s_tmpl_free(s_tmpl *tmpl) {
 		tmpl->arr = NULL;
 	}
 }
+
+/******************************************************************************
+ * The function initializes the array with a s_tchar.
+ *****************************************************************************/
+
+void s_tmpl_set(s_tmpl *tmpl, const s_tchar tchar) {
+
+	for (int row = 0; row < tmpl->dim.row; row++) {
+		for (int col = 0; col < tmpl->dim.col; col++) {
+
+			s_tmpl_get(tmpl, row, col) = tchar;
+		}
+	}
+}
