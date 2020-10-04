@@ -22,6 +22,7 @@
  * SOFTWARE.
  */
 
+#include "lib_logging.h"
 #include "s_color_def.h"
 #include "s_tmpl_checker.h"
 
@@ -48,7 +49,7 @@
  * Definition of the characters for the checker.
  *****************************************************************************/
 
-static const wchar_t template[CHECKER_ROW][CHECKER_COL] = {
+static const wchar_t _tchar_checker[CHECKER_ROW][CHECKER_COL] = {
 
 { T_FU, T_UP, T_UP, T_FU },
 
@@ -57,74 +58,197 @@ static const wchar_t template[CHECKER_ROW][CHECKER_COL] = {
 };
 
 /******************************************************************************
- * The definition of the foreground and background color numbers. There is one
- * array with gradients that are used for the foreground and background.
+ * The definition of the template structure, we have one structure for the full
+ * and one for the half template.
+ *****************************************************************************/
+
+typedef enum {
+
+	TS_FULL = 0, TS_HALF = 1
+
+} e_tmpl_size;
+
+#define NUM_SIZES 2
+
+static s_tmpl _tmpls[NUM_SIZES];
+
+/******************************************************************************
+ * The array with the color definition.
+ *****************************************************************************/
+
+#define BG_OFFSET 2
+
+#define _COLOR_NUM CHECKER_ROW + CHECKER_ROW
+
+short _colors[NUM_PLAYER][_COLOR_NUM];
+
+/******************************************************************************
+ * The function initializes the template structures and the color array.
+ *****************************************************************************/
+
+void s_tmpl_checker_create() {
+
+	//
+	// Create color
+	//
+	s_color_def_gradient(_colors[OWNER_BLACK], _COLOR_NUM, "#222222", "#555555");
+
+	s_color_def_gradient(_colors[OWNER_WHITE], _COLOR_NUM, "#bbbbbb", "#eeeeee");
+
+	//
+	// Create templates
+	//
+	s_tmpl_create(&_tmpls[TS_FULL], CHECKER_ROW, CHECKER_COL);
+
+	s_tmpl_create(&_tmpls[TS_HALF], CHECKER_ROW / 2, CHECKER_COL);
+}
+
+/******************************************************************************
  *
- * fg: 0 1 2 3
- * bg: 2 3 4 5
  *****************************************************************************/
 
-#define _COLOR_SHIFT 2
+void s_tmpl_checker_free() {
 
-#define _COLOR_NUM CHECKER_COL + _COLOR_SHIFT
+	s_tmpl_free(&_tmpls[TS_FULL]);
+
+	s_tmpl_free(&_tmpls[TS_HALF]);
+}
 
 /******************************************************************************
- * The function sets the foreground and background colors of the checker
- * struct.
+ *
  *****************************************************************************/
 
-static void checker_copy_colors(s_checker_tchar *tmpl_checker, const short *colors) {
+static int s_tmpl_checker_num_half(const int total) {
 
-	for (int row = 0; row < CHECKER_ROW; row++) {
-		for (int col = 0; col < CHECKER_COL; col++) {
+	//
+	//
+	//
+	if (total < 6) {
+		return 0;
+	}
 
-			tmpl_checker->tchar[row][col].fg = colors[col];
-			tmpl_checker->tchar[row][col].bg = colors[col + _COLOR_SHIFT];
+	if (total < 10) {
+		return (total - 5) * 2;
+	}
+
+	return 8;
+}
+
+static void s_tmpl_checker_labeled(s_tmpl *tmpl, const int total, const bool reverse, const short fg, const short bg) {
+
+	s_tchar *tchar;
+
+	for (int row = 0; row < tmpl->dim.row; row++) {
+		for (int col = 0; col < tmpl->dim.col; col++) {
+
+			tchar = s_tmpl_get_ptr(tmpl, row, col);
+
+			tchar->chr = T_FU;
+			tchar->fg = fg;
+			tchar->bg = bg;
+		}
+	}
+
+	tchar = s_tmpl_get_ptr(tmpl, reverse ? 0 : 1, 1);
+	tchar->chr = L'1';
+
+	tchar = s_tmpl_get_ptr(tmpl, reverse ? 0 : 1, 2);
+
+	switch (total - 10) {
+	case 0:
+		tchar->chr = L'0';
+		break;
+	case 1:
+		tchar->chr = L'1';
+		break;
+	case 2:
+		tchar->chr = L'2';
+		break;
+	case 3:
+		tchar->chr = L'3';
+		break;
+	case 4:
+		tchar->chr = L'4';
+		break;
+	case 5:
+		tchar->chr = L'5';
+		break;
+	case 60:
+		tchar->chr = L'6';
+		break;
+
+	default:
+		log_exit("Invalid number: %d", total)
+		;
+	}
+}
+
+/******************************************************************************
+ *
+ *****************************************************************************/
+
+static void s_tmpl_checker_cp(s_tmpl *tmpl, const int row_start, const wchar_t char_tmpl[CHECKER_ROW][CHECKER_COL], const short fg, const short bg) {
+
+	s_tchar *tchar;
+
+	for (int row = 0; row < tmpl->dim.row; row++) {
+		for (int col = 0; col < tmpl->dim.col; col++) {
+
+			tchar = s_tmpl_get_ptr(tmpl, row, col);
+
+			tchar->chr = char_tmpl[row_start + row][col];
+			tchar->fg = fg;
+			tchar->bg = bg;
 		}
 	}
 }
 
 /******************************************************************************
- * The function copies the wchar_t characters from the template to the checker
- * struct.
+ *
  *****************************************************************************/
 
-static void checker_copy_tmpl(s_checker_tchar *tmpl_checker, const wchar_t tmpl[CHECKER_ROW][CHECKER_COL]) {
+static void s_tmpl_checker_colors(const e_owner owner, const int idx, short *fg, short *bg) {
 
-	for (int row = 0; row < CHECKER_ROW; row++) {
-		for (int col = 0; col < CHECKER_COL; col++) {
+	//
+	// Only up to 9 checkers are printed in points, so the last valid index is
+	// 8.
+	//
+	const int i = idx < 9 ? idx : 8;
 
-			tmpl_checker->tchar[row][col].chr = tmpl[row][col];
-		}
-	}
+	const int color = (i % 2 ? 1 : 0);
+	*fg = _colors[owner][color];
+	*bg = _colors[owner][color + BG_OFFSET];
 }
 
 /******************************************************************************
- * The function initializes the checker struct.
+ * The function returns a template for the checker. Depending on the input
+ * data, a full or half template is chosen and filled.
  *****************************************************************************/
 
-void s_tmpl_checker_init(s_tmpl_checker *templ_checker) {
+const s_tmpl* s_tmpl_checker_get_tmpl(const e_owner owner, const int total, const int idx, const bool reverse) {
+
+	short fg, bg;
+	s_tmpl_checker_colors(owner, idx, &fg, &bg);
+
+	const bool half = idx < s_tmpl_checker_num_half(total);
+
+	const int row_start = half && reverse ? 1 : 0;
 
 	//
-	// An array for the color gradient.
+	// Get the template, that we will update and return. Here only the size
+	// matters.
 	//
-	short colors[_COLOR_NUM];
+	s_tmpl *tmpl = NULL;
 
-	//
-	// Black checker
-	//
-	s_color_def_gradient(colors, _COLOR_NUM, "#111111", "#555555");
+	if (total < 10 || idx < 8) {
 
-	checker_copy_colors(&templ_checker->checker[OWNER_BLACK], colors);
+		tmpl = half ? &_tmpls[TS_HALF] : &_tmpls[TS_FULL];
+		s_tmpl_checker_cp(tmpl, row_start, _tchar_checker, fg, bg);
 
-	checker_copy_tmpl(&templ_checker->checker[OWNER_BLACK], template);
+	} else if (idx == total - 1) {
+		tmpl = &_tmpls[TS_FULL];
+		s_tmpl_checker_labeled(tmpl, total, reverse, fg, bg);
+	}
 
-	//
-	// White checker
-	//
-	s_color_def_gradient(colors, _COLOR_NUM, "#aaaaaa", "#eeeeee");
-
-	checker_copy_colors(&templ_checker->checker[OWNER_WHITE], colors);
-
-	checker_copy_tmpl(&templ_checker->checker[OWNER_WHITE], template);
+	return tmpl;
 }

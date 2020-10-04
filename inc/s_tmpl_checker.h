@@ -25,33 +25,20 @@
 #ifndef INC_S_TMPL_CHECKER_H_
 #define INC_S_TMPL_CHECKER_H_
 
+#include <stdbool.h>
+
 #include "bg_defs.h"
-#include "lib_s_tchar.h"
 
-/******************************************************************************
- * The struct contains the character and color definition of a checker.
- *****************************************************************************/
-
-typedef struct {
-
-	s_tchar tchar[CHECKER_ROW][CHECKER_COL];
-
-} s_checker_tchar;
-
-/******************************************************************************
- * The struct contains the definition of the checkers for the two players.
- *****************************************************************************/
-
-typedef struct {
-
-	s_checker_tchar checker[NUM_PLAYER];
-
-} s_tmpl_checker;
+#include "s_tmpl.h"
 
 /******************************************************************************
  * Declaration of the functions.
  *****************************************************************************/
 
-void s_tmpl_checker_init(s_tmpl_checker *templ_checker);
+void s_tmpl_checker_create();
+
+void s_tmpl_checker_free();
+
+const s_tmpl* s_tmpl_checker_get_tmpl(const e_owner owner, const int total, const int idx, const bool reverse);
 
 #endif /* INC_S_TMPL_CHECKER_H_ */
