@@ -31,9 +31,16 @@
  *****************************************************************************/
 
 //
+// The number of checker for each player.
+//
+#define CHECKER_NUM 16
+
+//
 // The number of points (triangles) of the backgammon game.
 //
 #define POINTS_NUM 24
+
+#define POINTS_HALF 12
 
 //
 // The dimension of a checker (gaming piece)
@@ -62,9 +69,19 @@
 #define reverse_idx(t,i) ((t) - 1 - (i))
 
 //
+// The macro returns the maximum of two value.
+//
+#define max(t,i) ((i) > (t) ? (t) : (i))
+
+//
 // Empty wchar_t
 //
 #define EMPTY L' '
+
+//
+// Full block
+//
+#define FULL L'\u2588'
 
 //
 // The number of players (which is trivial).
@@ -83,5 +100,17 @@ typedef enum {
 } e_owner;
 
 #define e_owner_has_owner(o) ((o) != -1)
+
+/******************************************************************************
+ *
+ *****************************************************************************/
+
+#define NUM_ORIENT 2
+
+typedef enum {
+
+	ORIENT_TOP = 0, ORIENT_BOT = 1
+
+} e_orient;
 
 #endif /* INC_BG_DEFS_H_ */
