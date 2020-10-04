@@ -58,7 +58,7 @@
  * Definition of the characters for the points.
  *****************************************************************************/
 
-static const wchar_t template[POINTS_ROW][POINTS_COL] = {
+static const wchar_t _tchar_points[POINTS_ROW][POINTS_COL] = {
 
 { T__I, T_II, T_II, T_II, T_II, T_I_ },
 
@@ -180,11 +180,11 @@ void s_tmpl_point_create() {
 
 	s_tmpl_create(&_tmpls[OWNER_BLACK][ORIENT_TOP], POINTS_ROW, POINTS_COL);
 
-	s_tmpl_point_cp(&_tmpls[OWNER_BLACK][ORIENT_TOP], template, colors, false);
+	s_tmpl_point_cp(&_tmpls[OWNER_BLACK][ORIENT_TOP], _tchar_points, colors, false);
 
 	s_tmpl_create(&_tmpls[OWNER_BLACK][ORIENT_BOT], POINTS_ROW, POINTS_COL);
 
-	s_tmpl_point_cp(&_tmpls[OWNER_BLACK][ORIENT_BOT], template, colors, true);
+	s_tmpl_point_cp(&_tmpls[OWNER_BLACK][ORIENT_BOT], _tchar_points, colors, true);
 
 	//
 	// White points
@@ -193,11 +193,11 @@ void s_tmpl_point_create() {
 
 	s_tmpl_create(&_tmpls[OWNER_WHITE][ORIENT_TOP], POINTS_ROW, POINTS_COL);
 
-	s_tmpl_point_cp(&_tmpls[OWNER_WHITE][ORIENT_TOP], template, colors, false);
+	s_tmpl_point_cp(&_tmpls[OWNER_WHITE][ORIENT_TOP], _tchar_points, colors, false);
 
 	s_tmpl_create(&_tmpls[OWNER_WHITE][ORIENT_BOT], POINTS_ROW, POINTS_COL);
 
-	s_tmpl_point_cp(&_tmpls[OWNER_WHITE][ORIENT_BOT], template, colors, true);
+	s_tmpl_point_cp(&_tmpls[OWNER_WHITE][ORIENT_BOT], _tchar_points, colors, true);
 
 }
 
