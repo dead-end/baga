@@ -66,8 +66,8 @@ typedef struct {
 
 void nc_board_init();
 
-void s_board_add_checker(const int checker_idx, const e_owner owner);
-
 void nc_board_print();
+
+void s_board_points_add_checkers(const int checker_idx, const e_owner owner, const int num);
 
 #endif /* INC_NC_BOARD_H_ */

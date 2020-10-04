@@ -24,6 +24,7 @@
 
 #include <ncurses.h>
 
+#include "lib_logging.h"
 #include "lib_color_pair.h"
 
 #include "s_tmpl_points.h"
@@ -84,8 +85,6 @@ static s_nc_board _nc_board_bg;
 
 static s_nc_board _nc_board_fg;
 
-static s_tmpl_checker _tmpl_checker;
-
 static s_point _points_pos[POINTS_NUM];
 
 /******************************************************************************
@@ -142,28 +141,23 @@ static void nc_board_set_area_bg(s_nc_board *board, const s_area *area_board, co
 
 // --------------------------
 
-/******************************************************************************
- * The function adds a points template to the background board. The lower
- * points have to be added upside down.
- *****************************************************************************/
+#define revers_ul_pos(r,h) ((r) - (h) + 1)
 
-static void s_board_points_add_templ(s_nc_board *board, const s_points_tchar *points_tchar, const bool reverse, const s_point *pos) {
+static void s_board_points_add_templ(s_nc_board *board, const s_tmpl *tmpl, const s_point *pos, const bool reverse) {
 
 	s_tchar *board_tchar;
 	const s_tchar *tmpl_tchar;
 
-	for (int row = 0; row < POINTS_ROW; row++) {
-		for (int col = 0; col < POINTS_COL; col++) {
+	for (int row = 0; row < tmpl->dim.row; row++) {
+		for (int col = 0; col < tmpl->dim.col; col++) {
 
-			board_tchar = &board->arr[pos->row + row][pos->col + col];
+			tmpl_tchar = s_tmpl_get_ptr(tmpl, row, col);
 
-			//
-			// Get the template character for an index, which may be reversed.
-			//
 			if (reverse) {
-				tmpl_tchar = &points_tchar->tchar[reverse_idx(POINTS_ROW, row)][col];
+				board_tchar = &board->arr[pos->row + row][pos->col + col];
+
 			} else {
-				tmpl_tchar = &points_tchar->tchar[row][col];
+				board_tchar = &board->arr[revers_ul_pos(pos->row, tmpl->dim.row) + row][pos->col + col];
 			}
 
 			board_tchar->chr = tmpl_tchar->chr;
@@ -176,10 +170,17 @@ static void s_board_points_add_templ(s_nc_board *board, const s_points_tchar *po
  *
  *****************************************************************************/
 
-static void s_board_points_add(s_nc_board *board, const s_tmpl_points *points_templ, const s_point *points_pos) {
+void s_board_points_add(s_nc_board *board, const s_point *points_pos) {
+
+	s_tmpl *tmpl;
 
 	for (int i = 0; i < POINTS_NUM; i++) {
-		s_board_points_add_templ(board, s_tmpl_point_get(points_templ, i), (i < 12), &points_pos[i]);
+
+		tmpl = s_tmpl_point_get_tmpl(i);
+
+		log_debug("Adding point: %d", i);
+
+		s_board_points_add_templ(board, tmpl, &points_pos[i], i < 12);
 	}
 }
 
@@ -223,7 +224,9 @@ void nc_board_init() {
 	//
 	// Checker template
 	//
-	s_tmpl_checker_init(&_tmpl_checker);
+	//s_tmpl_checker_init(&_tmpl_checker);
+
+	s_tmpl_checker_create();
 
 	nc_board_init_bg(&_nc_board_bg, &_area_board_outer, &_area_board_inner);
 
@@ -233,12 +236,13 @@ void nc_board_init() {
 	s_tmpl_points_set_pos(_points_pos, &_area_board_outer, &_area_board_inner);
 
 	//
-	// Points template
+	// Add points to the board
 	//
-	s_tmpl_points tmpl_points;
-	s_tmpl_points_init(&tmpl_points);
+	s_tmpl_point_create();
 
-	s_board_points_add(&_nc_board_bg, &tmpl_points, _points_pos);
+	s_board_points_add(&_nc_board_bg, _points_pos);
+
+	s_tmpl_point_free();
 
 	//
 	//
@@ -246,27 +250,57 @@ void nc_board_init() {
 	nc_board_set_tchar(&_nc_board_fg, ( s_tchar ) { EMPTY, 0, 0 });
 }
 
+#define CHECKER_ROW_HALF 1
+
 /******************************************************************************
  *
  *****************************************************************************/
 
-// TODO: comments
-#define CHECKER_OFFSET_COL 1
+static s_point s_board_cp_tmpl(const s_tmpl *tmpl, s_point pos, const bool reverse) {
 
-void s_board_add_checker(const int checker_idx, const e_owner owner) {
+	if (reverse) {
+		pos.row = pos.row - tmpl->dim.row + 1;
+	}
 
-	const s_checker_tchar *templ = &_tmpl_checker.checker[owner];
+	for (int row = 0; row < tmpl->dim.row; row++) {
+		for (int col = 0; col < tmpl->dim.col; col++) {
 
-	const s_point *checker_pos = &_points_pos[checker_idx];
-
-	for (int row = 0; row < CHECKER_ROW; row++) {
-		for (int col = 0; col < CHECKER_COL; col++) {
-
-			//
-			// copy the struct
-			//
-			_nc_board_fg.arr[checker_pos->row + row][checker_pos->col + CHECKER_OFFSET_COL + col] = templ->tchar[row][col];
+			_nc_board_fg.arr[pos.row + row][pos.col + col] = s_tmpl_get(tmpl, row, col);
 		}
+	}
+
+	if (reverse) {
+		pos.row--;
+	} else {
+		pos.row += tmpl->dim.row;
+	}
+
+	return pos;
+}
+
+#define pos_next(r,h,ir) ((ir) ? (r) - (h): (r) + (h) )
+
+/******************************************************************************
+ *
+ *****************************************************************************/
+
+void s_board_points_add_checkers(const int idx, const e_owner owner, const int num) {
+
+	s_point pos = { .row = _points_pos[idx].row + CHECKER_OFFSET_ROW, .col = _points_pos[idx].col + CHECKER_OFFSET_COL };
+
+	const bool reverse = (idx >= 12);
+
+	const s_tmpl *tmpl;
+
+	for (int i = 0; i < num; i++) {
+
+		tmpl = s_tmpl_checker_get_tmpl(owner, num, i, reverse);
+
+		if (tmpl == NULL) {
+			continue;
+		}
+
+		pos = s_board_cp_tmpl(tmpl, pos, reverse);
 	}
 }
 
