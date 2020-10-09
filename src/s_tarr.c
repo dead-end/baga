@@ -24,7 +24,7 @@
 
 #include "lib_logging.h"
 
-#include "s_tmpl.h"
+#include "s_tarr.h"
 
 /******************************************************************************
  * The function creates the array for the structure with the given dimension

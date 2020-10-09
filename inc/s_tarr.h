@@ -22,8 +22,8 @@
  * SOFTWARE.
  */
 
-#ifndef INC_S_TMPL_H_
-#define INC_S_TMPL_H_
+#ifndef INC_S_TARR_H_
+#define INC_S_TARR_H_
 
 #include "lib_s_point.h"
 #include "lib_s_tchar.h"
@@ -59,4 +59,4 @@ void s_tarr_set(s_tarr *tarr, const s_tchar tchar);
 
 #define s_tarr_get(t,r,c) ((t)->arr[ (r) * (t)->dim.col + (c)])
 
-#endif /* INC_S_TMPL_H_ */
+#endif /* INC_S_TARR_H_ */
