@@ -31,36 +31,36 @@
  * and stores the dimension.
  *****************************************************************************/
 
-void s_tmpl_create(s_tmpl *tmpl, const int row, const int col) {
+void s_tarr_new(s_tarr *tarr, const int row, const int col) {
 
 	log_debug("Creating s_tmpl: %d/%d", row, col);
 
-	tmpl->arr = malloc(row * col * sizeof(s_tchar));
-	if (tmpl->arr == NULL) {
+	tarr->arr = malloc(row * col * sizeof(s_tchar));
+	if (tarr->arr == NULL) {
 		log_exit_str("Unable to allocate memory!");
 	}
 
-	tmpl->dim.row = row;
-	tmpl->dim.col = col;
+	tarr->dim.row = row;
+	tarr->dim.col = col;
 }
 
 /******************************************************************************
  * The function frees the array of the structure.
  *****************************************************************************/
 
-void s_tmpl_free(s_tmpl *tmpl) {
+void s_tarr_free(s_tarr *tarr) {
 
 #ifdef DEBUG
-	if (tmpl->arr == NULL) {
-		log_exit("Template already freed: %d/%d", tmpl->dim.row, tmpl->dim.col);
+	if (tarr->arr == NULL) {
+		log_exit("Template already freed: %d/%d", tarr->dim.row, tarr->dim.col);
 	}
 #endif
 
-	log_debug("Freeing s_tmpl: %d/%d", tmpl->dim.row, tmpl->dim.col);
+	log_debug("Freeing s_tmpl: %d/%d", tarr->dim.row, tarr->dim.col);
 
-	if (tmpl->arr != NULL) {
-		free(tmpl->arr);
-		tmpl->arr = NULL;
+	if (tarr->arr != NULL) {
+		free(tarr->arr);
+		tarr->arr = NULL;
 	}
 }
 
@@ -68,12 +68,12 @@ void s_tmpl_free(s_tmpl *tmpl) {
  * The function initializes the array with a s_tchar.
  *****************************************************************************/
 
-void s_tmpl_set(s_tmpl *tmpl, const s_tchar tchar) {
+void s_tarr_set(s_tarr *tarr, const s_tchar tchar) {
 
-	for (int row = 0; row < tmpl->dim.row; row++) {
-		for (int col = 0; col < tmpl->dim.col; col++) {
+	for (int row = 0; row < tarr->dim.row; row++) {
+		for (int col = 0; col < tarr->dim.col; col++) {
 
-			s_tmpl_get(tmpl, row, col) = tchar;
+			s_tarr_get(tarr, row, col) = tchar;
 		}
 	}
 }

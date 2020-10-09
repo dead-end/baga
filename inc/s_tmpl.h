@@ -39,24 +39,24 @@ typedef struct {
 
 	s_tchar *arr;
 
-} s_tmpl;
+} s_tarr;
 
 /******************************************************************************
  * The function declarations.
  *****************************************************************************/
 
-void s_tmpl_create(s_tmpl *tmpl, const int row, const int col);
+void s_tarr_new(s_tarr *tarr, const int row, const int col);
 
-void s_tmpl_free(s_tmpl *tmpl);
+void s_tarr_free(s_tarr *tarr);
 
-void s_tmpl_set(s_tmpl *tmpl, const s_tchar tchar);
+void s_tarr_set(s_tarr *tarr, const s_tchar tchar);
 
 /******************************************************************************
- * The macro to access the element of the array.
+ * The macro to access the elements of the array.
  *****************************************************************************/
 
-#define s_tmpl_get_ptr(t,r,c) (&((t)->arr[ (r) * (t)->dim.col + (c)]))
+#define s_tarr_get_ptr(t,r,c) (&((t)->arr[ (r) * (t)->dim.col + (c)]))
 
-#define s_tmpl_get(t,r,c) ((t)->arr[ (r) * (t)->dim.col + (c)])
+#define s_tarr_get(t,r,c) ((t)->arr[ (r) * (t)->dim.col + (c)])
 
 #endif /* INC_S_TMPL_H_ */
