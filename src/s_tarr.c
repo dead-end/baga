@@ -89,15 +89,37 @@ void s_tarr_free(s_tarr **tarr) {
 }
 
 /******************************************************************************
- * The function initializes the array with a s_tchar.
+ * The function initializes the array with a s_tchar. All elements are treated
+ * the same, so do not need to care about rows and cols and treat the structure
+ * as a one dimensional array.
  *****************************************************************************/
 
 void s_tarr_set(s_tarr *tarr, const s_tchar tchar) {
 
+	const int end = tarr->dim.row * tarr->dim.col;
+
+	for (int i = 0; i < end; i++) {
+		tarr->arr[i] = tchar;
+	}
+}
+
+/******************************************************************************
+ * The function initializes the array with a wchar_t character, a foreground
+ * color and an array with a background gradient.
+ *****************************************************************************/
+
+void s_tarr_set_gradient(s_tarr *tarr, const wchar_t chr, const short fg_color, const short *bg_colors) {
+
+	s_tchar *tchr;
+
 	for (int row = 0; row < tarr->dim.row; row++) {
 		for (int col = 0; col < tarr->dim.col; col++) {
 
-			s_tarr_get(tarr, row, col) = tchar;
+			tchr = &s_tarr_get(tarr, row, col);
+
+			tchr->chr = chr;
+			tchr->fg = fg_color;
+			tchr->bg = bg_colors[row];
 		}
 	}
 }
