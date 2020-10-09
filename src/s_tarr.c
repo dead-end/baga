@@ -123,3 +123,24 @@ void s_tarr_set_gradient(s_tarr *tarr, const wchar_t chr, const short fg_color, 
 		}
 	}
 }
+
+/******************************************************************************
+ * The function sets the background color with a gradient for a given area
+ * inside a s_tarr structure.
+ *****************************************************************************/
+
+void s_tarr_set_bg(s_tarr *tarr, const s_area *area, const short *bg_colors) {
+
+	//
+	// Store the position of the area.
+	//
+	const int pos_row = area->pos.row;
+	const int pos_col = area->pos.col;
+
+	for (int row = 0; row < area->dim.row; row++) {
+		for (int col = 0; col < area->dim.col; col++) {
+
+			s_tarr_get(tarr, pos_row + row, pos_col + col).bg = bg_colors[row];
+		}
+	}
+}

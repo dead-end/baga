@@ -28,6 +28,8 @@
 #include "lib_s_point.h"
 #include "lib_s_tchar.h"
 
+#include "s_area.h"
+
 /******************************************************************************
  * The structure represents a two dimensional array. The data is stored in a
  * one dimensional array. We have a macro to access an element.
@@ -52,6 +54,8 @@ void s_tarr_free(s_tarr **tarr);
 void s_tarr_set(s_tarr *tarr, const s_tchar tchar);
 
 void s_tarr_set_gradient(s_tarr *tarr, const wchar_t chr, const short fg_color, const short *bg_colors);
+
+void s_tarr_set_bg(s_tarr *tarr, const s_area *area, const short *bg_colors);
 
 /******************************************************************************
  * The macro to access the elements of the array.
