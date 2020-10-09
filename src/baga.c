@@ -38,6 +38,8 @@
 
 static void exit_callback() {
 
+	nc_board_free();
+
 	endwin();
 }
 
