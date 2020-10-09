@@ -29,7 +29,7 @@
 
 #include "bg_defs.h"
 
-#include "s_tmpl.h"
+#include "s_tarr.h"
 
 /******************************************************************************
  * Declaration of the functions.
@@ -39,6 +39,6 @@ void s_tmpl_checker_create();
 
 void s_tmpl_checker_free();
 
-const s_tmpl* s_tmpl_checker_get_tmpl(const e_owner owner, const int total, const int idx, const bool reverse);
+const s_tarr* s_tmpl_checker_get_tmpl(const e_owner owner, const int total, const int idx, const bool reverse);
 
 #endif /* INC_S_TMPL_CHECKER_H_ */
