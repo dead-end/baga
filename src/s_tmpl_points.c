@@ -88,7 +88,7 @@ static const wchar_t _tchar_points[POINTS_ROW][POINTS_COL] = {
  * black / white - top / bottom.
  *****************************************************************************/
 
-s_tmpl _tmpls[NUM_PLAYER][NUM_ORIENT];
+static s_tarr *_tmpls[NUM_PLAYER][NUM_ORIENT];
 
 /******************************************************************************
  * The functions computes the positions of the points.
@@ -136,7 +136,7 @@ void s_tmpl_points_set_pos(s_point *point_pos, const s_area *area_board_outer, c
  * The function copies the character template to the template structure.
  *****************************************************************************/
 
-static void s_tmpl_point_cp(s_tmpl *tmpl, const wchar_t chr_tmpl[POINTS_ROW][POINTS_COL], const short *fg, const bool reverse) {
+static void s_tmpl_point_cp(s_tarr *tmpl, const wchar_t chr_tmpl[POINTS_ROW][POINTS_COL], const short *fg, const bool reverse) {
 
 	s_tchar *tchr;
 	int row_reverse;
@@ -148,7 +148,7 @@ static void s_tmpl_point_cp(s_tmpl *tmpl, const wchar_t chr_tmpl[POINTS_ROW][POI
 			// The s_tmpl structure is not an 2 dim array, so we have to call
 			// the function to get the element.
 			//
-			tchr = s_tmpl_get_ptr(tmpl, row, col);
+			tchr = &s_tarr_get(tmpl, row, col);
 
 			//
 			// If required, we copy the characters with reversed rows.
@@ -178,26 +178,26 @@ void s_tmpl_point_create() {
 	//
 	s_color_def_gradient(colors, POINTS_ROW, "#ff8000", "#cc6600");
 
-	s_tmpl_create(&_tmpls[OWNER_BLACK][ORIENT_TOP], POINTS_ROW, POINTS_COL);
+	_tmpls[OWNER_BLACK][ORIENT_TOP] = s_tarr_new(POINTS_ROW, POINTS_COL);
 
-	s_tmpl_point_cp(&_tmpls[OWNER_BLACK][ORIENT_TOP], _tchar_points, colors, false);
+	s_tmpl_point_cp(_tmpls[OWNER_BLACK][ORIENT_TOP], _tchar_points, colors, false);
 
-	s_tmpl_create(&_tmpls[OWNER_BLACK][ORIENT_BOT], POINTS_ROW, POINTS_COL);
+	_tmpls[OWNER_BLACK][ORIENT_BOT] = s_tarr_new(POINTS_ROW, POINTS_COL);
 
-	s_tmpl_point_cp(&_tmpls[OWNER_BLACK][ORIENT_BOT], _tchar_points, colors, true);
+	s_tmpl_point_cp(_tmpls[OWNER_BLACK][ORIENT_BOT], _tchar_points, colors, true);
 
 	//
 	// White points
 	//
 	s_color_def_gradient(colors, POINTS_ROW, "#804000", "#4d2800");
 
-	s_tmpl_create(&_tmpls[OWNER_WHITE][ORIENT_TOP], POINTS_ROW, POINTS_COL);
+	_tmpls[OWNER_WHITE][ORIENT_TOP] = s_tarr_new(POINTS_ROW, POINTS_COL);
 
-	s_tmpl_point_cp(&_tmpls[OWNER_WHITE][ORIENT_TOP], _tchar_points, colors, false);
+	s_tmpl_point_cp(_tmpls[OWNER_WHITE][ORIENT_TOP], _tchar_points, colors, false);
 
-	s_tmpl_create(&_tmpls[OWNER_WHITE][ORIENT_BOT], POINTS_ROW, POINTS_COL);
+	_tmpls[OWNER_WHITE][ORIENT_BOT] = s_tarr_new(POINTS_ROW, POINTS_COL);
 
-	s_tmpl_point_cp(&_tmpls[OWNER_WHITE][ORIENT_BOT], _tchar_points, colors, true);
+	s_tmpl_point_cp(_tmpls[OWNER_WHITE][ORIENT_BOT], _tchar_points, colors, true);
 
 }
 
@@ -207,13 +207,13 @@ void s_tmpl_point_create() {
 
 void s_tmpl_point_free() {
 
-	s_tmpl_free(&_tmpls[OWNER_BLACK][ORIENT_TOP]);
+	s_tarr_free(&_tmpls[OWNER_BLACK][ORIENT_TOP]);
 
-	s_tmpl_free(&_tmpls[OWNER_BLACK][ORIENT_BOT]);
+	s_tarr_free(&_tmpls[OWNER_BLACK][ORIENT_BOT]);
 
-	s_tmpl_free(&_tmpls[OWNER_WHITE][ORIENT_TOP]);
+	s_tarr_free(&_tmpls[OWNER_WHITE][ORIENT_TOP]);
 
-	s_tmpl_free(&_tmpls[OWNER_WHITE][ORIENT_BOT]);
+	s_tarr_free(&_tmpls[OWNER_WHITE][ORIENT_BOT]);
 }
 
 /******************************************************************************
@@ -221,7 +221,7 @@ void s_tmpl_point_free() {
  * and the orientation is reversed on the second half.
  *****************************************************************************/
 
-s_tmpl* s_tmpl_point_get_tmpl(const int idx) {
+s_tarr* s_tmpl_point_get_tmpl(const int point_idx) {
 
-	return &_tmpls[idx % NUM_PLAYER][idx < POINTS_HALF ? 0 : 1];
+	return _tmpls[point_idx % NUM_PLAYER][point_idx < POINTS_HALF ? 0 : 1];
 }

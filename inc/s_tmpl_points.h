@@ -27,8 +27,8 @@
 
 #include "lib_s_point.h"
 
-#include "s_tmpl.h"
 #include "s_area.h"
+#include "s_tarr.h"
 
 /******************************************************************************
  * Declaration of the functions.
@@ -38,7 +38,7 @@ void s_tmpl_point_create();
 
 void s_tmpl_point_free();
 
-s_tmpl* s_tmpl_point_get_tmpl(const int idx);
+s_tarr* s_tmpl_point_get_tmpl(const int point_idx);
 
 void s_tmpl_points_set_pos(s_point *point_pos, const s_area *area_board_outer, const s_area *area_board_inner);
 
