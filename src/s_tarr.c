@@ -27,41 +27,65 @@
 #include "s_tarr.h"
 
 /******************************************************************************
- * The function creates the array for the structure with the given dimension
- * and stores the dimension.
+ * The function allocates a s_tarr structure with a given dimension.
  *****************************************************************************/
 
-void s_tarr_new(s_tarr *tarr, const int row, const int col) {
+s_tarr* s_tarr_new(const int row, const int col) {
 
-	log_debug("Creating s_tmpl: %d/%d", row, col);
+	log_debug("New s_tarr with: %d/%d", row, col);
 
+	//
+	// Allocate the structure
+	//
+	s_tarr *tarr = malloc(sizeof(s_tarr));
+	if (tarr == NULL) {
+		log_exit_str("Unable to allocate memory!");
+	}
+
+	//
+	// Allocate the array (1-dimensional)
+	//
 	tarr->arr = malloc(row * col * sizeof(s_tchar));
 	if (tarr->arr == NULL) {
 		log_exit_str("Unable to allocate memory!");
 	}
 
+	//
+	// Set the dimensions.
+	//
 	tarr->dim.row = row;
 	tarr->dim.col = col;
+
+	return tarr;
 }
 
 /******************************************************************************
- * The function frees the array of the structure.
+ * The function frees the s_tarr structure.
  *****************************************************************************/
 
-void s_tarr_free(s_tarr *tarr) {
+void s_tarr_free(s_tarr **tarr) {
 
-#ifdef DEBUG
-	if (tarr->arr == NULL) {
-		log_exit("Template already freed: %d/%d", tarr->dim.row, tarr->dim.col);
+	//
+	// Ensure that there is something to free
+	//
+	if (*tarr == NULL) {
+		log_exit_str("s_tarr already freed!");
 	}
-#endif
 
-	log_debug("Freeing s_tmpl: %d/%d", tarr->dim.row, tarr->dim.col);
+	//
+	// Free the array
+	//
+	free((*tarr)->arr);
 
-	if (tarr->arr != NULL) {
-		free(tarr->arr);
-		tarr->arr = NULL;
-	}
+	//
+	// Free the structure.
+	//
+	free(*tarr);
+
+	//
+	// Set the pointer to NULL, to mark it as freed.
+	//
+	*tarr = NULL;
 }
 
 /******************************************************************************
