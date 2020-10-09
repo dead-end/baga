@@ -45,9 +45,9 @@ typedef struct {
  * The function declarations.
  *****************************************************************************/
 
-void s_tarr_new(s_tarr *tarr, const int row, const int col);
+s_tarr* s_tarr_new(const int row, const int col);
 
-void s_tarr_free(s_tarr *tarr);
+void s_tarr_free(s_tarr **tarr);
 
 void s_tarr_set(s_tarr *tarr, const s_tchar tchar);
 
@@ -55,8 +55,6 @@ void s_tarr_set(s_tarr *tarr, const s_tchar tchar);
  * The macro to access the elements of the array.
  *****************************************************************************/
 
-#define s_tarr_get_ptr(t,r,c) (&((t)->arr[ (r) * (t)->dim.col + (c)]))
-
-#define s_tarr_get(t,r,c) ((t)->arr[ (r) * (t)->dim.col + (c)])
+#define s_tarr_get(t,r,c) ((t)->arr[ (r) * (t)->dim.col + (c) ])
 
 #endif /* INC_S_TARR_H_ */
