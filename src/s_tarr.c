@@ -166,3 +166,17 @@ void s_tarr_cp_fg(s_tarr *to_arr, const s_tarr *from_arr, const s_point pos) {
 		}
 	}
 }
+
+/******************************************************************************
+ * The function copies the from_array to the to_array at a given position.
+ *****************************************************************************/
+
+void s_tarr_cp(s_tarr *to_arr, const s_tarr *from_arr, const s_point pos) {
+
+	for (int row = 0; row < from_arr->dim.row; row++) {
+		for (int col = 0; col < from_arr->dim.col; col++) {
+
+			s_tarr_get(to_arr, pos.row + row, pos.col + col) = s_tarr_get(from_arr, row, col);
+		}
+	}
+}
