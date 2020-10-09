@@ -39,7 +39,7 @@ typedef enum {
 
 #define NUM_SIZES 2
 
-static s_tmpl _tmpls[NUM_SIZES];
+static s_tarr *_tmpls[NUM_SIZES];
 
 /******************************************************************************
  * The array with the color definition.
@@ -47,7 +47,7 @@ static s_tmpl _tmpls[NUM_SIZES];
 
 #define _COLOR_NUM 9
 
-short _colors[NUM_PLAYER][_COLOR_NUM];
+static short _colors[NUM_PLAYER][_COLOR_NUM];
 
 /******************************************************************************
  * The function returns the number of checkers that will be displayed as half
@@ -79,18 +79,18 @@ static int s_tmpl_checker_num_half(const int total) {
 
 static wchar_t wchar_t_map[] = { L'0', L'1', L'2', L'3', L'4', L'5', L'6', L'7', L'8', L'9' };
 
-static void s_tmpl_checker_set_label(s_tmpl *tmpl, const int total, const bool reverse) {
+static void s_tmpl_checker_set_label(s_tarr *tmpl, const int total, const bool reverse) {
 	short tmp;
 	s_tchar *tchar;
 
-	tchar = s_tmpl_get_ptr(tmpl, reverse ? 0 : 1, 1);
+	tchar = &s_tarr_get(tmpl, reverse ? 0 : 1, 1);
 	tchar->chr = total < 10 ? L'0' : L'1';
 
 	tmp = tchar->fg;
 	tchar->fg = tchar->bg;
 	tchar->bg = tmp;
 
-	tchar = s_tmpl_get_ptr(tmpl, reverse ? 0 : 1, 2);
+	tchar = &s_tarr_get(tmpl, reverse ? 0 : 1, 2);
 	tchar->chr = total < 10 ? wchar_t_map[total] : wchar_t_map[total - 10];
 
 	tmp = tchar->fg;
@@ -150,7 +150,7 @@ static int s_tmpl_checker_color_idx(const int total, const int idx) {
  *
  *****************************************************************************/
 
-const s_tmpl* s_tmpl_checker_get_tmpl(const e_owner owner, const int total, const int idx, const bool reverse) {
+const s_tarr* s_tmpl_checker_get_tmpl(const e_owner owner, const int total, const int idx, const bool reverse) {
 
 	//
 	// We get the color index for the current checker
@@ -166,9 +166,9 @@ const s_tmpl* s_tmpl_checker_get_tmpl(const e_owner owner, const int total, cons
 
 	const bool half = idx < s_tmpl_checker_num_half(total);
 
-	s_tmpl *tmpl = half ? &_tmpls[TS_HALF] : &_tmpls[TS_FULL];
+	s_tarr *tmpl = half ? _tmpls[TS_HALF] : _tmpls[TS_FULL];
 
-	s_tmpl_set(tmpl, (s_tchar ) { .chr = FULL, .bg = 0, .fg = _colors[owner][color_idx] });
+	s_tarr_set(tmpl, (s_tchar ) { .chr = FULL, .bg = 0, .fg = _colors[owner][color_idx] });
 
 	if (idx == total - 1 && total > 5) {
 		s_tmpl_checker_set_label(tmpl, total, reverse);
@@ -193,9 +193,9 @@ void s_tmpl_checker_create() {
 	//
 	// Create templates
 	//
-	s_tmpl_create(&_tmpls[TS_FULL], CHECKER_ROW, CHECKER_COL);
+	_tmpls[TS_FULL] = s_tarr_new(CHECKER_ROW, CHECKER_COL);
 
-	s_tmpl_create(&_tmpls[TS_HALF], CHECKER_ROW / 2, CHECKER_COL);
+	_tmpls[TS_HALF] = s_tarr_new(CHECKER_ROW / 2, CHECKER_COL);
 }
 
 /******************************************************************************
@@ -204,8 +204,10 @@ void s_tmpl_checker_create() {
 
 void s_tmpl_checker_free() {
 
-	s_tmpl_free(&_tmpls[TS_FULL]);
+	log_debug_str("Freeing checker!");
 
-	s_tmpl_free(&_tmpls[TS_HALF]);
+	s_tarr_free(&_tmpls[TS_FULL]);
+
+	s_tarr_free(&_tmpls[TS_HALF]);
 }
 
