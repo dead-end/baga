@@ -57,6 +57,8 @@ void s_tarr_set_gradient(s_tarr *tarr, const wchar_t chr, const short fg_color, 
 
 void s_tarr_set_bg(s_tarr *tarr, const s_area *area, const short *bg_colors);
 
+void s_tarr_cp_fg(s_tarr *to, const s_tarr *from, const s_point pos);
+
 /******************************************************************************
  * The macro to access the elements of the array.
  *****************************************************************************/

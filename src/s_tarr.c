@@ -144,3 +144,25 @@ void s_tarr_set_bg(s_tarr *tarr, const s_area *area, const short *bg_colors) {
 		}
 	}
 }
+
+/******************************************************************************
+ * The function copies the foreground (character and color) from a template to
+ * a s_tarr. The background of the target is untouched.
+ *****************************************************************************/
+
+void s_tarr_cp_fg(s_tarr *to_arr, const s_tarr *from_arr, const s_point pos) {
+
+	const s_tchar *from;
+	s_tchar *to;
+
+	for (int row = 0; row < from_arr->dim.row; row++) {
+		for (int col = 0; col < from_arr->dim.col; col++) {
+
+			to = &s_tarr_get(to_arr, pos.row + row, pos.col + col);
+			from = &s_tarr_get(from_arr, row, col);
+
+			to->chr = from->chr;
+			to->fg = from->fg;
+		}
+	}
+}
