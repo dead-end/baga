@@ -143,7 +143,7 @@ static void nc_board_set_area_bg(s_nc_board *board, const s_area *area_board, co
 
 #define revers_ul_pos(r,h) ((r) - (h) + 1)
 
-static void s_board_points_add_templ(s_nc_board *board, const s_tmpl *tmpl, const s_point *pos, const bool reverse) {
+static void s_board_points_add_templ(s_nc_board *board, const s_tarr *tmpl, const s_point *pos, const bool reverse) {
 
 	s_tchar *board_tchar;
 	const s_tchar *tmpl_tchar;
@@ -151,7 +151,7 @@ static void s_board_points_add_templ(s_nc_board *board, const s_tmpl *tmpl, cons
 	for (int row = 0; row < tmpl->dim.row; row++) {
 		for (int col = 0; col < tmpl->dim.col; col++) {
 
-			tmpl_tchar = s_tmpl_get_ptr(tmpl, row, col);
+			tmpl_tchar = &s_tarr_get(tmpl, row, col);
 
 			if (reverse) {
 				board_tchar = &board->arr[pos->row + row][pos->col + col];
@@ -172,7 +172,7 @@ static void s_board_points_add_templ(s_nc_board *board, const s_tmpl *tmpl, cons
 
 void s_board_points_add(s_nc_board *board, const s_point *points_pos) {
 
-	s_tmpl *tmpl;
+	s_tarr *tmpl;
 
 	for (int i = 0; i < POINTS_NUM; i++) {
 
@@ -250,13 +250,24 @@ void nc_board_init() {
 	nc_board_set_tchar(&_nc_board_fg, ( s_tchar ) { EMPTY, 0, 0 });
 }
 
+/******************************************************************************
+ *
+ *****************************************************************************/
+
+void nc_board_free() {
+
+	log_debug_str("Freeing resources!");
+
+	s_tmpl_checker_free();
+}
+
 #define CHECKER_ROW_HALF 1
 
 /******************************************************************************
  *
  *****************************************************************************/
 
-static s_point s_board_cp_tmpl(const s_tmpl *tmpl, s_point pos, const bool reverse) {
+static s_point s_board_cp_tmpl(const s_tarr *tmpl, s_point pos, const bool reverse) {
 
 	if (reverse) {
 		pos.row = pos.row - tmpl->dim.row + 1;
@@ -265,7 +276,7 @@ static s_point s_board_cp_tmpl(const s_tmpl *tmpl, s_point pos, const bool rever
 	for (int row = 0; row < tmpl->dim.row; row++) {
 		for (int col = 0; col < tmpl->dim.col; col++) {
 
-			_nc_board_fg.arr[pos.row + row][pos.col + col] = s_tmpl_get(tmpl, row, col);
+			_nc_board_fg.arr[pos.row + row][pos.col + col] = s_tarr_get(tmpl, row, col);
 		}
 	}
 
@@ -290,7 +301,7 @@ void s_board_points_add_checkers(const int idx, const e_owner owner, const int n
 
 	const bool reverse = (idx >= 12);
 
-	const s_tmpl *tmpl;
+	const s_tarr *tmpl;
 
 	for (int i = 0; i < num; i++) {
 
