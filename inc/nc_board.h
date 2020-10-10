@@ -26,10 +26,6 @@
 #define INC_NC_BOARD_H_
 
 #include "bg_defs.h"
-#include "lib_s_point.h"
-#include "lib_s_tchar.h"
-
-#include "s_area.h"
 
 /******************************************************************************
  * Definitions of various sizes.
@@ -49,16 +45,6 @@
 #define BOARD_ROW (2 * BORDER_ROW + BOARD_HALF_ROW)
 
 #define BOARD_COL (5 * BORDER_COL + 2 * BOARD_HALF_COL  + 2 * CHECKER_COL)
-
-/******************************************************************************
- * The struct contains the definition of the board.
- *****************************************************************************/
-
-typedef struct {
-
-	s_tchar arr[BOARD_ROW][BOARD_COL];
-
-} s_nc_board;
 
 /******************************************************************************
  * Function definitions that are only used for unit tests.
