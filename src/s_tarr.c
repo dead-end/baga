@@ -180,3 +180,24 @@ void s_tarr_cp(s_tarr *to_arr, const s_tarr *from_arr, const s_point pos) {
 		}
 	}
 }
+
+/******************************************************************************
+ * The function computes the upper left corner of the array with a given
+ * position. The position is either the upper or the lower left corner.
+ *
+ * +--------+
+ * | <- upper left
+ * |        |
+ * |        |
+ * | <- lower left
+ * +--------+
+ *****************************************************************************/
+
+s_point s_tarr_ul_pos_get(const s_tarr *tarr, s_point cur_pos, const bool reverse) {
+
+	if (reverse) {
+		cur_pos.row = cur_pos.row - tarr->dim.row + 1;
+	}
+
+	return cur_pos;
+}
