@@ -46,8 +46,10 @@ typedef struct {
  * Definition of the macros.
  *****************************************************************************/
 
+#define TCHAR_CHR_UNUSED L'\0'
+
 #define s_tchar_set(t,c,f,b) (t)->chr = (c) ; (t)->fg = (f) ; (t)->bg = (b)
 
-#define s_tchar_is_defined(t) ((t)->chr != L'\0')
+#define s_tchar_is_defined(t) ((t)->chr != TCHAR_CHR_UNUSED)
 
 #endif /* INC_LIB_S_TCHAR_H_ */
