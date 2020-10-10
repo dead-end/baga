@@ -37,9 +37,9 @@ typedef enum {
 
 } e_tmpl_size;
 
-#define NUM_SIZES 2
+#define _NUM_SIZES 2
 
-static s_tarr *_tmpls[NUM_SIZES];
+static s_tarr *_tmpls[_NUM_SIZES];
 
 /******************************************************************************
  * The array with the color definition.
@@ -50,59 +50,78 @@ static s_tarr *_tmpls[NUM_SIZES];
 static short _colors[NUM_PLAYER][_COLOR_NUM];
 
 /******************************************************************************
- * The function returns the number of checkers that will be displayed as half
- * for a given number of checkers on a point.
+ * The macro returns the number of checkers that will be displayed as half for
+ * a given number of checkers on a point.
  *****************************************************************************/
 
-static int s_tmpl_checker_num_half(const int total) {
+static int _num_half_map[] = {
 
-	//
-	// 5 checker can be displayed on a point completely.
-	//
-	if (total < 6) {
-		return 0;
-	}
+//
+// Index 0 unused
+//
+		-1,
 
-	if (total < 10) {
-		return (total - 5) * 2;
-	}
+		//
+		// 1 - 5 => all checkers are displayed completely
+		//
+		0, 0, 0, 0, 0,
 
-	//
-	// 8 half and one complete checker.
-	//
-	return 8;
-}
+		//
+		// 6 - 9 => all checkers are displayed (full or half)
+		//
+		2, 4, 6, 8,
+
+		//
+		// 10 - 16 => 9 checkers are displayed (full or half) and the rest is
+		// missing.
+		//
+		8, 8, 8, 8, 8, 8, 8
+
+};
+
+#define s_tmpl_checker_num_half(t) _num_half_map[t]
 
 /******************************************************************************
- *
+ * The function adds the number of checker to the checker template. The number
+ * of checker for each player is 16, so this is the max value.
  *****************************************************************************/
 
 static wchar_t wchar_t_map[] = { L'0', L'1', L'2', L'3', L'4', L'5', L'6', L'7', L'8', L'9' };
 
 static void s_tmpl_checker_set_label(s_tarr *tmpl, const int total, const bool reverse) {
-	short tmp;
 	s_tchar *tchar;
 
+#ifdef DEBUG
+
+	//
+	// Ensure that the number of checker is valid
+	//
+	if (total < 1 || total > CHECKER_NUM) {
+		log_exit("Invalid checker num: %d", total);
+	}
+#endif
+
+	//
+	// Add 1 or leading 0
+	//
 	tchar = &s_tarr_get(tmpl, reverse ? 0 : 1, 1);
 	tchar->chr = total < 10 ? L'0' : L'1';
 
-	tmp = tchar->fg;
-	tchar->fg = tchar->bg;
-	tchar->bg = tmp;
-
+	//
+	// Add the second digit.
+	//
 	tchar = &s_tarr_get(tmpl, reverse ? 0 : 1, 2);
 	tchar->chr = total < 10 ? wchar_t_map[total] : wchar_t_map[total - 10];
 
-	tmp = tchar->fg;
-	tchar->fg = tchar->bg;
-	tchar->bg = tmp;
 }
 
 /******************************************************************************
  * The function returns the color index of a checker. If the index is not
  * visible the function returns -1.
  *
- * Example: total 12 => 1-8 and 12 are visible, the others not.
+ * Example: total 12 => 1-8 and 12 are visible, the others not:
+ *
+ * 1 2 3 4 5 6 7 8 [9-10-11] 12
  *****************************************************************************/
 
 static int s_tmpl_checker_color_idx(const int total, const int idx) {
@@ -147,7 +166,10 @@ static int s_tmpl_checker_color_idx(const int total, const int idx) {
 // ----------------------- INTERFACE ------------------------------------------
 
 /******************************************************************************
- *
+ * The function returns a template for a checker on a point. If the point
+ * contains too much checker, the checker can be displayed as a half or fully
+ * or not at all. If not all checker are displayed fully the total number of
+ * checkers is added to the innermost checker, which is always displayed fully.
  *****************************************************************************/
 
 const s_tarr* s_tmpl_checker_get_tmpl(const e_owner owner, const int total, const int idx, const bool reverse) {
@@ -158,7 +180,10 @@ const s_tarr* s_tmpl_checker_get_tmpl(const e_owner owner, const int total, cons
 	const int color_idx = s_tmpl_checker_color_idx(total, idx);
 
 	//
-	// If the index is negative, the the checker will not be displayed.
+	// If the index is negative, the the checker will not be displayed. There
+	// will be up to 9 checker displayed. The first 8 and the last:
+	//
+	// 1 2 3 4 5 6 7 8 [9-10-11-12] 13
 	//
 	if (color_idx < 0) {
 		return NULL;
@@ -168,8 +193,11 @@ const s_tarr* s_tmpl_checker_get_tmpl(const e_owner owner, const int total, cons
 
 	s_tarr *tmpl = half ? _tmpls[TS_HALF] : _tmpls[TS_FULL];
 
-	s_tarr_set(tmpl, (s_tchar ) { .chr = FULL, .bg = 0, .fg = _colors[owner][color_idx] });
+	s_tarr_set(tmpl, (s_tchar ) { .chr = EMPTY, .fg = _colors[e_owner_other(owner)][0], .bg = _colors[owner][color_idx] });
 
+	//
+	// Add label if necessary
+	//
 	if (idx == total - 1 && total > 5) {
 		s_tmpl_checker_set_label(tmpl, total, reverse);
 	}
@@ -182,6 +210,16 @@ const s_tarr* s_tmpl_checker_get_tmpl(const e_owner owner, const int total, cons
  *****************************************************************************/
 
 void s_tmpl_checker_create() {
+
+#ifdef DEBUG
+
+	//
+	// Ensure that the _num_half_map has the correct size.
+	//
+	if (sizeof(_num_half_map) / sizeof(_num_half_map[0]) != CHECKER_NUM + 1) {
+		log_exit_str("Invalid number of elements for _num_half_map");
+	}
+#endif
 
 	//
 	// Create color
@@ -210,4 +248,3 @@ void s_tmpl_checker_free() {
 
 	s_tarr_free(&_tmpls[TS_HALF]);
 }
-
