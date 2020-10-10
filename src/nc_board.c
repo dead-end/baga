@@ -81,114 +81,19 @@ s_area _area_bear_off = {
  *
  *****************************************************************************/
 
-static s_nc_board _nc_board_bg;
+static s_tarr *_nc_board_bg;
 
-static s_nc_board _nc_board_fg;
+static s_tarr *_nc_board_fg;
 
 static s_point _points_pos[POINTS_NUM];
 
-/******************************************************************************
- * The function sets the board with a default character and a foreground and
- * background color.
- *****************************************************************************/
-
-static void nc_board_set_tchar(s_nc_board *board, const s_tchar tchar) {
-
-	for (int row = 0; row < BOARD_ROW; row++) {
-		for (int col = 0; col < BOARD_COL; col++) {
-
-			board->arr[row][col] = tchar;
-		}
-	}
-}
-
-/******************************************************************************
- * The function sets the board with a default color and a foreground color and
- * a background color gradient.
- *****************************************************************************/
-
-static void nc_board_init_gradient(s_nc_board *board, const wchar_t chr, const short fg_color, const short *bg_colors) {
-
-	for (int row = 0; row < BOARD_ROW; row++) {
-		for (int col = 0; col < BOARD_COL; col++) {
-
-			board->arr[row][col].chr = chr;
-			board->arr[row][col].fg = fg_color;
-			board->arr[row][col].bg = bg_colors[row];
-		}
-	}
-}
-
-/******************************************************************************
- * The function sets the background color with a gradient for a given area.
- *****************************************************************************/
-
-static void nc_board_set_area_bg(s_nc_board *board, const s_area *area_board, const short *bg_colors) {
-
-	//
-	// Store the position of the area.
-	//
-	const int pos_row = area_board->pos.row;
-	const int pos_col = area_board->pos.col;
-
-	for (int row = 0; row < area_board->dim.row; row++) {
-		for (int col = 0; col < area_board->dim.col; col++) {
-
-			board->arr[pos_row + row][pos_col + col].bg = bg_colors[row];
-		}
-	}
-}
-
 // --------------------------
 
-#define revers_ul_pos(r,h) ((r) - (h) + 1)
-
-static void s_board_points_add_templ(s_nc_board *board, const s_tarr *tmpl, const s_point *pos, const bool reverse) {
-
-	s_tchar *board_tchar;
-	const s_tchar *tmpl_tchar;
-
-	for (int row = 0; row < tmpl->dim.row; row++) {
-		for (int col = 0; col < tmpl->dim.col; col++) {
-
-			tmpl_tchar = &s_tarr_get(tmpl, row, col);
-
-			if (reverse) {
-				board_tchar = &board->arr[pos->row + row][pos->col + col];
-
-			} else {
-				board_tchar = &board->arr[revers_ul_pos(pos->row, tmpl->dim.row) + row][pos->col + col];
-			}
-
-			board_tchar->chr = tmpl_tchar->chr;
-			board_tchar->fg = tmpl_tchar->fg;
-		}
-	}
-}
-
 /******************************************************************************
  *
  *****************************************************************************/
 
-void s_board_points_add(s_nc_board *board, const s_point *points_pos) {
-
-	s_tarr *tmpl;
-
-	for (int i = 0; i < POINTS_NUM; i++) {
-
-		tmpl = s_tmpl_point_get_tmpl(i);
-
-		log_debug("Adding point: %d", i);
-
-		s_board_points_add_templ(board, tmpl, &points_pos[i], i < 12);
-	}
-}
-
-/******************************************************************************
- *
- *****************************************************************************/
-
-void nc_board_init_bg(s_nc_board *board_bg, const s_area *area_board_outer, const s_area *area_board_inner) {
+void nc_board_init_bg(s_tarr *board_bg, const s_area *area_board_outer, const s_area *area_board_inner) {
 
 	//
 	// Complete board
@@ -197,7 +102,7 @@ void nc_board_init_bg(s_nc_board *board_bg, const s_area *area_board_outer, cons
 
 	s_color_def_gradient(color_bar_bg, BOARD_ROW, "#1a0d00", "#663500");
 
-	nc_board_init_gradient(board_bg, EMPTY, 0, color_bar_bg);
+	s_tarr_set_gradient(board_bg, EMPTY, 0, color_bar_bg);
 
 	//
 	// Inner / outer board
@@ -206,9 +111,9 @@ void nc_board_init_bg(s_nc_board *board_bg, const s_area *area_board_outer, cons
 
 	s_color_def_gradient(color_board_bg, BOARD_HALF_ROW, "#ffe6cc", "#ff9933");
 
-	nc_board_set_area_bg(board_bg, area_board_outer, color_board_bg);
+	s_tarr_set_bg(board_bg, area_board_outer, color_board_bg);
 
-	nc_board_set_area_bg(board_bg, area_board_inner, color_board_bg);
+	s_tarr_set_bg(board_bg, area_board_inner, color_board_bg);
 }
 
 // ---------------------------------------------------------------------------
@@ -221,6 +126,9 @@ void nc_board_init_bg(s_nc_board *board_bg, const s_area *area_board_outer, cons
 
 void nc_board_init() {
 
+	_nc_board_bg = s_tarr_new(BOARD_ROW, BOARD_COL);
+
+	_nc_board_fg = s_tarr_new(BOARD_ROW, BOARD_COL);
 	//
 	// Checker template
 	//
@@ -228,7 +136,7 @@ void nc_board_init() {
 
 	s_tmpl_checker_create();
 
-	nc_board_init_bg(&_nc_board_bg, &_area_board_outer, &_area_board_inner);
+	nc_board_init_bg(_nc_board_bg, &_area_board_outer, &_area_board_inner);
 
 	//
 	// Points positions
@@ -238,16 +146,13 @@ void nc_board_init() {
 	//
 	// Add points to the board
 	//
-	s_tmpl_point_create();
 
-	s_board_points_add(&_nc_board_bg, _points_pos);
-
-	s_tmpl_point_free();
+	s_tmpl_point_add_2_tarr(_nc_board_bg, _points_pos);
 
 	//
 	//
 	//
-	nc_board_set_tchar(&_nc_board_fg, ( s_tchar ) { EMPTY, 0, 0 });
+	s_tarr_set(_nc_board_fg, ( s_tchar ) { TCHAR_CHR_UNUSED, -1, -1 });
 }
 
 /******************************************************************************
@@ -259,6 +164,10 @@ void nc_board_free() {
 	log_debug_str("Freeing resources!");
 
 	s_tmpl_checker_free();
+
+	s_tarr_free(&_nc_board_fg);
+
+	s_tarr_free(&_nc_board_bg);
 }
 
 #define CHECKER_ROW_HALF 1
@@ -273,12 +182,7 @@ static s_point s_board_cp_tmpl(const s_tarr *tmpl, s_point pos, const bool rever
 		pos.row = pos.row - tmpl->dim.row + 1;
 	}
 
-	for (int row = 0; row < tmpl->dim.row; row++) {
-		for (int col = 0; col < tmpl->dim.col; col++) {
-
-			_nc_board_fg.arr[pos.row + row][pos.col + col] = s_tarr_get(tmpl, row, col);
-		}
-	}
+	s_tarr_cp(_nc_board_fg, tmpl, pos);
 
 	if (reverse) {
 		pos.row--;
@@ -339,18 +243,18 @@ void nc_board_print() {
 	for (int row = 0; row < BOARD_ROW; row++) {
 		for (int col = 0; col < BOARD_COL; col++) {
 
-			fg = &_nc_board_fg.arr[row][col];
+			fg = &s_tarr_get(_nc_board_fg, row, col);
 
-			if (fg->chr == EMPTY) {
+			if (s_tchar_is_defined(fg)) {
 
-				bg = &_nc_board_bg.arr[row][col];
-
-				cp = cp_color_pair_get(bg->fg, bg->bg);
-				chr = bg->chr;
+				cp = cp_color_pair_get(fg->fg, fg->bg);
+				chr = s_tarr_get(_nc_board_fg,row,col).chr;
 
 			} else {
-				cp = cp_color_pair_get(fg->fg, fg->bg);
-				chr = _nc_board_fg.arr[row][col].chr;
+
+				bg = &s_tarr_get(_nc_board_bg, row, col);
+				cp = cp_color_pair_get(bg->fg, bg->bg);
+				chr = bg->chr;
 			}
 
 			attrset(COLOR_PAIR(cp));
