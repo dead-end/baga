@@ -34,12 +34,8 @@
  * Declaration of the functions.
  *****************************************************************************/
 
-void s_tmpl_point_create();
-
-void s_tmpl_point_free();
-
-s_tarr* s_tmpl_point_get_tmpl(const int point_idx);
-
 void s_tmpl_points_set_pos(s_point *point_pos, const s_area *area_board_outer, const s_area *area_board_inner);
+
+void s_tmpl_point_add_2_tarr(s_tarr *tarr, const s_point *points_pos);
 
 #endif /* INC_S_TMPL_POINTS_H_ */
