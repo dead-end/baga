@@ -25,7 +25,6 @@
 #include <ncurses.h>
 
 #include "lib_logging.h"
-#include "lib_color_pair.h"
 
 #include "s_tmpl_points.h"
 #include "s_tmpl_checker.h"
@@ -220,46 +219,10 @@ void s_board_points_add_checkers(const int idx, const e_owner owner, const int n
 }
 
 /******************************************************************************
- * The function prints the board. This is done with the fixed background board
- * and the foreground board, which contains the checkers. If there is a non
- * space character in the foreground, we print the foreground, otherwise we
- * print the background.
+ * The function prints the board.
  *****************************************************************************/
 
 void nc_board_print() {
 
-	//
-	// The color pair.
-	//
-	short cp;
-
-	//
-	// The character to be printed.
-	//
-	wchar_t chr;
-
-	const s_tchar *bg, *fg;
-
-	for (int row = 0; row < BOARD_ROW; row++) {
-		for (int col = 0; col < BOARD_COL; col++) {
-
-			fg = &s_tarr_get(_nc_board_fg, row, col);
-
-			if (s_tchar_is_defined(fg)) {
-
-				cp = cp_color_pair_get(fg->fg, fg->bg);
-				chr = s_tarr_get(_nc_board_fg,row,col).chr;
-
-			} else {
-
-				bg = &s_tarr_get(_nc_board_bg, row, col);
-				cp = cp_color_pair_get(bg->fg, bg->bg);
-				chr = bg->chr;
-			}
-
-			attrset(COLOR_PAIR(cp));
-
-			mvprintw(row, col, "%lc", chr);
-		}
-	}
+	s_tarr_print(stdscr, _nc_board_fg, _nc_board_bg);
 }
