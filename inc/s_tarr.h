@@ -66,7 +66,7 @@ void s_tarr_cp(s_tarr *to_arr, const s_tarr *from_arr, const s_point pos);
 
 s_point s_tarr_ul_pos_get(const s_tarr *tarr, s_point cur_pos, const bool reverse);
 
-void s_tarr_print(WINDOW *win, const s_tarr *ta_fg, const s_tarr *ta_bg);
+void s_tarr_print_pos(WINDOW *win, const s_tarr *ta_fg, const s_point pos_fg, const s_tarr *ta_bg);
 
 /******************************************************************************
  * The macro to access the elements of the array.

@@ -204,18 +204,19 @@ s_point s_tarr_ul_pos_get(const s_tarr *tarr, s_point cur_pos, const bool revers
 }
 
 /******************************************************************************
- * The function print the complete foreground / background.
+ * The function prints the foreground at a given position. If the foreground is
+ * not defined we use the background.
  *****************************************************************************/
 
-void s_tarr_print(WINDOW *win, const s_tarr *ta_fg, const s_tarr *ta_bg) {
+void s_tarr_print_pos(WINDOW *win, const s_tarr *ta_fg, const s_point pos_fg, const s_tarr *ta_bg) {
 
 #ifdef DEBUG
 
 	//
 	// Ensure that both have the same dimension.
 	//
-	if (ta_fg->dim.row != ta_bg->dim.row || ta_fg->dim.col != ta_bg->dim.col) {
-		log_exit("Wrong dim - fg: %d/%d bg: %d/%d", ta_fg->dim.row, ta_fg->dim.col, ta_bg->dim.row, ta_bg->dim.col);
+	if (ta_fg->dim.row + pos_fg.row > ta_bg->dim.row || ta_fg->dim.col + pos_fg.col > ta_bg->dim.col) {
+		log_exit("Wrong dim - fg: %d/%d pos: %d/%d bg: %d/%d", ta_fg->dim.row, ta_fg->dim.col, pos_fg.row, pos_fg.col, ta_bg->dim.row, ta_bg->dim.col);
 	}
 #endif
 
@@ -223,8 +224,8 @@ void s_tarr_print(WINDOW *win, const s_tarr *ta_fg, const s_tarr *ta_bg) {
 
 	const s_tchar *tchar;
 
-	for (int row = 0; row < ta_bg->dim.row; row++) {
-		for (int col = 0; col < ta_bg->dim.col; col++) {
+	for (int row = 0; row < ta_fg->dim.row; row++) {
+		for (int col = 0; col < ta_fg->dim.col; col++) {
 
 			//
 			// We first try the foreground
@@ -244,7 +245,7 @@ void s_tarr_print(WINDOW *win, const s_tarr *ta_fg, const s_tarr *ta_bg) {
 			cp = cp_color_pair_get(tchar->fg, tchar->bg);
 			attrset(COLOR_PAIR(cp));
 
-			mvwprintw(win, row, col, "%lc", tchar->chr);
+			mvwprintw(win, pos_fg.row + row, pos_fg.col + col, "%lc", tchar->chr);
 		}
 	}
 }
