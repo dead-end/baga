@@ -224,5 +224,5 @@ void s_board_points_add_checkers(const int idx, const e_owner owner, const int n
 
 void nc_board_print() {
 
-	s_tarr_print(stdscr, _nc_board_fg, _nc_board_bg);
+	s_tarr_print_pos(stdscr, _nc_board_fg, (s_point ) { 0, 0 }, _nc_board_bg);
 }
