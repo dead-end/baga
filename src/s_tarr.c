@@ -23,6 +23,7 @@
  */
 
 #include "lib_logging.h"
+#include "lib_color_pair.h"
 
 #include "s_tarr.h"
 
@@ -200,4 +201,50 @@ s_point s_tarr_ul_pos_get(const s_tarr *tarr, s_point cur_pos, const bool revers
 	}
 
 	return cur_pos;
+}
+
+/******************************************************************************
+ * The function print the complete foreground / background.
+ *****************************************************************************/
+
+void s_tarr_print(WINDOW *win, const s_tarr *ta_fg, const s_tarr *ta_bg) {
+
+#ifdef DEBUG
+
+	//
+	// Ensure that both have the same dimension.
+	//
+	if (ta_fg->dim.row != ta_bg->dim.row || ta_fg->dim.col != ta_bg->dim.col) {
+		log_exit("Wrong dim - fg: %d/%d bg: %d/%d", ta_fg->dim.row, ta_fg->dim.col, ta_bg->dim.row, ta_bg->dim.col);
+	}
+#endif
+
+	short cp;
+
+	const s_tchar *tchar;
+
+	for (int row = 0; row < ta_bg->dim.row; row++) {
+		for (int col = 0; col < ta_bg->dim.col; col++) {
+
+			//
+			// We first try the foreground
+			//
+			tchar = &s_tarr_get(ta_fg, row, col);
+
+			//
+			// If it is not defined we use the background.
+			//
+			if (!s_tchar_is_defined(tchar)) {
+				tchar = &s_tarr_get(ta_bg, row, col);
+			}
+
+			//
+			// Set the color pair with the t_char
+			//
+			cp = cp_color_pair_get(tchar->fg, tchar->bg);
+			attrset(COLOR_PAIR(cp));
+
+			mvwprintw(win, row, col, "%lc", tchar->chr);
+		}
+	}
 }

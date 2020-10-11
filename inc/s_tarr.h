@@ -26,6 +26,7 @@
 #define INC_S_TARR_H_
 
 #include <stdbool.h>
+#include <ncurses.h>
 
 #include "lib_s_point.h"
 #include "lib_s_tchar.h"
@@ -64,6 +65,8 @@ void s_tarr_cp_fg(s_tarr *to, const s_tarr *from, const s_point pos);
 void s_tarr_cp(s_tarr *to_arr, const s_tarr *from_arr, const s_point pos);
 
 s_point s_tarr_ul_pos_get(const s_tarr *tarr, s_point cur_pos, const bool reverse);
+
+void s_tarr_print(WINDOW *win, const s_tarr *ta_fg, const s_tarr *ta_bg);
 
 /******************************************************************************
  * The macro to access the elements of the array.
