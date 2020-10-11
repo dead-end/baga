@@ -282,10 +282,27 @@ void s_tarr_print_area(WINDOW *win, const s_tarr *ta_fg, const s_tarr *ta_bg, co
 
 void s_tarr_del(const s_tarr *ta_target, const s_tarr *ta_del, const s_point pos_del) {
 
-	for (int row = 0; row < ta_del->dim.row; row++) {
-		for (int col = 0; col < ta_del->dim.col; col++) {
+	const int row_end = pos_del.row + ta_del->dim.row;
+	const int col_end = pos_del.col + ta_del->dim.col;
 
-			s_tarr_get(ta_target, pos_del.row + row, pos_del.col + col) = (s_tchar ) { TCHAR_CHR_UNUSED, -1, -1 };
+#ifdef DEBUG
+
+	log_debug("target dim: %d/%d", ta_target->dim.row, ta_target->dim.col);
+	log_debug("delete dim: %d/%d", ta_del->dim.row, ta_del->dim.col);
+	log_debug("delete pos: %d/%d", pos_del.row, pos_del.col);
+
+	//
+	// Ensure that the array is inside the target.
+	//
+	if (ta_target->dim.row < row_end || ta_target->dim.col < col_end) {
+		log_exit_str("Delete array not inside!");
+	}
+#endif
+
+	for (int row = pos_del.row; row < row_end; row++) {
+		for (int col = pos_del.col; col < col_end; col++) {
+
+			s_tarr_get(ta_target, row, col) = (s_tchar ) { TCHAR_CHR_UNUSED, -1, -1 };
 		}
 	}
 }
