@@ -138,8 +138,8 @@ static int s_tmpl_checker_color_idx(const int total, const int idx) {
 	//
 	// Ensure that the index is valid.
 	//
-	if (idx < 0 || idx > total) {
-		log_exit("Invalid index: %d", total);
+	if (idx < 0 || idx >= total) {
+		log_exit("Invalid index: %d total: %d", idx, total);
 	}
 #endif
 
