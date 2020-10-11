@@ -23,6 +23,7 @@
  */
 
 #include "lib_logging.h"
+#include "lib_color.h"
 #include "lib_color_pair.h"
 
 #include "s_tarr.h"
@@ -208,24 +209,39 @@ s_point s_tarr_ul_pos_get(const s_tarr *tarr, s_point cur_pos, const bool revers
  * not defined we use the background.
  *****************************************************************************/
 
-void s_tarr_print_pos(WINDOW *win, const s_tarr *ta_fg, const s_point pos_fg, const s_tarr *ta_bg) {
+void s_tarr_print_area(WINDOW *win, const s_tarr *ta_fg, const s_tarr *ta_bg, const s_area area) {
+
+	const int row_end = area.pos.row + area.dim.row;
+	const int col_end = area.pos.col + area.dim.col;
 
 #ifdef DEBUG
+
+	log_debug("fg dim: %d/%d", ta_fg->dim.row, ta_fg->dim.col);
+	log_debug("bg dim: %d/%d", ta_bg->dim.row, ta_bg->dim.col);
+
+	log_debug("area dim: %d/%d pos: %d/%d", area.dim.row, area.dim.col, area.pos.row, area.pos.col);
 
 	//
 	// Ensure that both have the same dimension.
 	//
-	if (ta_fg->dim.row + pos_fg.row > ta_bg->dim.row || ta_fg->dim.col + pos_fg.col > ta_bg->dim.col) {
-		log_exit("Wrong dim - fg: %d/%d pos: %d/%d bg: %d/%d", ta_fg->dim.row, ta_fg->dim.col, pos_fg.row, pos_fg.col, ta_bg->dim.row, ta_bg->dim.col);
+	if (ta_fg->dim.row != ta_bg->dim.row || ta_fg->dim.col != ta_bg->dim.col) {
+		log_exit_str("FG and BG dimensions differ!");
 	}
+
+	//
+	// Ensure that the area is inside the fg / bg.
+	//
+	if (ta_fg->dim.row < row_end || ta_fg->dim.col < col_end) {
+		log_exit_str("Area not inside!");
+	}
+
 #endif
 
 	short cp;
-
 	const s_tchar *tchar;
 
-	for (int row = 0; row < ta_fg->dim.row; row++) {
-		for (int col = 0; col < ta_fg->dim.col; col++) {
+	for (int row = area.pos.row; row < row_end; row++) {
+		for (int col = area.pos.col; col < col_end; col++) {
 
 			//
 			// We first try the foreground
@@ -239,13 +255,37 @@ void s_tarr_print_pos(WINDOW *win, const s_tarr *ta_fg, const s_point pos_fg, co
 				tchar = &s_tarr_get(ta_bg, row, col);
 			}
 
+#ifdef DEBUG
+
+			//
+			// Ensure that the color pair is valid. Here we have a position.
+			//
+			if (!col_is_valid(tchar->fg) || !col_is_valid(tchar->bg)) {
+				log_exit("Color: %d/%d at: %d/%d", tchar->fg, tchar->bg, row, col);
+			}
+#endif
+
 			//
 			// Set the color pair with the t_char
 			//
 			cp = cp_color_pair_get(tchar->fg, tchar->bg);
 			attrset(COLOR_PAIR(cp));
 
-			mvwprintw(win, pos_fg.row + row, pos_fg.col + col, "%lc", tchar->chr);
+			mvwprintw(win, row, col, "%lc", tchar->chr);
+		}
+	}
+}
+
+/******************************************************************************
+ * The function deletes the s_tarr on the target at a given position.
+ *****************************************************************************/
+
+void s_tarr_del(const s_tarr *ta_target, const s_tarr *ta_del, const s_point pos_del) {
+
+	for (int row = 0; row < ta_del->dim.row; row++) {
+		for (int col = 0; col < ta_del->dim.col; col++) {
+
+			s_tarr_get(ta_target, pos_del.row + row, pos_del.col + col) = (s_tchar ) { TCHAR_CHR_UNUSED, -1, -1 };
 		}
 	}
 }
