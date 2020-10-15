@@ -45,6 +45,10 @@ static s_tarr *_tmpls[_NUM_SIZES];
  * The array with the color definition.
  *****************************************************************************/
 
+#define CHECK_DIS_MAX 9
+
+#define CHECK_DIS_FULL 5
+
 #define _COLOR_NUM 9
 
 static short _colors[NUM_PLAYER][_COLOR_NUM];
@@ -119,9 +123,9 @@ static void s_tmpl_checker_set_label(s_tarr *tmpl, const int total, const bool r
  * The function returns the color index of a checker. If the index is not
  * visible the function returns -1.
  *
- * Example: total 12 => 1-8 and 12 are visible, the others not:
+ * Example: total 12 => 1-9 are visible, the others not:
  *
- * 1 2 3 4 5 6 7 8 [9-10-11] 12
+ * 0 1 2 3 4 5 6 7 8 -1 -1 -1 ...
  *****************************************************************************/
 
 static int s_tmpl_checker_color_idx(const int total, const int idx) {
@@ -143,17 +147,7 @@ static int s_tmpl_checker_color_idx(const int total, const int idx) {
 	}
 #endif
 
-	//
-	// The last checker on the point is always visible.
-	//
-	if (idx == total - 1) {
-		return 0;
-	}
-
-	//
-	// The first 8 checker are visible.
-	//
-	if (idx < 8) {
+	if (idx < CHECK_DIS_MAX) {
 		return reverse_idx(max(_COLOR_NUM, total), idx);
 	}
 
@@ -162,6 +156,39 @@ static int s_tmpl_checker_color_idx(const int total, const int idx) {
 	//
 	return -1;
 }
+
+/******************************************************************************
+ *
+ *****************************************************************************/
+
+static int _total_label_idx[] = {
+
+//
+// Index 0 unused
+//
+		-1,
+
+		//
+		// 1 - 5 => all checkers are displayed completely, so there is no
+		// label.
+		//
+		-1, -1, -1, -1, -1,
+
+		//
+		// 6 - 9 => all checkers are displayed (full or half). The last has the
+		// label.
+		//
+		5, 6, 7, 8,
+
+		//
+		// 10 - 16 => 9 checkers are displayed (full or half) and the rest is
+		// missing. The last visible has the label.
+		//
+		8, 8, 8, 8, 8, 8, 8
+
+};
+
+#define s_tmpl_checker_has_label(t,i) (_total_label_idx[(t)] == (i))
 
 // ----------------------- INTERFACE ------------------------------------------
 
@@ -180,10 +207,7 @@ const s_tarr* s_tmpl_checker_get_tmpl(const e_owner owner, const int total, cons
 	const int color_idx = s_tmpl_checker_color_idx(total, idx);
 
 	//
-	// If the index is negative, the the checker will not be displayed. There
-	// will be up to 9 checker displayed. The first 8 and the last:
-	//
-	// 1 2 3 4 5 6 7 8 [9-10-11-12] 13
+	// If the index is negative, the the checker will not be displayed.
 	//
 	if (color_idx < 0) {
 		return NULL;
@@ -198,7 +222,8 @@ const s_tarr* s_tmpl_checker_get_tmpl(const e_owner owner, const int total, cons
 	//
 	// Add label if necessary
 	//
-	if (idx == total - 1 && total > 5) {
+	if (s_tmpl_checker_has_label(total, idx)) {
+		log_debug("total: %d idx: %d", total, idx);
 		s_tmpl_checker_set_label(tmpl, total, reverse);
 	}
 
