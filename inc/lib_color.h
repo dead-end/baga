@@ -37,4 +37,6 @@
 
 short col_color_create(const short r, const short g, const short b);
 
+#define col_is_valid(c) ((c) != COLOR_UNDEF)
+
 #endif /* INC_LIB_COLOR_H_ */
