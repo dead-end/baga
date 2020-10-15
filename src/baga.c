@@ -130,5 +130,9 @@ int main() {
 
 	getch();
 
+	nc_board_test();
+
+	getch();
+
 	log_debug_str("Ending baga...");
 }
