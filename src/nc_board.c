@@ -237,7 +237,7 @@ void nc_board_print() {
 void nc_board_test() {
 	log_debug_str("start");
 
-	const s_tarr *tmpl = s_tmpl_checker_get_tmpl(OWNER_WHITE, 1, 0, false);
+	const s_tarr *tmpl = s_tmpl_checker_get_travler(OWNER_WHITE);
 
 	if (tmpl == NULL) {
 		log_exit_str("Template is null!");
