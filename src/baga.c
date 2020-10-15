@@ -121,7 +121,7 @@ int main() {
 	s_board_points_add_checkers(20, OWNER_WHITE, 9);
 	s_board_points_add_checkers(21, OWNER_WHITE, 10);
 	s_board_points_add_checkers(22, OWNER_WHITE, 11);
-	s_board_points_add_checkers(23, OWNER_WHITE, 12);
+	s_board_points_add_checkers(23, OWNER_WHITE, 16);
 
 	//
 	// Print the initialized board
