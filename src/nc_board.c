@@ -89,16 +89,16 @@ static s_tarr *_nc_board_fg;
 
 static s_point _points_pos[POINTS_NUM];
 
-// --------------------------
+// -------------------------------- START
 
 /******************************************************************************
- *
+ * The function initializes the background of the board.
  *****************************************************************************/
 
 static void nc_board_init_bg(s_tarr *board_bg, const s_area *area_board_outer, const s_area *area_board_inner) {
 
 	//
-	// Complete board
+	// Set the background of the complete board.
 	//
 	short color_bar_bg[BOARD_ROW];
 
@@ -107,7 +107,7 @@ static void nc_board_init_bg(s_tarr *board_bg, const s_area *area_board_outer, c
 	s_tarr_set_gradient(board_bg, EMPTY, 0, color_bar_bg);
 
 	//
-	// Inner / outer board
+	// Set the background of the inner / outer board.
 	//
 	short color_board_bg[BOARD_HALF_ROW];
 
@@ -118,9 +118,37 @@ static void nc_board_init_bg(s_tarr *board_bg, const s_area *area_board_outer, c
 	s_tarr_set_bg(board_bg, area_board_inner, color_board_bg);
 }
 
-// ---------------------------------------------------------------------------
-// Interface functions
-// ---------------------------------------------------------------------------
+/******************************************************************************
+ * The function allocates the resources for the board.
+ *****************************************************************************/
+
+static void nc_board_alloc() {
+
+	log_debug_str("Allocating resources!");
+
+	_nc_board_bg = s_tarr_new(BOARD_ROW, BOARD_COL);
+
+	_nc_board_fg = s_tarr_new(BOARD_ROW, BOARD_COL);
+
+	s_tmpl_checker_create();
+}
+
+/******************************************************************************
+ * The function frees the resources for the board.
+ *****************************************************************************/
+
+void nc_board_free() {
+
+	log_debug_str("Freeing resources!");
+
+	s_tarr_free(&_nc_board_fg);
+
+	s_tarr_free(&_nc_board_bg);
+
+	s_tmpl_checker_free();
+}
+
+// -------------------------------- END
 
 /******************************************************************************
  *
@@ -128,15 +156,7 @@ static void nc_board_init_bg(s_tarr *board_bg, const s_area *area_board_outer, c
 
 void nc_board_init() {
 
-	_nc_board_bg = s_tarr_new(BOARD_ROW, BOARD_COL);
-
-	_nc_board_fg = s_tarr_new(BOARD_ROW, BOARD_COL);
-	//
-	// Checker template
-	//
-	//s_tmpl_checker_init(&_tmpl_checker);
-
-	s_tmpl_checker_create();
+	nc_board_alloc();
 
 	nc_board_init_bg(_nc_board_bg, &_area_board_outer, &_area_board_inner);
 
@@ -157,43 +177,7 @@ void nc_board_init() {
 	s_tarr_set(_nc_board_fg, ( s_tchar ) { TCHAR_CHR_UNUSED, -1, -1 });
 }
 
-/******************************************************************************
- *
- *****************************************************************************/
-
-void nc_board_free() {
-
-	log_debug_str("Freeing resources!");
-
-	s_tmpl_checker_free();
-
-	s_tarr_free(&_nc_board_fg);
-
-	s_tarr_free(&_nc_board_bg);
-}
-
 #define CHECKER_ROW_HALF 1
-
-/******************************************************************************
- *
- *****************************************************************************/
-
-static s_point s_board_cp_tmpl(const s_tarr *tmpl, s_point pos, const bool reverse) {
-
-	if (reverse) {
-		pos.row = pos.row - tmpl->dim.row + 1;
-	}
-
-	s_tarr_cp(_nc_board_fg, tmpl, pos);
-
-	if (reverse) {
-		pos.row--;
-	} else {
-		pos.row += tmpl->dim.row;
-	}
-
-	return pos;
-}
 
 /******************************************************************************
  *
@@ -215,7 +199,7 @@ void s_board_points_add_checkers(const int idx, const e_owner owner, const int n
 			continue;
 		}
 
-		pos = s_board_cp_tmpl(tmpl, pos, reverse);
+		pos = s_tarr_cp_pos(_nc_board_fg, tmpl, pos, reverse);
 	}
 }
 
