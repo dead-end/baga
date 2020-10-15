@@ -41,4 +41,6 @@ void s_tmpl_checker_free();
 
 const s_tarr* s_tmpl_checker_get_tmpl(const e_owner owner, const int total, const int idx, const bool reverse);
 
+const s_tarr* s_tmpl_checker_get_travler(const e_owner owner);
+
 #endif /* INC_S_TMPL_CHECKER_H_ */

@@ -42,14 +42,28 @@ typedef enum {
 static s_tarr *_tmpls[_NUM_SIZES];
 
 /******************************************************************************
- * The array with the color definition.
+ * The definition of the checkers on a point.
  *****************************************************************************/
 
+//
+// No more than CHECK_DIS_MAX checkers are displayed on a point.
+//
 #define CHECK_DIS_MAX 9
 
+//
+// The maximum number of checker that are displayed completely on a point.
+//
 #define CHECK_DIS_FULL 5
 
-#define _COLOR_NUM 9
+/******************************************************************************
+ * The definition of colors for the checkers on a point.
+ *****************************************************************************/
+
+#define COLOR_IDX_TRAV 0
+
+#define COLOR_IDX_FG 0
+
+#define _COLOR_NUM 10
 
 static short _colors[NUM_PLAYER][_COLOR_NUM];
 
@@ -86,6 +100,40 @@ static int _num_half_map[] = {
 #define s_tmpl_checker_num_half(t) _num_half_map[t]
 
 /******************************************************************************
+ * The array contains the index for the label with a given total number of
+ * checker. If the value is negative, there is no label.
+ *****************************************************************************/
+
+static int _total_label_idx[] = {
+
+//
+// Index 0 unused
+//
+		-1,
+
+		//
+		// 1 - 5 => all checkers are displayed completely, so there is no
+		// label.
+		//
+		-1, -1, -1, -1, -1,
+
+		//
+		// 6 - 9 => all checkers are displayed (full or half). The last has the
+		// label.
+		//
+		5, 6, 7, 8,
+
+		//
+		// 10 - 16 => 9 checkers are displayed (full or half) and the rest is
+		// missing. The last visible has the label.
+		//
+		8, 8, 8, 8, 8, 8, 8
+
+};
+
+#define s_tmpl_checker_has_label(t,i) (_total_label_idx[(t)] == (i))
+
+/******************************************************************************
  * The function adds the number of checker to the checker template. The number
  * of checker for each player is 16, so this is the max value.
  *****************************************************************************/
@@ -120,115 +168,12 @@ static void s_tmpl_checker_set_label(s_tarr *tmpl, const int total, const bool r
 }
 
 /******************************************************************************
- * The function returns the color index of a checker. If the index is not
- * visible the function returns -1.
- *
- * Example: total 12 => 1-9 are visible, the others not:
- *
- * 0 1 2 3 4 5 6 7 8 -1 -1 -1 ...
- *****************************************************************************/
-
-static int s_tmpl_checker_color_idx(const int total, const int idx) {
-
-#ifdef DEBUG
-
-	//
-	// Ensure that the total number of checkers is valid.
-	//
-	if (total < 0 || total > CHECKER_NUM) {
-		log_exit("Invalid number of checkers on the point: %d", total);
-	}
-
-	//
-	// Ensure that the index is valid.
-	//
-	if (idx < 0 || idx >= total) {
-		log_exit("Invalid index: %d total: %d", idx, total);
-	}
-#endif
-
-	if (idx < CHECK_DIS_MAX) {
-		return reverse_idx(max(_COLOR_NUM, total), idx);
-	}
-
-	//
-	// All other checkers are not visible.
-	//
-	return -1;
-}
-
-/******************************************************************************
  *
  *****************************************************************************/
 
-static int _total_label_idx[] = {
-
-//
-// Index 0 unused
-//
-		-1,
-
-		//
-		// 1 - 5 => all checkers are displayed completely, so there is no
-		// label.
-		//
-		-1, -1, -1, -1, -1,
-
-		//
-		// 6 - 9 => all checkers are displayed (full or half). The last has the
-		// label.
-		//
-		5, 6, 7, 8,
-
-		//
-		// 10 - 16 => 9 checkers are displayed (full or half) and the rest is
-		// missing. The last visible has the label.
-		//
-		8, 8, 8, 8, 8, 8, 8
-
-};
-
-#define s_tmpl_checker_has_label(t,i) (_total_label_idx[(t)] == (i))
+#define s_tmpl_checker_color_idx(t,i) (reverse_idx(max(CHECK_DIS_MAX, (t)), (i)) + 1)
 
 // ----------------------- INTERFACE ------------------------------------------
-
-/******************************************************************************
- * The function returns a template for a checker on a point. If the point
- * contains too much checker, the checker can be displayed as a half or fully
- * or not at all. If not all checker are displayed fully the total number of
- * checkers is added to the innermost checker, which is always displayed fully.
- *****************************************************************************/
-
-const s_tarr* s_tmpl_checker_get_tmpl(const e_owner owner, const int total, const int idx, const bool reverse) {
-
-	//
-	// We get the color index for the current checker
-	//
-	const int color_idx = s_tmpl_checker_color_idx(total, idx);
-
-	//
-	// If the index is negative, the the checker will not be displayed.
-	//
-	if (color_idx < 0) {
-		return NULL;
-	}
-
-	const bool half = idx < s_tmpl_checker_num_half(total);
-
-	s_tarr *tmpl = half ? _tmpls[TS_HALF] : _tmpls[TS_FULL];
-
-	s_tarr_set(tmpl, (s_tchar ) { .chr = EMPTY, .fg = _colors[e_owner_other(owner)][0], .bg = _colors[owner][color_idx] });
-
-	//
-	// Add label if necessary
-	//
-	if (s_tmpl_checker_has_label(total, idx)) {
-		log_debug("total: %d idx: %d", total, idx);
-		s_tmpl_checker_set_label(tmpl, total, reverse);
-	}
-
-	return tmpl;
-}
 
 /******************************************************************************
  * The function initializes the template structures and the color array.
@@ -249,9 +194,9 @@ void s_tmpl_checker_create() {
 	//
 	// Create color
 	//
-	s_color_def_gradient(_colors[OWNER_BLACK], _COLOR_NUM, "#777777", "#111111");
+	s_color_def_gradient(_colors[OWNER_BLACK], _COLOR_NUM, "#777777", "#222222");
 
-	s_color_def_gradient(_colors[OWNER_WHITE], _COLOR_NUM, "#ffffff", "#999999");
+	s_color_def_gradient(_colors[OWNER_WHITE], _COLOR_NUM, "#ffffff", "#aaaaaa");
 
 	//
 	// Create templates
@@ -272,4 +217,66 @@ void s_tmpl_checker_free() {
 	s_tarr_free(&_tmpls[TS_FULL]);
 
 	s_tarr_free(&_tmpls[TS_HALF]);
+}
+
+/******************************************************************************
+ * The function returns a template for a traveling checker. The template is
+ * full. It has no label, so the foreground is not used.
+ *****************************************************************************/
+
+const s_tarr* s_tmpl_checker_get_travler(const e_owner owner) {
+
+	s_tarr *tmpl = _tmpls[TS_FULL];
+
+	s_tarr_set(_tmpls[TS_FULL], (s_tchar ) {
+
+			.chr = EMPTY,
+
+			.fg = _colors[e_owner_other(owner)][COLOR_IDX_FG],
+
+			.bg = _colors[owner][COLOR_IDX_TRAV] });
+
+	return tmpl;
+}
+
+/******************************************************************************
+ * The function returns a template for a checker on a point. The template can
+ * be displayed fully, half or not at all. The template can contains a label.
+ *****************************************************************************/
+
+const s_tarr* s_tmpl_checker_get_tmpl(const e_owner owner, const int total, const int idx, const bool reverse) {
+
+	//
+	// Only the first 9 checkers are displayed.
+	//
+	if (idx >= CHECK_DIS_MAX) {
+		return NULL;
+	}
+
+	//
+	// We get the color index for the current checker
+	//
+	const int color_idx = s_tmpl_checker_color_idx(total, idx);
+
+	//
+	// Select the template, which can be full or half.
+	//
+	s_tarr *tmpl = (idx < s_tmpl_checker_num_half(total)) ? _tmpls[TS_HALF] : _tmpls[TS_FULL];
+
+	s_tarr_set(tmpl, (s_tchar ) {
+
+			.chr = EMPTY,
+
+			.fg = _colors[e_owner_other(owner)][COLOR_IDX_FG],
+
+			.bg = _colors[owner][color_idx] });
+
+	//
+	// Add label if necessary
+	//
+	if (s_tmpl_checker_has_label(total, idx)) {
+		s_tmpl_checker_set_label(tmpl, total, reverse);
+	}
+
+	return tmpl;
 }
