@@ -25,11 +25,14 @@
 #include <ncurses.h>
 
 #include "lib_logging.h"
+#include "s_area.h"
 
 #include "s_tmpl_points.h"
 #include "s_tmpl_checker.h"
 #include "nc_board.h"
 #include "s_color_def.h"
+
+#define MS_SLEEP 25
 
 /******************************************************************************
  * Definitions of the various areas of the board. An area has a position and a
@@ -92,7 +95,7 @@ static s_point _points_pos[POINTS_NUM];
  *
  *****************************************************************************/
 
-void nc_board_init_bg(s_tarr *board_bg, const s_area *area_board_outer, const s_area *area_board_inner) {
+static void nc_board_init_bg(s_tarr *board_bg, const s_area *area_board_outer, const s_area *area_board_inner) {
 
 	//
 	// Complete board
@@ -192,8 +195,6 @@ static s_point s_board_cp_tmpl(const s_tarr *tmpl, s_point pos, const bool rever
 	return pos;
 }
 
-#define pos_next(r,h,ir) ((ir) ? (r) - (h): (r) + (h) )
-
 /******************************************************************************
  *
  *****************************************************************************/
@@ -224,5 +225,54 @@ void s_board_points_add_checkers(const int idx, const e_owner owner, const int n
 
 void nc_board_print() {
 
-	s_tarr_print_pos(stdscr, _nc_board_fg, (s_point ) { 0, 0 }, _nc_board_bg);
+	s_tarr_print_area(stdscr, _nc_board_fg, _nc_board_bg, (s_area ) { .dim = _nc_board_fg->dim, .pos = { 0, 0 } });
+
+	wrefresh(stdscr);
+}
+
+/******************************************************************************
+ *
+ *****************************************************************************/
+
+void nc_board_test() {
+	log_debug_str("start");
+
+	const s_tarr *tmpl = s_tmpl_checker_get_tmpl(OWNER_WHITE, 1, 0, false);
+
+	if (tmpl == NULL) {
+		log_exit_str("Template is null!");
+	}
+
+	const int col_start = _area_board_outer.pos.col + CHECKER_OFFSET_COL;
+	const int col_end = _area_board_inner.pos.col + _area_board_outer.dim.col - tmpl->dim.col;
+
+	s_area area = { .dim = tmpl->dim, .pos = { POINTS_ROW + 2, 0 } };
+
+	for (int col = col_start; col < col_end; col++) {
+
+		area.pos.col = col;
+
+		//
+		// Copy the checker template to the position
+		//
+		s_tarr_cp(_nc_board_fg, tmpl, area.pos);
+		s_tarr_print_area(stdscr, _nc_board_fg, _nc_board_bg, area);
+
+		wrefresh(stdscr);
+
+		if (napms(MS_SLEEP) != OK) {
+			log_exit_str("sleep failed!");
+		}
+
+		//
+		// Delete the checker template from the position
+		//
+		s_tarr_del(_nc_board_fg, tmpl, area.pos);
+		s_tarr_print_area(stdscr, _nc_board_fg, _nc_board_bg, area);
+	}
+
+	//
+	// Show the last delete
+	//
+	wrefresh(stdscr);
 }
