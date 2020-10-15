@@ -184,6 +184,57 @@ void s_tarr_cp(s_tarr *to_arr, const s_tarr *from_arr, const s_point pos) {
 }
 
 /******************************************************************************
+ * The function copies the from_array to the to_array at a given position. The
+ * position depends on the reverse flag. The function returns the next
+ * position.
+ *
+ * Reverse flag: false
+ *
+ * +---+
+ * | <- param pos
+ * |
+ * |
+ * +---+
+ *   <- next pos
+ *
+ * Reverse flag: true
+ *
+ *   <- next pos
+ * +---+
+ * | <- pos
+ * |
+ * | <- param pos
+ * +---+
+ *****************************************************************************/
+
+s_point s_tarr_cp_pos(s_tarr *to_arr, const s_tarr *from_arr, s_point pos, const bool reverse) {
+
+	//
+	// If reverse is true, the position is the lower left corner. It has to be
+	// changed to the upper left corner.
+	//
+	if (reverse) {
+		pos.row = pos.row - from_arr->dim.row + 1;
+	}
+
+	//
+	// Do the copying.
+	//
+	s_tarr_cp(to_arr, from_arr, pos);
+
+	//
+	// Compute the next position.
+	//
+	if (reverse) {
+		pos.row--;
+	} else {
+		pos.row += from_arr->dim.row;
+	}
+
+	return pos;
+}
+
+/******************************************************************************
  * The function computes the upper left corner of the array with a given
  * position. The position is either the upper or the lower left corner.
  *
