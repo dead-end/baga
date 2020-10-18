@@ -68,7 +68,7 @@ s_point s_tarr_cp_pos(s_tarr *to_arr, const s_tarr *from_arr, s_point pos, const
 
 s_point s_tarr_ul_pos_get(const s_tarr *tarr, s_point cur_pos, const bool reverse);
 
-void s_tarr_print_area(WINDOW *win, const s_tarr *ta_fg, const s_tarr *ta_bg, const s_area area);
+void s_tarr_print_area(WINDOW *win, const s_tarr *ta_fg, const s_tarr *ta_bg, const s_area *area);
 
 void s_tarr_del(const s_tarr *ta_target, const s_tarr *ta_del, const s_point pos_del);
 

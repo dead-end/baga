@@ -260,17 +260,17 @@ s_point s_tarr_ul_pos_get(const s_tarr *tarr, s_point cur_pos, const bool revers
  * not defined we use the background.
  *****************************************************************************/
 
-void s_tarr_print_area(WINDOW *win, const s_tarr *ta_fg, const s_tarr *ta_bg, const s_area area) {
+void s_tarr_print_area(WINDOW *win, const s_tarr *ta_fg, const s_tarr *ta_bg, const s_area *area) {
 
-	const int row_end = area.pos.row + area.dim.row;
-	const int col_end = area.pos.col + area.dim.col;
+	const int row_end = area->pos.row + area->dim.row;
+	const int col_end = area->pos.col + area->dim.col;
 
 #ifdef DEBUG
 
 	log_debug("fg dim: %d/%d", ta_fg->dim.row, ta_fg->dim.col);
 	log_debug("bg dim: %d/%d", ta_bg->dim.row, ta_bg->dim.col);
 
-	log_debug("area dim: %d/%d pos: %d/%d", area.dim.row, area.dim.col, area.pos.row, area.pos.col);
+	log_debug("area dim: %d/%d pos: %d/%d", area->dim.row, area->dim.col, area->pos.row, area->pos.col);
 
 	//
 	// Ensure that both have the same dimension.
@@ -291,8 +291,8 @@ void s_tarr_print_area(WINDOW *win, const s_tarr *ta_fg, const s_tarr *ta_bg, co
 	short cp;
 	const s_tchar *tchar;
 
-	for (int row = area.pos.row; row < row_end; row++) {
-		for (int col = area.pos.col; col < col_end; col++) {
+	for (int row = area->pos.row; row < row_end; row++) {
+		for (int col = area->pos.col; col < col_end; col++) {
 
 			//
 			// We first try the foreground
