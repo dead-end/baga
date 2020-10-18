@@ -68,6 +68,62 @@ static s_tarr *_tmpls[_NUM_SIZES];
 static short _colors[NUM_PLAYER][_COLOR_NUM];
 
 /******************************************************************************
+ *
+ *****************************************************************************/
+
+s_checker_layout _checker_layout[CHECKER_NUM + 1][2] = {
+
+//
+// total 0
+//
+		{ { .total = 0, .num_half = -1, -1 }, { .total = 0, .num_half = -1, -1 } },
+
+		//
+		// total 1 - 5 all are displayed fully.
+		//
+		{ { .total = 1, .num_half = 0, .label_idx = -1 }, { .total = 1, .num_half = 0, .label_idx = -1 } },
+
+		{ { .total = 2, .num_half = 0, .label_idx = -1 }, { .total = 2, .num_half = 0, .label_idx = -1 } },
+
+		{ { .total = 3, .num_half = 0, .label_idx = -1 }, { .total = 3, .num_half = 0, .label_idx = -1 } },
+
+		{ { .total = 4, .num_half = 0, .label_idx = -1 }, { .total = 4, .num_half = 0, .label_idx = -1 } },
+
+		{ { .total = 5, .num_half = 0, .label_idx = -1 }, { .total = 5, .num_half = 1, .label_idx = -1 } }, // The number 5 is compressed.
+
+		//
+		// total 6 - 9
+		//
+		{ { .total = 6, .num_half = 2, .label_idx = 5 }, { .total = 6, .num_half = 3, .label_idx = 5 } },
+
+		{ { .total = 7, .num_half = 4, .label_idx = 6 }, { .total = 7, .num_half = 5, .label_idx = 6 } },
+
+		{ { .total = 8, .num_half = 6, .label_idx = 7 }, { .total = 8, .num_half = 7, .label_idx = 7 } },
+
+		{ { .total = 9, .num_half = 8, .label_idx = 8 }, { .total = 9, .num_half = 7, .label_idx = 7 } },
+
+		//
+		// Total: 10 - 16 none is displayed fully.
+		//
+		{ { .total = 10, .num_half = 8, .label_idx = 8 }, { .total = 10, .num_half = 7, .label_idx = 7 } },
+
+		{ { .total = 11, .num_half = 8, .label_idx = 8 }, { .total = 11, .num_half = 7, .label_idx = 7 } },
+
+		{ { .total = 12, .num_half = 8, .label_idx = 8 }, { .total = 12, .num_half = 7, .label_idx = 7 } },
+
+		{ { .total = 13, .num_half = 8, .label_idx = 8 }, { .total = 13, .num_half = 7, .label_idx = 7 } },
+
+		{ { .total = 14, .num_half = 8, .label_idx = 8 }, { .total = 14, .num_half = 7, .label_idx = 7 } },
+
+		{ { .total = 15, .num_half = 8, .label_idx = 8 }, { .total = 15, .num_half = 7, .label_idx = 7 } },
+
+		{ { .total = 16, .num_half = 8, .label_idx = 8 }, { .total = 16, .num_half = 7, .label_idx = 7 } }
+
+};
+
+// #define get_checker_layout(t,c) _checker_layout[t][c]
+
+/******************************************************************************
  * The macro returns the number of checkers that will be displayed as half for
  * a given number of checkers on a point.
  *****************************************************************************/
@@ -244,7 +300,7 @@ const s_tarr* s_tmpl_checker_get_travler(const e_owner owner) {
  * be displayed fully, half or not at all. The template can contains a label.
  *****************************************************************************/
 
-const s_tarr* s_tmpl_checker_get_tmpl(const e_owner owner, const int total, const int idx, const bool reverse) {
+const s_tarr* s_tmpl_checker_get_tmpl_old(const e_owner owner, const int total, const int idx, const bool reverse) {
 
 	//
 	// Only the first 9 checkers are displayed.
@@ -276,6 +332,47 @@ const s_tarr* s_tmpl_checker_get_tmpl(const e_owner owner, const int total, cons
 	//
 	if (s_tmpl_checker_has_label(total, idx)) {
 		s_tmpl_checker_set_label(tmpl, total, reverse);
+	}
+
+	return tmpl;
+}
+
+/******************************************************************************
+ *
+ *****************************************************************************/
+
+const s_tarr* s_tmpl_checker_get_tmpl(const e_owner owner, const s_checker_layout checker_layout, const int idx, const bool reverse) {
+
+	//
+	// We do not display checker behind the labels.
+	//
+	if (checker_layout.label_idx >= 0 && idx > checker_layout.label_idx) {
+		return NULL;
+	}
+
+	//
+	// We get the color index for the current checker
+	//
+	const int color_idx = s_tmpl_checker_color_idx(checker_layout.total, idx);
+
+	//
+	// Select the template, which can be full or half.
+	//
+	s_tarr *tmpl = (idx < checker_layout.num_half) ? _tmpls[TS_HALF] : _tmpls[TS_FULL];
+
+	s_tarr_set(tmpl, (s_tchar ) {
+
+			.chr = EMPTY,
+
+			.fg = _colors[e_owner_other(owner)][COLOR_IDX_FG],
+
+			.bg = _colors[owner][color_idx] });
+
+	//
+	// Add label if necessary
+	//
+	if (checker_layout.label_idx == idx) {
+		s_tmpl_checker_set_label(tmpl, checker_layout.total, reverse);
 	}
 
 	return tmpl;

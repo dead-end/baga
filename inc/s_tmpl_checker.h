@@ -32,6 +32,24 @@
 #include "s_tarr.h"
 
 /******************************************************************************
+ *
+ *****************************************************************************/
+
+typedef struct {
+
+	int total;
+
+	int num_half;
+
+	int label_idx;
+
+} s_checker_layout;
+
+extern s_checker_layout _checker_layout[CHECKER_NUM + 1][2];
+
+#define s_checker_layout_get(t,c) _checker_layout[t][c]
+
+/******************************************************************************
  * Declaration of the functions.
  *****************************************************************************/
 
@@ -39,7 +57,9 @@ void s_tmpl_checker_create();
 
 void s_tmpl_checker_free();
 
-const s_tarr* s_tmpl_checker_get_tmpl(const e_owner owner, const int total, const int idx, const bool reverse);
+const s_tarr* s_tmpl_checker_get_tmpl_old(const e_owner owner, const int total, const int idx, const bool reverse);
+
+const s_tarr* s_tmpl_checker_get_tmpl(const e_owner owner, const s_checker_layout checker_layout, const int idx, const bool reverse);
 
 const s_tarr* s_tmpl_checker_get_travler(const e_owner owner);
 
