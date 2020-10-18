@@ -185,7 +185,7 @@ void nc_board_init() {
 
 void s_board_points_add_checkers(const int idx, const e_owner owner, const int num) {
 
-	const s_checker_layout checker_layout = s_checker_layout_get(num, false);
+	const s_checker_layout checker_layout = s_checker_layout_get(num, idx % 2);
 
 	s_point pos = { .row = _points_pos[idx].row + CHECKER_OFFSET_ROW, .col = _points_pos[idx].col + CHECKER_OFFSET_COL };
 

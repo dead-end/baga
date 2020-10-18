@@ -32,21 +32,37 @@
 #include "s_tarr.h"
 
 /******************************************************************************
- *
+ * The struct contains the layout of a checkers on a point.
  *****************************************************************************/
 
 typedef struct {
 
+	//
+	// The total number of checkers on the point.
+	//
 	int total;
 
+	//
+	// The number of checkers on the point, which are displayed half.
+	//
 	int num_half;
 
+	//
+	// The index of the checker, which has a label, or -1 if none of the
+	// checkers has a label.
+	//
 	int label_idx;
 
 } s_checker_layout;
 
+//
+// The declaration of the arrays with the layouts.
+//
 extern s_checker_layout _checker_layout[CHECKER_NUM + 1][2];
 
+//
+// The macro to access the layout.
+//
 #define s_checker_layout_get(t,c) _checker_layout[t][c]
 
 /******************************************************************************
@@ -57,10 +73,8 @@ void s_tmpl_checker_create();
 
 void s_tmpl_checker_free();
 
-const s_tarr* s_tmpl_checker_get_tmpl_old(const e_owner owner, const int total, const int idx, const bool reverse);
+const s_tarr* s_tmpl_checker_get_travler(const e_owner owner);
 
 const s_tarr* s_tmpl_checker_get_tmpl(const e_owner owner, const s_checker_layout checker_layout, const int idx, const bool reverse);
-
-const s_tarr* s_tmpl_checker_get_travler(const e_owner owner);
 
 #endif /* INC_S_TMPL_CHECKER_H_ */
