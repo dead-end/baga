@@ -32,7 +32,10 @@
 #include "nc_board.h"
 #include "s_color_def.h"
 
+// todo: comment, file, ...
 #define MS_SLEEP 25
+
+#define TRAVEL_ROW POINTS_ROW + 2
 
 /******************************************************************************
  * Definitions of the various areas of the board. An area has a position and a
@@ -211,7 +214,7 @@ void s_board_points_add_checkers(const int idx, const e_owner owner, const int n
 
 void nc_board_print() {
 
-	s_tarr_print_area(stdscr, _nc_board_fg, _nc_board_bg, (s_area ) { .dim = _nc_board_fg->dim, .pos = { 0, 0 } });
+	s_tarr_print_area(stdscr, _nc_board_fg, _nc_board_bg, &(s_area ) { .dim = _nc_board_fg->dim, .pos = { 0, 0 } });
 
 	wrefresh(stdscr);
 }
@@ -220,7 +223,51 @@ void nc_board_print() {
  *
  *****************************************************************************/
 
-void nc_board_test() {
+void travler_move(const s_tarr *tmpl, s_area *tmpl_area, const s_point target, const s_point dir) {
+
+#ifdef DEBUG
+	const int dist1 = abs(tmpl_area->pos.row - target.row) + abs(tmpl_area->pos.col - target.col);
+	const int dist2 = abs(tmpl_area->pos.row - (target.row - dir.row)) + abs(tmpl_area->pos.col - (target.col - dir.col));
+
+	if (dist2 >= dist1) {
+		log_exit_str("Wrong direction!");
+	}
+#endif
+
+	while (true) {
+
+		tmpl_area->pos.row += dir.row;
+		tmpl_area->pos.col += dir.col;
+
+		//
+		// Copy the checker template to the position
+		//
+		s_tarr_cp(_nc_board_fg, tmpl, tmpl_area->pos);
+		s_tarr_print_area(stdscr, _nc_board_fg, _nc_board_bg, tmpl_area);
+
+		wrefresh(stdscr);
+
+		if (napms(MS_SLEEP) != OK) {
+			log_exit_str("sleep failed!");
+		}
+
+		if (tmpl_area->pos.row == target.row && tmpl_area->pos.col == target.col) {
+			return;
+		}
+
+		//
+		// Delete the checker template from the position
+		//
+		s_tarr_del(_nc_board_fg, tmpl, tmpl_area->pos);
+		s_tarr_print_area(stdscr, _nc_board_fg, _nc_board_bg, tmpl_area);
+	}
+}
+
+/******************************************************************************
+ *
+ *****************************************************************************/
+
+void nc_board_test_old() {
 	log_debug_str("start");
 
 	const s_tarr *tmpl = s_tmpl_checker_get_travler(OWNER_WHITE);
@@ -242,7 +289,7 @@ void nc_board_test() {
 		// Copy the checker template to the position
 		//
 		s_tarr_cp(_nc_board_fg, tmpl, area.pos);
-		s_tarr_print_area(stdscr, _nc_board_fg, _nc_board_bg, area);
+		s_tarr_print_area(stdscr, _nc_board_fg, _nc_board_bg, &area);
 
 		wrefresh(stdscr);
 
@@ -254,11 +301,31 @@ void nc_board_test() {
 		// Delete the checker template from the position
 		//
 		s_tarr_del(_nc_board_fg, tmpl, area.pos);
-		s_tarr_print_area(stdscr, _nc_board_fg, _nc_board_bg, area);
+		s_tarr_print_area(stdscr, _nc_board_fg, _nc_board_bg, &area);
 	}
 
-	//
-	// Show the last delete
-	//
+//
+// Show the last delete
+//
 	wrefresh(stdscr);
+}
+
+/******************************************************************************
+ *
+ *****************************************************************************/
+
+void nc_board_test() {
+	log_debug_str("start");
+
+	const s_tarr *tmpl = s_tmpl_checker_get_travler(OWNER_WHITE);
+
+	if (tmpl == NULL) {
+		log_exit_str("Template is null!");
+	}
+
+	s_area area = { .dim = tmpl->dim, .pos = { TRAVEL_ROW, 0 } };
+
+	s_point target = { .row = TRAVEL_ROW, .col = _area_board_inner.pos.col + _area_board_outer.dim.col - tmpl->dim.col };
+
+	travler_move(tmpl, &area, target, (s_point ) { 0, 1 });
 }
