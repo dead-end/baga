@@ -27,33 +27,21 @@
 #include "s_tmpl_checker.h"
 
 /******************************************************************************
- * The definition of the template structure, we have one structure for the full
- * and one for the half template.
+ * The definition of the template structures. To print the checkers on a point
+ * we need a full and a half structure. For the traveling checker we need an
+ * other, independent template. We do not overwrite the traveler template when
+ * we update a point.
  *****************************************************************************/
 
 typedef enum {
 
-	TS_FULL = 0, TS_HALF = 1
+	TS_FULL = 0, TS_HALF = 1, TS_TRAVELER = 2
 
 } e_tmpl_size;
 
-#define _NUM_SIZES 2
+#define _NUM_SIZES 3
 
 static s_tarr *_tmpls[_NUM_SIZES];
-
-/******************************************************************************
- * The definition of the checkers on a point.
- *****************************************************************************/
-
-//
-// No more than CHECK_DIS_MAX checkers are displayed on a point.
-//
-#define CHECK_DIS_MAX 9
-
-//
-// The maximum number of checker that are displayed completely on a point.
-//
-#define CHECK_DIS_FULL 5
 
 /******************************************************************************
  * The definition of colors for the checkers on a point.
@@ -63,7 +51,7 @@ static s_tarr *_tmpls[_NUM_SIZES];
 
 #define COLOR_IDX_FG 0
 
-#define _COLOR_NUM 10
+#define _COLOR_NUM CHECK_DIS_MAX + 1
 
 static short _colors[NUM_PLAYER][_COLOR_NUM];
 
@@ -131,9 +119,9 @@ s_checker_layout _checker_layout[CHECKER_NUM + 1][2] = {
 };
 
 //
-// The macro checks if the checker with the given index is visible.
+// The macro checks if the checker with the given index is not visible.
 //
-#define s_checker_layout_is_visible(cl,i) ((cl).label_idx >= 0) && ((i) > (cl).label_idx)
+#define s_checker_layout_not_visible(cl,i) ((cl).label_idx >= 0) && ((i) > (cl).label_idx)
 
 //
 // The macro checks if the checker with the given index has a label.
@@ -204,6 +192,8 @@ void s_tmpl_checker_create() {
 	_tmpls[TS_FULL] = s_tarr_new(CHECKER_ROW, CHECKER_COL);
 
 	_tmpls[TS_HALF] = s_tarr_new(CHECKER_ROW / 2, CHECKER_COL);
+
+	_tmpls[TS_TRAVELER] = s_tarr_new(CHECKER_ROW, CHECKER_COL);
 }
 
 /******************************************************************************
@@ -217,6 +207,8 @@ void s_tmpl_checker_free() {
 	s_tarr_free(&_tmpls[TS_FULL]);
 
 	s_tarr_free(&_tmpls[TS_HALF]);
+
+	s_tarr_free(&_tmpls[TS_TRAVELER]);
 }
 
 /******************************************************************************
@@ -226,9 +218,9 @@ void s_tmpl_checker_free() {
 
 const s_tarr* s_tmpl_checker_get_travler(const e_owner owner) {
 
-	s_tarr *tmpl = _tmpls[TS_FULL];
+	s_tarr *tmpl = _tmpls[TS_TRAVELER];
 
-	s_tarr_set(_tmpls[TS_FULL], (s_tchar ) {
+	s_tarr_set(_tmpls[TS_TRAVELER], (s_tchar ) {
 
 			.chr = EMPTY,
 
@@ -238,7 +230,6 @@ const s_tarr* s_tmpl_checker_get_travler(const e_owner owner) {
 
 	return tmpl;
 }
-
 /******************************************************************************
  * The function returns the template for the checker. The checker can be
  * displayed fully, half or not at all. The color depends on the owner, and the
@@ -250,7 +241,7 @@ const s_tarr* s_tmpl_checker_get_tmpl(const e_owner owner, const s_checker_layou
 	//
 	// We do not display checkers behind the label.
 	//
-	if (s_checker_layout_is_visible(checker_layout, idx)) {
+	if (s_checker_layout_not_visible(checker_layout, idx)) {
 		return NULL;
 	}
 

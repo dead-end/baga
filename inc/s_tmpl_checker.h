@@ -32,6 +32,20 @@
 #include "s_tarr.h"
 
 /******************************************************************************
+ * The definition of the checkers on a point.
+ *****************************************************************************/
+
+//
+// No more than CHECK_DIS_MAX checkers are displayed on a point.
+//
+#define CHECK_DIS_MAX 9
+
+//
+// The maximum number of checker that are displayed completely on a point.
+//
+#define CHECK_DIS_FULL 5
+
+/******************************************************************************
  * The struct contains the layout of a checkers on a point.
  *****************************************************************************/
 
