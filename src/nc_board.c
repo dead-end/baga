@@ -34,7 +34,9 @@
 
 // todo: comment, file, ...
 
-#define ms_sleep() if (napms(50) != OK) { log_exit_str("sleep failed!"); }
+#define ms_sleep() if (napms(200) != OK) { log_exit_str("sleep failed!"); }
+
+#define nc_board_refresh(w) if (wrefresh(w) == ERR) { log_exit_str("Unable to refresh window!"); }
 
 #define TRAVEL_ROW POINTS_ROW + 2
 
@@ -218,7 +220,7 @@ void nc_board_print() {
 
 	s_tarr_print_area(stdscr, _nc_board_fg, _nc_board_bg, &(s_area ) { .dim = _nc_board_fg->dim, .pos = { 0, 0 } });
 
-	wrefresh(stdscr);
+	nc_board_refresh(stdscr);
 }
 
 /******************************************************************************
@@ -251,19 +253,19 @@ static void travler_move_line(const s_tarr *tmpl, s_area *tmpl_area, const s_poi
 		s_tarr_cp(_nc_board_fg, tmpl, tmpl_area->pos);
 		s_tarr_print_area(stdscr, _nc_board_fg, _nc_board_bg, tmpl_area);
 
-		wrefresh(stdscr);
+		nc_board_refresh(stdscr);
 
 		ms_sleep();
-
-		if (tmpl_area->pos.row == target.row && tmpl_area->pos.col == target.col) {
-			return;
-		}
 
 		//
 		// Delete the checker template from the position
 		//
 		s_tarr_del(_nc_board_fg, tmpl, tmpl_area->pos);
 		s_tarr_print_area(stdscr, _nc_board_fg, _nc_board_bg, tmpl_area);
+
+		if (tmpl_area->pos.row == target.row && tmpl_area->pos.col == target.col) {
+			return;
+		}
 	}
 }
 
@@ -298,7 +300,7 @@ void travler_move(const int idx_from, const int num_from, const int idx_to, cons
 
 		s_tarr_print_area(stdscr, _nc_board_fg, _nc_board_bg, &(s_area ) { .dim = { num_from * CHECKER_ROW, CHECKER_COL }, .pos = pos_from });
 
-		wrefresh(stdscr);
+		nc_board_refresh(stdscr);
 
 		s_tarr_del(_nc_board_fg, tmpl, tmpl_area.pos);
 		s_tarr_print_area(stdscr, _nc_board_fg, _nc_board_bg, &tmpl_area);
@@ -316,8 +318,6 @@ void travler_move(const int idx_from, const int num_from, const int idx_to, cons
 	target.col = tmpl_area.pos.col;
 	travler_move_line(tmpl, &tmpl_area, target, (s_point ) { 1, 0 });
 
-	ms_sleep();
-
 	//
 	// Move along the traveler line
 	//
@@ -325,13 +325,13 @@ void travler_move(const int idx_from, const int num_from, const int idx_to, cons
 	target.col = pos_to.col;
 	travler_move_line(tmpl, &tmpl_area, target, (s_point ) { 0, 1 });
 
-	ms_sleep();
-
+	//
+	// Move from traveler line
+	//
 	target.row = pos_from.row + num_to * CHECKER_ROW;
 	target.col = tmpl_area.pos.col;
 	travler_move_line(tmpl, &tmpl_area, target, (s_point ) { -1, 0 });
 
-	ms_sleep();
 	//
 	// Phase
 	//
@@ -340,7 +340,7 @@ void travler_move(const int idx_from, const int num_from, const int idx_to, cons
 
 		s_tarr_print_area(stdscr, _nc_board_fg, _nc_board_bg, &(s_area ) { .dim = { (num_to + 1) * CHECKER_ROW, CHECKER_COL }, .pos = pos_to });
 
-		wrefresh(stdscr);
+		nc_board_refresh(stdscr);
 
 	} else {
 		log_exit_str("Unimplemented!");
