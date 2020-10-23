@@ -33,7 +33,8 @@
 #include "s_color_def.h"
 
 // todo: comment, file, ...
-#define MS_SLEEP 25
+
+#define ms_sleep() if (napms(50) != OK) { log_exit_str("sleep failed!"); }
 
 #define TRAVEL_ROW POINTS_ROW + 2
 
@@ -188,7 +189,8 @@ void nc_board_init() {
 
 void s_board_points_add_checkers(const int idx, const e_owner owner, const int num) {
 
-	const s_checker_layout checker_layout = s_checker_layout_get(num, idx % 2);
+	// todo check second parameter
+	const s_checker_layout checker_layout = s_checker_layout_get(num, false);
 
 	s_point pos = { .row = _points_pos[idx].row + CHECKER_OFFSET_ROW, .col = _points_pos[idx].col + CHECKER_OFFSET_COL };
 
@@ -223,9 +225,13 @@ void nc_board_print() {
  *
  *****************************************************************************/
 
-void travler_move(const s_tarr *tmpl, s_area *tmpl_area, const s_point target, const s_point dir) {
+static void travler_move_line(const s_tarr *tmpl, s_area *tmpl_area, const s_point target, const s_point dir) {
 
 #ifdef DEBUG
+
+	//
+	// Ensure that the distance to the target is smaller, after the move.
+	//
 	const int dist1 = abs(tmpl_area->pos.row - target.row) + abs(tmpl_area->pos.col - target.col);
 	const int dist2 = abs(tmpl_area->pos.row - (target.row - dir.row)) + abs(tmpl_area->pos.col - (target.col - dir.col));
 
@@ -247,9 +253,7 @@ void travler_move(const s_tarr *tmpl, s_area *tmpl_area, const s_point target, c
 
 		wrefresh(stdscr);
 
-		if (napms(MS_SLEEP) != OK) {
-			log_exit_str("sleep failed!");
-		}
+		ms_sleep();
 
 		if (tmpl_area->pos.row == target.row && tmpl_area->pos.col == target.col) {
 			return;
@@ -267,47 +271,80 @@ void travler_move(const s_tarr *tmpl, s_area *tmpl_area, const s_point target, c
  *
  *****************************************************************************/
 
-void nc_board_test_old() {
-	log_debug_str("start");
+void travler_move(const int idx_from, const int num_from, const int idx_to, const int num_to, const e_owner owner) {
 
-	const s_tarr *tmpl = s_tmpl_checker_get_travler(OWNER_WHITE);
+	const s_point pos_from = { .row = _points_pos[idx_from].row + CHECKER_OFFSET_ROW, .col = _points_pos[idx_from].col + CHECKER_OFFSET_COL };
 
-	if (tmpl == NULL) {
-		log_exit_str("Template is null!");
-	}
+	const s_point pos_to = { .row = _points_pos[idx_to].row + CHECKER_OFFSET_ROW, .col = _points_pos[idx_to].col + CHECKER_OFFSET_COL };
 
-	const int col_start = _area_board_outer.pos.col + CHECKER_OFFSET_COL;
-	const int col_end = _area_board_inner.pos.col + _area_board_outer.dim.col - tmpl->dim.col;
+	const s_tarr *tmpl = s_tmpl_checker_get_travler(owner);
+	log_debug("traveler color: %d", tmpl->arr[0].bg);
 
-	s_area area = { .dim = tmpl->dim, .pos = { POINTS_ROW + 2, 0 } };
+	s_area tmpl_area = { .dim = tmpl->dim };
 
-	for (int col = col_start; col < col_end; col++) {
+	s_point target;
 
-		area.pos.col = col;
+	//
+	// Phase 1
+	//
+	if (num_from <= CHECK_DIS_FULL) {
 
-		//
-		// Copy the checker template to the position
-		//
-		s_tarr_cp(_nc_board_fg, tmpl, area.pos);
-		s_tarr_print_area(stdscr, _nc_board_fg, _nc_board_bg, &area);
+		s_board_points_add_checkers(idx_from, owner, num_from - 1);
+
+		tmpl_area.pos.row = pos_from.row + (num_from - 1) * CHECKER_ROW;
+		tmpl_area.pos.col = pos_from.col;
+
+		s_tarr_cp(_nc_board_fg, tmpl, tmpl_area.pos);
+
+		s_tarr_print_area(stdscr, _nc_board_fg, _nc_board_bg, &(s_area ) { .dim = { num_from * CHECKER_ROW, CHECKER_COL }, .pos = pos_from });
 
 		wrefresh(stdscr);
 
-		if (napms(MS_SLEEP) != OK) {
-			log_exit_str("sleep failed!");
-		}
+		s_tarr_del(_nc_board_fg, tmpl, tmpl_area.pos);
+		s_tarr_print_area(stdscr, _nc_board_fg, _nc_board_bg, &tmpl_area);
 
-		//
-		// Delete the checker template from the position
-		//
-		s_tarr_del(_nc_board_fg, tmpl, area.pos);
-		s_tarr_print_area(stdscr, _nc_board_fg, _nc_board_bg, &area);
+	} else {
+		log_exit_str("Unimplemented!");
 	}
 
-//
-// Show the last delete
-//
-	wrefresh(stdscr);
+	ms_sleep();
+
+	//
+	// Move to traveler line
+	//
+	target.row = TRAVEL_ROW;
+	target.col = tmpl_area.pos.col;
+	travler_move_line(tmpl, &tmpl_area, target, (s_point ) { 1, 0 });
+
+	ms_sleep();
+
+	//
+	// Move along the traveler line
+	//
+	target.row = TRAVEL_ROW;
+	target.col = pos_to.col;
+	travler_move_line(tmpl, &tmpl_area, target, (s_point ) { 0, 1 });
+
+	ms_sleep();
+
+	target.row = pos_from.row + num_to * CHECKER_ROW;
+	target.col = tmpl_area.pos.col;
+	travler_move_line(tmpl, &tmpl_area, target, (s_point ) { -1, 0 });
+
+	ms_sleep();
+	//
+	// Phase
+	//
+	if (num_to < CHECK_DIS_FULL) {
+		s_board_points_add_checkers(idx_to, owner, num_to + 1);
+
+		s_tarr_print_area(stdscr, _nc_board_fg, _nc_board_bg, &(s_area ) { .dim = { (num_to + 1) * CHECKER_ROW, CHECKER_COL }, .pos = pos_to });
+
+		wrefresh(stdscr);
+
+	} else {
+		log_exit_str("Unimplemented!");
+	}
 }
 
 /******************************************************************************
@@ -317,15 +354,7 @@ void nc_board_test_old() {
 void nc_board_test() {
 	log_debug_str("start");
 
-	const s_tarr *tmpl = s_tmpl_checker_get_travler(OWNER_WHITE);
+	travler_move(11, 3, 7, 4, OWNER_WHITE);
 
-	if (tmpl == NULL) {
-		log_exit_str("Template is null!");
-	}
-
-	s_area area = { .dim = tmpl->dim, .pos = { TRAVEL_ROW, 0 } };
-
-	s_point target = { .row = TRAVEL_ROW, .col = _area_board_inner.pos.col + _area_board_outer.dim.col - tmpl->dim.col };
-
-	travler_move(tmpl, &area, target, (s_point ) { 0, 1 });
+	travler_move(4, 2, 2, 3, OWNER_BLACK);
 }
