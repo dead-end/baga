@@ -33,4 +33,6 @@
 
 s_point direction_get(const s_point from, const s_point to);
 
+#define direction_mov_to(p,d) (p)->row += (d).row ; (p)->col += (d).col
+
 #endif /* INC_DIRECTION_H_ */
