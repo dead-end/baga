@@ -28,6 +28,19 @@
 #include "lib_s_point.h"
 
 /******************************************************************************
+ * The enum defines the 4 directions that are supported for the movements of
+ * the traveling checkers. The value is used as an index to an array.
+ *****************************************************************************/
+
+typedef enum {
+
+	E_DIR_UP = 0, E_DIR_DOWN = 1, E_DIR_RIGHT = 2, E_DIR_LEFT = 3
+
+} e_dir;
+
+extern s_point dirs[4];
+
+/******************************************************************************
  * The definitions of the functions.
  *****************************************************************************/
 

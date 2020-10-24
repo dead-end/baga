@@ -27,17 +27,6 @@
 #include "direction.h"
 
 /******************************************************************************
- * The enum defines the 4 directions that are supported for the movements of
- * the traveling checkers. The value is used as an index to an array.
- *****************************************************************************/
-
-typedef enum {
-
-	E_DIR_UP = 0, E_DIR_DOWN = 1, E_DIR_RIGHT = 2, E_DIR_LEFT = 3
-
-} e_dir;
-
-/******************************************************************************
  * The array contains the s_points with the movements. To move from one
  * position in a given direction, add the s_point to the position. The index of
  * the array is the enum e_dir value.
@@ -58,12 +47,12 @@ s_point dirs[4] = {
 		//
 		// Direction: RIGHT
 		//
-		[E_DIR_RIGHT] = { 0, 1 },
+		[E_DIR_RIGHT] = { 0, 2 },
 
 		//
 		// Direction: LEFT
 		//
-		[E_DIR_LEFT] = { 0, -1 },
+		[E_DIR_LEFT] = { 0, -2 },
 
 };
 
