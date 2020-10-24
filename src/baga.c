@@ -92,9 +92,11 @@ int main() {
 	s_bg_board bg_board;
 	bg_board_new_game(&bg_board);
 
-	s_board_points_add_checkers(11, OWNER_WHITE, 3);
+	s_board_points_add_checkers(11, OWNER_WHITE, 4);
 
 	s_board_points_add_checkers(7, OWNER_WHITE, 4);
+
+	s_board_points_add_checkers(15, OWNER_WHITE, 4);
 
 	s_board_points_add_checkers(4, OWNER_BLACK, 2);
 	s_board_points_add_checkers(2, OWNER_BLACK, 3);
