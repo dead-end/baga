@@ -71,7 +71,12 @@
 //
 // The macro returns the maximum of two value.
 //
-#define max(t,i) ((i) > (t) ? (t) : (i))
+#define max(t,i) ((i) > (t) ? (i) : (t))
+
+//
+// The macro returns the maximum of two value.
+//
+#define min(t,i) ((i) > (t) ? (t) : (i))
 
 //
 // Empty wchar_t
