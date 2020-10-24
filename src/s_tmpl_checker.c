@@ -313,6 +313,7 @@ s_point s_tmpl_checker_pos(const int point_idx, s_point point_pos, const int tot
 
 // todo: ensure it works with half (if half > 0 => last index always the same!!)
 // todo: unit tests
+// todo: compressed
 s_point s_tmpl_checker_last_pos(const s_point point_pos, const int point_idx, const int total) {
 
 	const s_checker_layout *layout = &s_checker_layout_get(total, false);
