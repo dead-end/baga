@@ -282,7 +282,7 @@ void travler_move(const int idx_from, const int num_from, const int idx_to, cons
 	const s_tarr *tmpl = s_tmpl_checker_get_travler(owner);
 	log_debug("traveler color: %d", tmpl->arr[0].bg);
 
-	s_area tmpl_area = { .dim = tmpl->dim };
+	s_point tmpl_pos;
 
 	s_point target;
 
@@ -293,17 +293,17 @@ void travler_move(const int idx_from, const int num_from, const int idx_to, cons
 
 		s_board_points_add_checkers(idx_from, owner, num_from - 1);
 
-		tmpl_area.pos.row = pos_from.row + (num_from - 1) * CHECKER_ROW;
-		tmpl_area.pos.col = pos_from.col;
+		tmpl_pos.row = pos_from.row + (num_from - 1) * CHECKER_ROW;
+		tmpl_pos.col = pos_from.col;
 
-		s_tarr_cp(_nc_board_fg, tmpl, tmpl_area.pos);
+		s_tarr_cp(_nc_board_fg, tmpl, tmpl_pos);
 
 		s_tarr_print_area(stdscr, _nc_board_fg, _nc_board_bg, pos_from, (s_point ) { num_from * CHECKER_ROW, CHECKER_COL });
 
 		nc_board_refresh(stdscr);
 
-		s_tarr_del(_nc_board_fg, tmpl, tmpl_area.pos);
-		s_tarr_print_area(stdscr, _nc_board_fg, _nc_board_bg, tmpl_area.pos, tmpl_area.dim);
+		s_tarr_del(_nc_board_fg, tmpl, tmpl_pos);
+		s_tarr_print_area(stdscr, _nc_board_fg, _nc_board_bg, tmpl_pos, tmpl->dim);
 
 	} else {
 		log_exit_str("Unimplemented!");
@@ -315,22 +315,22 @@ void travler_move(const int idx_from, const int num_from, const int idx_to, cons
 	// Move to traveler line
 	//
 	target.row = TRAVEL_ROW;
-	target.col = tmpl_area.pos.col;
-	travler_move_line(tmpl, &tmpl_area.pos, target, (s_point ) { 1, 0 });
+	target.col = tmpl_pos.col;
+	travler_move_line(tmpl, &tmpl_pos, target, (s_point ) { 1, 0 });
 
 	//
 	// Move along the traveler line
 	//
 	target.row = TRAVEL_ROW;
 	target.col = pos_to.col;
-	travler_move_line(tmpl, &tmpl_area.pos, target, (s_point ) { 0, 1 });
+	travler_move_line(tmpl, &tmpl_pos, target, (s_point ) { 0, 1 });
 
 	//
 	// Move from traveler line
 	//
 	target.row = pos_from.row + num_to * CHECKER_ROW;
-	target.col = tmpl_area.pos.col;
-	travler_move_line(tmpl, &tmpl_area.pos, target, (s_point ) { -1, 0 });
+	target.col = tmpl_pos.col;
+	travler_move_line(tmpl, &tmpl_pos, target, (s_point ) { -1, 0 });
 
 	//
 	// Phase
