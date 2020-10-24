@@ -227,15 +227,15 @@ void nc_board_print() {
  *
  *****************************************************************************/
 
-static void travler_move_line(const s_tarr *tmpl, s_area *tmpl_area, const s_point target, const s_point dir) {
+static void travler_move_line(const s_tarr *tmpl, s_point *tmpl_pos, const s_point target, const s_point dir) {
 
 #ifdef DEBUG
 
 	//
 	// Ensure that the distance to the target is smaller, after the move.
 	//
-	const int dist1 = abs(tmpl_area->pos.row - target.row) + abs(tmpl_area->pos.col - target.col);
-	const int dist2 = abs(tmpl_area->pos.row - (target.row - dir.row)) + abs(tmpl_area->pos.col - (target.col - dir.col));
+	const int dist1 = abs(tmpl_pos->row - target.row) + abs(tmpl_pos->col - target.col);
+	const int dist2 = abs(tmpl_pos->row - (target.row - dir.row)) + abs(tmpl_pos->col - (target.col - dir.col));
 
 	if (dist2 >= dist1) {
 		log_exit_str("Wrong direction!");
@@ -244,14 +244,14 @@ static void travler_move_line(const s_tarr *tmpl, s_area *tmpl_area, const s_poi
 
 	while (true) {
 
-		tmpl_area->pos.row += dir.row;
-		tmpl_area->pos.col += dir.col;
+		tmpl_pos->row += dir.row;
+		tmpl_pos->col += dir.col;
 
 		//
 		// Copy the checker template to the position
 		//
-		s_tarr_cp(_nc_board_fg, tmpl, tmpl_area->pos);
-		s_tarr_print_area(stdscr, _nc_board_fg, _nc_board_bg, tmpl_area->pos, tmpl_area->dim);
+		s_tarr_cp(_nc_board_fg, tmpl, *tmpl_pos);
+		s_tarr_print_area(stdscr, _nc_board_fg, _nc_board_bg, *tmpl_pos, tmpl->dim);
 
 		nc_board_refresh(stdscr);
 
@@ -260,10 +260,10 @@ static void travler_move_line(const s_tarr *tmpl, s_area *tmpl_area, const s_poi
 		//
 		// Delete the checker template from the position
 		//
-		s_tarr_del(_nc_board_fg, tmpl, tmpl_area->pos);
-		s_tarr_print_area(stdscr, _nc_board_fg, _nc_board_bg, tmpl_area->pos, tmpl_area->dim);
+		s_tarr_del(_nc_board_fg, tmpl, *tmpl_pos);
+		s_tarr_print_area(stdscr, _nc_board_fg, _nc_board_bg, *tmpl_pos, tmpl->dim);
 
-		if (tmpl_area->pos.row == target.row && tmpl_area->pos.col == target.col) {
+		if (tmpl_pos->row == target.row && tmpl_pos->col == target.col) {
 			return;
 		}
 	}
@@ -316,21 +316,21 @@ void travler_move(const int idx_from, const int num_from, const int idx_to, cons
 	//
 	target.row = TRAVEL_ROW;
 	target.col = tmpl_area.pos.col;
-	travler_move_line(tmpl, &tmpl_area, target, (s_point ) { 1, 0 });
+	travler_move_line(tmpl, &tmpl_area.pos, target, (s_point ) { 1, 0 });
 
 	//
 	// Move along the traveler line
 	//
 	target.row = TRAVEL_ROW;
 	target.col = pos_to.col;
-	travler_move_line(tmpl, &tmpl_area, target, (s_point ) { 0, 1 });
+	travler_move_line(tmpl, &tmpl_area.pos, target, (s_point ) { 0, 1 });
 
 	//
 	// Move from traveler line
 	//
 	target.row = pos_from.row + num_to * CHECKER_ROW;
 	target.col = tmpl_area.pos.col;
-	travler_move_line(tmpl, &tmpl_area, target, (s_point ) { -1, 0 });
+	travler_move_line(tmpl, &tmpl_area.pos, target, (s_point ) { -1, 0 });
 
 	//
 	// Phase
