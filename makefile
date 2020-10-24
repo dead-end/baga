@@ -73,6 +73,8 @@ SRC_LIBS = \
 	$(SRC_DIR)/s_tmpl_checker.c \
 	$(SRC_DIR)/s_tmpl_points.c  \
 	$(SRC_DIR)/s_tarr.c  \
+	$(SRC_DIR)/direction.c  \
+	$(SRC_DIR)/ut_direction.c  \
 	$(SRC_DIR)/ut_utils.c          \
 	$(SRC_DIR)/ut_lib_color_pair.c \
 	$(SRC_DIR)/ut_lib_string.c     \
