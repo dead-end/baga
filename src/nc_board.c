@@ -31,10 +31,14 @@
 #include "s_tmpl_checker.h"
 #include "nc_board.h"
 #include "s_color_def.h"
+#include "direction.h"
 
 // todo: comment, file, ...
 
-#define ms_sleep() if (napms(200) != OK) { log_exit_str("sleep failed!"); }
+#define MS_SLEEP 80
+//#define MS_SLEEP 550
+
+#define ms_sleep() if (napms(MS_SLEEP) != OK) { log_exit_str("sleep failed!"); }
 
 #define nc_board_refresh(w) if (wrefresh(w) == ERR) { log_exit_str("Unable to refresh window!"); }
 
@@ -224,46 +228,76 @@ void nc_board_print() {
 }
 
 /******************************************************************************
- *
+ * The function copies the traveler to the foreground at a given position and
+ * prints the traveler area.
  *****************************************************************************/
 
-static void travler_move_line(const s_tarr *tmpl, s_point *tmpl_pos, const s_point target, const s_point dir) {
+static void travleler_print(const s_tarr *tmpl, const s_point tmpl_pos) {
+
+	s_tarr_cp(_nc_board_fg, tmpl, tmpl_pos);
+
+	s_tarr_print_area(stdscr, _nc_board_fg, _nc_board_bg, tmpl_pos, tmpl->dim);
+}
+
+/******************************************************************************
+ * The function deletes the traveler from the foreground at a given position
+ * and prints the (empty) traveler area.
+ *****************************************************************************/
+
+static void traveler_del(const s_tarr *tmpl, const s_point tmpl_pos) {
+
+	s_tarr_del(_nc_board_fg, tmpl, tmpl_pos);
+
+	s_tarr_print_area(stdscr, _nc_board_fg, _nc_board_bg, tmpl_pos, tmpl->dim);
+}
+
+/******************************************************************************
+ * The function is called with the template of the checker and moves the
+ * checker from a position to a target position. It is assumed that this is a
+ * horizontal or vertical movement. This means the rows or columns of the
+ * current position have to be the same.
+ *****************************************************************************/
+
+static void traveler_move_line(const s_tarr *tmpl, s_point *tmpl_pos, const s_point target) {
 
 #ifdef DEBUG
 
 	//
-	// Ensure that the distance to the target is smaller, after the move.
 	//
-	const int dist1 = abs(tmpl_pos->row - target.row) + abs(tmpl_pos->col - target.col);
-	const int dist2 = abs(tmpl_pos->row - (target.row - dir.row)) + abs(tmpl_pos->col - (target.col - dir.col));
-
-	if (dist2 >= dist1) {
-		log_exit_str("Wrong direction!");
+	//
+	if (s_point_same(tmpl_pos, &target)) {
+		log_exit_str("Already the same!");
 	}
 #endif
 
+	const s_point dir = direction_get(*tmpl_pos, target);
+
 	while (true) {
 
-		tmpl_pos->row += dir.row;
-		tmpl_pos->col += dir.col;
+		direction_mov_to(tmpl_pos, dir);
 
 		//
 		// Copy the checker template to the position
 		//
-		s_tarr_cp(_nc_board_fg, tmpl, *tmpl_pos);
-		s_tarr_print_area(stdscr, _nc_board_fg, _nc_board_bg, *tmpl_pos, tmpl->dim);
+		travleler_print(tmpl, *tmpl_pos);
 
 		nc_board_refresh(stdscr);
 
 		ms_sleep();
 
+		log_debug_str("");
+
 		//
 		// Delete the checker template from the position
 		//
-		s_tarr_del(_nc_board_fg, tmpl, *tmpl_pos);
-		s_tarr_print_area(stdscr, _nc_board_fg, _nc_board_bg, *tmpl_pos, tmpl->dim);
+		traveler_del(tmpl, *tmpl_pos);
 
-		if (tmpl_pos->row == target.row && tmpl_pos->col == target.col) {
+		//
+		// If the current position is the target we are done. It is important
+		// that the traveler is deleted before we return.
+		//
+		if (s_point_same(tmpl_pos, &target)) {
+			log_debug_str("same");
 			return;
 		}
 	}
@@ -293,17 +327,16 @@ void travler_move(const int idx_from, const int num_from, const int idx_to, cons
 
 		s_board_points_add_checkers(idx_from, owner, num_from - 1);
 
-		tmpl_pos.row = pos_from.row + (num_from - 1) * CHECKER_ROW;
-		tmpl_pos.col = pos_from.col;
+		tmpl_pos = s_tmpl_checker_last_pos(pos_from, idx_from, num_from);
 
 		s_tarr_cp(_nc_board_fg, tmpl, tmpl_pos);
 
-		s_tarr_print_area(stdscr, _nc_board_fg, _nc_board_bg, pos_from, (s_point ) { num_from * CHECKER_ROW, CHECKER_COL });
+		const s_area area = s_tmpl_checker_point_area(pos_from, idx_from, num_to - 1);
+		s_tarr_print_area(stdscr, _nc_board_fg, _nc_board_bg, area.pos, area.dim);
 
 		nc_board_refresh(stdscr);
 
-		s_tarr_del(_nc_board_fg, tmpl, tmpl_pos);
-		s_tarr_print_area(stdscr, _nc_board_fg, _nc_board_bg, tmpl_pos, tmpl->dim);
+		traveler_del(tmpl, tmpl_pos);
 
 	} else {
 		log_exit_str("Unimplemented!");
@@ -316,21 +349,25 @@ void travler_move(const int idx_from, const int num_from, const int idx_to, cons
 	//
 	target.row = TRAVEL_ROW;
 	target.col = tmpl_pos.col;
-	travler_move_line(tmpl, &tmpl_pos, target, (s_point ) { 1, 0 });
+	traveler_move_line(tmpl, &tmpl_pos, target);
 
 	//
 	// Move along the traveler line
 	//
 	target.row = TRAVEL_ROW;
 	target.col = pos_to.col;
-	travler_move_line(tmpl, &tmpl_pos, target, (s_point ) { 0, 1 });
+	traveler_move_line(tmpl, &tmpl_pos, target);
 
 	//
 	// Move from traveler line
 	//
-	target.row = pos_from.row + num_to * CHECKER_ROW;
-	target.col = tmpl_pos.col;
-	travler_move_line(tmpl, &tmpl_pos, target, (s_point ) { -1, 0 });
+	//const int sign = (idx_to < 12) ? 1 : -1;
+	const s_point last_pos = s_tmpl_checker_last_pos(pos_to, idx_to, num_to + 1);
+
+	//target.row = last_pos.row + sign * CHECKER_ROW;
+	target.row = last_pos.row;
+	target.col = last_pos.col;
+	traveler_move_line(tmpl, &tmpl_pos, target);
 
 	//
 	// Phase
@@ -338,7 +375,8 @@ void travler_move(const int idx_from, const int num_from, const int idx_to, cons
 	if (num_to < CHECK_DIS_FULL) {
 		s_board_points_add_checkers(idx_to, owner, num_to + 1);
 
-		s_tarr_print_area(stdscr, _nc_board_fg, _nc_board_bg, pos_to, (s_point ) { (num_to + 1) * CHECKER_ROW, CHECKER_COL });
+		const s_area area = s_tmpl_checker_point_area(pos_to, idx_to, num_to + 1);
+		s_tarr_print_area(stdscr, _nc_board_fg, _nc_board_bg, area.pos, area.dim);
 
 		nc_board_refresh(stdscr);
 
@@ -354,7 +392,8 @@ void travler_move(const int idx_from, const int num_from, const int idx_to, cons
 void nc_board_test() {
 	log_debug_str("start");
 
-	travler_move(11, 3, 7, 4, OWNER_WHITE);
-
 	travler_move(4, 2, 2, 3, OWNER_BLACK);
+
+	travler_move(15, 4, 7, 4, OWNER_WHITE);
+
 }

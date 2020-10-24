@@ -136,7 +136,8 @@ s_checker_layout _checker_layout[CHECKER_NUM + 1][2] = {
 //
 // The macro returns the color index of a given checker.
 //
-#define s_checker_layout_color_idx(t,i) (reverse_idx(max(CHECK_DIS_MAX, (t)), (i)) + 1)
+// todo: unit test
+#define s_checker_layout_color_idx(t,i) (reverse_idx(min(CHECK_DIS_MAX, (t)), (i)) + 1)
 
 /******************************************************************************
  * The function adds the number of checker to the checker template. The number
@@ -230,6 +231,7 @@ const s_tarr* s_tmpl_checker_get_travler(const e_owner owner) {
 
 	return tmpl;
 }
+
 /******************************************************************************
  * The function returns the template for the checker. The checker can be
  * displayed fully, half or not at all. The color depends on the owner, and the
@@ -271,4 +273,121 @@ const s_tarr* s_tmpl_checker_get_tmpl(const e_owner owner, const s_checker_layou
 	}
 
 	return tmpl;
+}
+
+/******************************************************************************
+ *
+ *****************************************************************************/
+
+s_point s_tmpl_checker_pos(const int point_idx, s_point point_pos, const int total, const int num) {
+
+	const s_checker_layout *layout = &s_checker_layout_get(total, false);
+
+	if (s_checker_layout_not_visible(*layout, num)) {
+		log_exit("Not visible: %d", num);
+	}
+
+	const int sign = (point_idx < 12) ? 1 : -1;
+
+	s_point result;
+	result.col = point_pos.col;
+
+	if (layout->num_half == 0) {
+		result.row = point_pos.row + sign * (CHECKER_ROW * num);
+
+	} else if (layout->num_half >= num) {
+		result.row = point_pos.row + sign * (CHECKER_ROW / 2 * num);
+
+	} else {
+		result.row = point_pos.row + sign * (CHECKER_ROW / 2 * layout->num_half + CHECKER_ROW * (num - layout->num_half));
+	}
+
+	return result;
+}
+
+// -----------------------------
+
+/******************************************************************************
+ *
+ *****************************************************************************/
+
+// todo: ensure it works with half (if half > 0 => last index always the same!!)
+// todo: unit tests
+s_point s_tmpl_checker_last_pos(const s_point point_pos, const int point_idx, const int total) {
+
+	const s_checker_layout *layout = &s_checker_layout_get(total, false);
+
+	int num_full;
+
+	//
+	// If the number of half displayed checkers is not null, the position of
+	// the last is fixed. This is the last fully displayed: CHECK_DIS_FULL, if
+	// all others are full.
+	//
+	if (layout->num_half == 0) {
+		num_full = max(layout->total, layout->label_idx + 1);
+
+	} else {
+		num_full = CHECK_DIS_FULL;
+	}
+
+	s_point result;
+	result.col = point_pos.col;
+
+	if (point_idx < 12) {
+
+		//
+		// 0  <= Index
+		// 1  11 <= pos
+		// 2  11
+		// 3  22
+		// 4  22
+		// 5  33
+		// 6  33
+		// 7  44 <= result
+		// 8  44
+		//
+		result.row = point_pos.row + CHECKER_ROW * (num_full - 1);
+
+	} else {
+
+		//
+		// 0  <= Index
+		// 1  11 <= result
+		// 2  11
+		// 3  22
+		// 4  22
+		// 5  33
+		// 6  33
+		// 7  44
+		// 8  44 <= pos
+		//
+		result.row = point_pos.row - CHECKER_ROW * num_full + 1;
+	}
+
+	log_debug("result: %d/%d total: %d half: %d full: %d", result.row, result.col, total, layout->num_half, num_full);
+
+	return result;
+}
+
+// todo: unit tests
+s_area s_tmpl_checker_point_area(const s_point point_pos, const int point_idx, const int total) {
+
+	const s_checker_layout *layout = &s_checker_layout_get(total, false);
+
+	s_area result;
+
+	const int num_full = max(layout->total, layout->label_idx + 1) - layout->num_half;
+
+	result.dim.row = CHECKER_ROW / 2 * layout->num_half + CHECKER_ROW * num_full;
+	result.dim.col = CHECKER_COL;
+
+	if (point_idx < 12) {
+		result.pos.row = point_pos.row;
+	} else {
+		result.pos.row = point_pos.row - result.dim.row;
+	}
+	result.pos.col = point_pos.col;
+
+	return result;
 }
