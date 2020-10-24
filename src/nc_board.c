@@ -119,9 +119,9 @@ static void nc_board_init_bg(s_tarr *board_bg, const s_area *area_board_outer, c
 
 	s_color_def_gradient(color_board_bg, BOARD_HALF_ROW, "#ffe6cc", "#ff9933");
 
-	s_tarr_set_bg(board_bg, area_board_outer, color_board_bg);
+	s_tarr_set_bg(board_bg, area_board_outer->pos, area_board_outer->dim, color_board_bg);
 
-	s_tarr_set_bg(board_bg, area_board_inner, color_board_bg);
+	s_tarr_set_bg(board_bg, area_board_inner->pos, area_board_inner->dim, color_board_bg);
 }
 
 /******************************************************************************
@@ -218,7 +218,7 @@ void s_board_points_add_checkers(const int idx, const e_owner owner, const int n
 
 void nc_board_print() {
 
-	s_tarr_print_area(stdscr, _nc_board_fg, _nc_board_bg, &(s_area ) { .dim = _nc_board_fg->dim, .pos = { 0, 0 } });
+	s_tarr_print_area(stdscr, _nc_board_fg, _nc_board_bg, (s_point ) { 0, 0 }, _nc_board_fg->dim);
 
 	nc_board_refresh(stdscr);
 }
@@ -251,7 +251,7 @@ static void travler_move_line(const s_tarr *tmpl, s_area *tmpl_area, const s_poi
 		// Copy the checker template to the position
 		//
 		s_tarr_cp(_nc_board_fg, tmpl, tmpl_area->pos);
-		s_tarr_print_area(stdscr, _nc_board_fg, _nc_board_bg, tmpl_area);
+		s_tarr_print_area(stdscr, _nc_board_fg, _nc_board_bg, tmpl_area->pos, tmpl_area->dim);
 
 		nc_board_refresh(stdscr);
 
@@ -261,7 +261,7 @@ static void travler_move_line(const s_tarr *tmpl, s_area *tmpl_area, const s_poi
 		// Delete the checker template from the position
 		//
 		s_tarr_del(_nc_board_fg, tmpl, tmpl_area->pos);
-		s_tarr_print_area(stdscr, _nc_board_fg, _nc_board_bg, tmpl_area);
+		s_tarr_print_area(stdscr, _nc_board_fg, _nc_board_bg, tmpl_area->pos, tmpl_area->dim);
 
 		if (tmpl_area->pos.row == target.row && tmpl_area->pos.col == target.col) {
 			return;
@@ -298,12 +298,12 @@ void travler_move(const int idx_from, const int num_from, const int idx_to, cons
 
 		s_tarr_cp(_nc_board_fg, tmpl, tmpl_area.pos);
 
-		s_tarr_print_area(stdscr, _nc_board_fg, _nc_board_bg, &(s_area ) { .dim = { num_from * CHECKER_ROW, CHECKER_COL }, .pos = pos_from });
+		s_tarr_print_area(stdscr, _nc_board_fg, _nc_board_bg, pos_from, (s_point ) { num_from * CHECKER_ROW, CHECKER_COL });
 
 		nc_board_refresh(stdscr);
 
 		s_tarr_del(_nc_board_fg, tmpl, tmpl_area.pos);
-		s_tarr_print_area(stdscr, _nc_board_fg, _nc_board_bg, &tmpl_area);
+		s_tarr_print_area(stdscr, _nc_board_fg, _nc_board_bg, tmpl_area.pos, tmpl_area.dim);
 
 	} else {
 		log_exit_str("Unimplemented!");
@@ -338,7 +338,7 @@ void travler_move(const int idx_from, const int num_from, const int idx_to, cons
 	if (num_to < CHECK_DIS_FULL) {
 		s_board_points_add_checkers(idx_to, owner, num_to + 1);
 
-		s_tarr_print_area(stdscr, _nc_board_fg, _nc_board_bg, &(s_area ) { .dim = { (num_to + 1) * CHECKER_ROW, CHECKER_COL }, .pos = pos_to });
+		s_tarr_print_area(stdscr, _nc_board_fg, _nc_board_bg, pos_to, (s_point ) { (num_to + 1) * CHECKER_ROW, CHECKER_COL });
 
 		nc_board_refresh(stdscr);
 
