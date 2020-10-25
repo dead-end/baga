@@ -230,16 +230,17 @@ s_point s_tmpl_checker_pos(const int point_idx, s_point point_pos, const int tot
 // todo: ensure it works with half (if half > 0 => last index always the same!!)
 // todo: unit tests
 // todo: compressed
+// todo: move to s_point_layout
 s_point s_tmpl_checker_last_pos(const s_point point_pos, const int point_idx, const int total) {
 
-	const s_point_layout *layout = &s_point_layout_get(total, E_UNCOMP);
+	//const s_point_layout *layout = &s_point_layout_get(total, E_UNCOMP);
 
 	//
 	// If the number of half displayed checkers is not null, the position of
 	// the last is fixed and the position is the position of the last fully
 	// visible checker with CHECK_DIS_FULL checkers.
 	//
-	const int num_full = min(layout->total, CHECK_DIS_FULL);
+	const int num_full = min(total, CHECK_DIS_FULL);
 
 	s_point result;
 	result.col = point_pos.col;
@@ -275,12 +276,13 @@ s_point s_tmpl_checker_last_pos(const s_point point_pos, const int point_idx, co
 		result.row = point_pos.row - CHECKER_ROW * num_full + 1;
 	}
 
-	log_debug("result: %d/%d total: %d half: %d full: %d", result.row, result.col, total, layout->num_half, num_full);
+	log_debug("result: %d/%d total: %d full: %d", result.row, result.col, total, num_full);
 
 	return result;
 }
 
 // todo: unit tests
+// todo: move to s_point_layout
 s_area s_tmpl_checker_point_area(const s_point point_pos, const int point_idx, const int total) {
 
 	const s_point_layout *layout = &s_point_layout_get(total, E_UNCOMP);
