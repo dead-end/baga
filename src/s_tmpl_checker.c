@@ -194,7 +194,7 @@ const s_tarr* s_tmpl_checker_get_tmpl(const e_owner owner, const s_point_layout 
 /******************************************************************************
  *
  *****************************************************************************/
-
+// todo:unused
 s_point s_tmpl_checker_pos(const int point_idx, s_point point_pos, const int total, const int num) {
 
 	const s_point_layout *layout = &s_point_layout_get(total, E_UNCOMP);
