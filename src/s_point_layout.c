@@ -1,0 +1,89 @@
+/*
+ * MIT License
+ *
+ * Copyright (c) 2020 dead-end
+ *
+ * Permission is hereby granted, free of charge, to any person obtaining a copy
+ * of this software and associated documentation files (the "Software"), to deal
+ * in the Software without restriction, including without limitation the rights
+ * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+ * copies of the Software, and to permit persons to whom the Software is
+ * furnished to do so, subject to the following conditions:
+ *
+ * The above copyright notice and this permission notice shall be included in all
+ * copies or substantial portions of the Software.
+ *
+ * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+ * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+ * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+ * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+ * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+ * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+ * SOFTWARE.
+ */
+
+#include "s_point_layout.h"
+
+/******************************************************************************
+ * The array is a definition of the checkers on a point. The values depend only
+ * on the total number of checker. Each checker can be displayed fully, half or
+ * not at all. The "num_half" member contains the number of checkers that are
+ * displayed half. The "label_idx" contains the index of the label. If the
+ * value is -1, then there is no value. The label index is the index of the
+ * last visible checker. Checkers with a higher index are not displayed.
+ *
+ * The index of the array is the total number of checker on the point, so the
+ * index 0 is ignored. The checkers can be compressed or not. This is the
+ * second dimension.
+ *****************************************************************************/
+
+s_point_layout _point_layout[CHECKER_NUM + 1][2] = {
+
+//
+// total 0
+//
+		{ { .total = 0, .num_half = -1, -1 }, { .total = 0, .num_half = -1, -1 } },
+
+		//
+		// total 1 - 5 all are displayed fully.
+		//
+		{ { .total = 1, .num_half = 0, .label_idx = -1 }, { .total = 1, .num_half = 0, .label_idx = -1 } },
+
+		{ { .total = 2, .num_half = 0, .label_idx = -1 }, { .total = 2, .num_half = 0, .label_idx = -1 } },
+
+		{ { .total = 3, .num_half = 0, .label_idx = -1 }, { .total = 3, .num_half = 0, .label_idx = -1 } },
+
+		{ { .total = 4, .num_half = 0, .label_idx = -1 }, { .total = 4, .num_half = 0, .label_idx = -1 } },
+
+		{ { .total = 5, .num_half = 0, .label_idx = -1 }, { .total = 5, .num_half = 1, .label_idx = -1 } }, // The number 5 is compressed.
+
+		//
+		// total 6 - 9
+		//
+		{ { .total = 6, .num_half = 2, .label_idx = 5 }, { .total = 6, .num_half = 3, .label_idx = 5 } },
+
+		{ { .total = 7, .num_half = 4, .label_idx = 6 }, { .total = 7, .num_half = 5, .label_idx = 6 } },
+
+		{ { .total = 8, .num_half = 6, .label_idx = 7 }, { .total = 8, .num_half = 7, .label_idx = 7 } },
+
+		{ { .total = 9, .num_half = 8, .label_idx = 8 }, { .total = 9, .num_half = 7, .label_idx = 7 } },
+
+		//
+		// Total: 10 - 16 none is displayed fully.
+		//
+		{ { .total = 10, .num_half = 8, .label_idx = 8 }, { .total = 10, .num_half = 7, .label_idx = 7 } },
+
+		{ { .total = 11, .num_half = 8, .label_idx = 8 }, { .total = 11, .num_half = 7, .label_idx = 7 } },
+
+		{ { .total = 12, .num_half = 8, .label_idx = 8 }, { .total = 12, .num_half = 7, .label_idx = 7 } },
+
+		{ { .total = 13, .num_half = 8, .label_idx = 8 }, { .total = 13, .num_half = 7, .label_idx = 7 } },
+
+		{ { .total = 14, .num_half = 8, .label_idx = 8 }, { .total = 14, .num_half = 7, .label_idx = 7 } },
+
+		{ { .total = 15, .num_half = 8, .label_idx = 8 }, { .total = 15, .num_half = 7, .label_idx = 7 } },
+
+		{ { .total = 16, .num_half = 8, .label_idx = 8 }, { .total = 16, .num_half = 7, .label_idx = 7 } }
+
+};
+
