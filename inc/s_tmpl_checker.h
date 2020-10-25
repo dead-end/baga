@@ -33,53 +33,7 @@
 
 #include "s_area.h"
 
-/******************************************************************************
- * The definition of the checkers on a point.
- *****************************************************************************/
-
-//
-// No more than CHECK_DIS_MAX checkers are displayed on a point.
-//
-#define CHECK_DIS_MAX 9
-
-//
-// The maximum number of checker that are displayed completely on a point.
-//
-#define CHECK_DIS_FULL 5
-
-/******************************************************************************
- * The struct contains the layout of a checkers on a point.
- *****************************************************************************/
-
-typedef struct {
-
-	//
-	// The total number of checkers on the point.
-	//
-	int total;
-
-	//
-	// The number of checkers on the point, which are displayed half.
-	//
-	int num_half;
-
-	//
-	// The index of the checker, which has a label, or -1 if none of the
-	// checkers has a label.
-	//
-	int label_idx;
-
-} s_checker_layout;
-
-//
-// The declaration of the arrays with the layouts.
-//
-extern s_checker_layout _checker_layout[CHECKER_NUM + 1][2];
-
-//
-// The macro to access the layout.
-//
-#define s_checker_layout_get(t,c) _checker_layout[t][c]
+#include "s_point_layout.h"
 
 /******************************************************************************
  * Declaration of the functions.
@@ -91,7 +45,7 @@ void s_tmpl_checker_free();
 
 const s_tarr* s_tmpl_checker_get_travler(const e_owner owner);
 
-const s_tarr* s_tmpl_checker_get_tmpl(const e_owner owner, const s_checker_layout checker_layout, const int idx, const bool reverse);
+const s_tarr* s_tmpl_checker_get_tmpl(const e_owner owner, const s_point_layout point_layout, const int idx, const bool reverse);
 
 // ------------------
 

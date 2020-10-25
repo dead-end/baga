@@ -56,90 +56,6 @@ static s_tarr *_tmpls[_NUM_SIZES];
 static short _colors[NUM_PLAYER][_COLOR_NUM];
 
 /******************************************************************************
- * The array is a definition of the checkers on a point. The values depend only
- * on the total number of checker. Each checker can be displayed fully, half or
- * not at all. The "num_half" member contains the number of checkers that are
- * displayed half. The "label_idx" contains the index of the label. If the
- * value is -1, then there is no value. The label index is the index of the
- * last visible checker. Checkers with a higher index are not displayed.
- *
- * The index of the array is the total number of checker on the point, so the
- * index 0 is ignored. The checkers can be compressed or not. This is the
- * second dimension.
- *****************************************************************************/
-
-s_checker_layout _checker_layout[CHECKER_NUM + 1][2] = {
-
-//
-// total 0
-//
-		{ { .total = 0, .num_half = -1, -1 }, { .total = 0, .num_half = -1, -1 } },
-
-		//
-		// total 1 - 5 all are displayed fully.
-		//
-		{ { .total = 1, .num_half = 0, .label_idx = -1 }, { .total = 1, .num_half = 0, .label_idx = -1 } },
-
-		{ { .total = 2, .num_half = 0, .label_idx = -1 }, { .total = 2, .num_half = 0, .label_idx = -1 } },
-
-		{ { .total = 3, .num_half = 0, .label_idx = -1 }, { .total = 3, .num_half = 0, .label_idx = -1 } },
-
-		{ { .total = 4, .num_half = 0, .label_idx = -1 }, { .total = 4, .num_half = 0, .label_idx = -1 } },
-
-		{ { .total = 5, .num_half = 0, .label_idx = -1 }, { .total = 5, .num_half = 1, .label_idx = -1 } }, // The number 5 is compressed.
-
-		//
-		// total 6 - 9
-		//
-		{ { .total = 6, .num_half = 2, .label_idx = 5 }, { .total = 6, .num_half = 3, .label_idx = 5 } },
-
-		{ { .total = 7, .num_half = 4, .label_idx = 6 }, { .total = 7, .num_half = 5, .label_idx = 6 } },
-
-		{ { .total = 8, .num_half = 6, .label_idx = 7 }, { .total = 8, .num_half = 7, .label_idx = 7 } },
-
-		{ { .total = 9, .num_half = 8, .label_idx = 8 }, { .total = 9, .num_half = 7, .label_idx = 7 } },
-
-		//
-		// Total: 10 - 16 none is displayed fully.
-		//
-		{ { .total = 10, .num_half = 8, .label_idx = 8 }, { .total = 10, .num_half = 7, .label_idx = 7 } },
-
-		{ { .total = 11, .num_half = 8, .label_idx = 8 }, { .total = 11, .num_half = 7, .label_idx = 7 } },
-
-		{ { .total = 12, .num_half = 8, .label_idx = 8 }, { .total = 12, .num_half = 7, .label_idx = 7 } },
-
-		{ { .total = 13, .num_half = 8, .label_idx = 8 }, { .total = 13, .num_half = 7, .label_idx = 7 } },
-
-		{ { .total = 14, .num_half = 8, .label_idx = 8 }, { .total = 14, .num_half = 7, .label_idx = 7 } },
-
-		{ { .total = 15, .num_half = 8, .label_idx = 8 }, { .total = 15, .num_half = 7, .label_idx = 7 } },
-
-		{ { .total = 16, .num_half = 8, .label_idx = 8 }, { .total = 16, .num_half = 7, .label_idx = 7 } }
-
-};
-
-//
-// The macro checks if the checker with the given index is not visible.
-//
-#define s_checker_layout_not_visible(cl,i) ((cl).label_idx >= 0) && ((i) > (cl).label_idx)
-
-//
-// The macro checks if the checker with the given index has a label.
-//
-#define s_checker_layout_has_label(cl,i) ((cl).label_idx == (i))
-
-//
-// The macro checks if the checker with the given index is displayed half.
-//
-#define s_checker_layout_is_half(cl,i) ((i) < (cl).num_half)
-
-//
-// The macro returns the color index of a given checker.
-//
-// todo: unit test
-#define s_checker_layout_color_idx(t,i) (reverse_idx(min(CHECK_DIS_MAX, (t)), (i)) + 1)
-
-/******************************************************************************
  * The function adds the number of checker to the checker template. The number
  * of checker for each player is 16, so this is the max value.
  *****************************************************************************/
@@ -238,24 +154,24 @@ const s_tarr* s_tmpl_checker_get_travler(const e_owner owner) {
  * display index.
  *****************************************************************************/
 
-const s_tarr* s_tmpl_checker_get_tmpl(const e_owner owner, const s_checker_layout checker_layout, const int idx, const bool reverse) {
+const s_tarr* s_tmpl_checker_get_tmpl(const e_owner owner, const s_point_layout point_layout, const int idx, const bool reverse) {
 
 	//
 	// We do not display checkers behind the label.
 	//
-	if (s_checker_layout_not_visible(checker_layout, idx)) {
+	if (s_point_layout_not_visible(point_layout, idx)) {
 		return NULL;
 	}
 
 	//
 	// We get the color index for the current checker.
 	//
-	const int color_idx = s_checker_layout_color_idx(checker_layout.total, idx);
+	const int color_idx = s_point_layout_color_idx(point_layout.total, idx);
 
 	//
 	// Select the template, which can be full or half.
 	//
-	s_tarr *tmpl = s_checker_layout_is_half(checker_layout, idx) ? _tmpls[TS_HALF] : _tmpls[TS_FULL];
+	s_tarr *tmpl = s_point_layout_is_half(point_layout, idx) ? _tmpls[TS_HALF] : _tmpls[TS_FULL];
 
 	s_tarr_set(tmpl, (s_tchar ) {
 
@@ -268,8 +184,8 @@ const s_tarr* s_tmpl_checker_get_tmpl(const e_owner owner, const s_checker_layou
 	//
 	// Add the label if necessary
 	//
-	if (s_checker_layout_has_label(checker_layout, idx)) {
-		s_tmpl_checker_set_label(tmpl, checker_layout.total, reverse);
+	if (s_point_layout_has_label(point_layout, idx)) {
+		s_tmpl_checker_set_label(tmpl, point_layout.total, reverse);
 	}
 
 	return tmpl;
@@ -281,9 +197,9 @@ const s_tarr* s_tmpl_checker_get_tmpl(const e_owner owner, const s_checker_layou
 
 s_point s_tmpl_checker_pos(const int point_idx, s_point point_pos, const int total, const int num) {
 
-	const s_checker_layout *layout = &s_checker_layout_get(total, false);
+	const s_point_layout *layout = &s_point_layout_get(total, false);
 
-	if (s_checker_layout_not_visible(*layout, num)) {
+	if (s_point_layout_not_visible(*layout, num)) {
 		log_exit("Not visible: %d", num);
 	}
 
@@ -316,21 +232,14 @@ s_point s_tmpl_checker_pos(const int point_idx, s_point point_pos, const int tot
 // todo: compressed
 s_point s_tmpl_checker_last_pos(const s_point point_pos, const int point_idx, const int total) {
 
-	const s_checker_layout *layout = &s_checker_layout_get(total, false);
-
-	int num_full;
+	const s_point_layout *layout = &s_point_layout_get(total, false);
 
 	//
 	// If the number of half displayed checkers is not null, the position of
-	// the last is fixed. This is the last fully displayed: CHECK_DIS_FULL, if
-	// all others are full.
+	// the last is fixed and the position is the position of the last fully
+	// visible checker with CHECK_DIS_FULL checkers.
 	//
-	if (layout->num_half == 0) {
-		num_full = max(layout->total, layout->label_idx + 1);
-
-	} else {
-		num_full = CHECK_DIS_FULL;
-	}
+	const int num_full = min(layout->total, CHECK_DIS_FULL);
 
 	s_point result;
 	result.col = point_pos.col;
@@ -374,7 +283,7 @@ s_point s_tmpl_checker_last_pos(const s_point point_pos, const int point_idx, co
 // todo: unit tests
 s_area s_tmpl_checker_point_area(const s_point point_pos, const int point_idx, const int total) {
 
-	const s_checker_layout *layout = &s_checker_layout_get(total, false);
+	const s_point_layout *layout = &s_point_layout_get(total, false);
 
 	s_area result;
 
