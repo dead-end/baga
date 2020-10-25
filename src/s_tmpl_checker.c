@@ -197,7 +197,7 @@ const s_tarr* s_tmpl_checker_get_tmpl(const e_owner owner, const s_point_layout 
 
 s_point s_tmpl_checker_pos(const int point_idx, s_point point_pos, const int total, const int num) {
 
-	const s_point_layout *layout = &s_point_layout_get(total, false);
+	const s_point_layout *layout = &s_point_layout_get(total, E_UNCOMP);
 
 	if (s_point_layout_not_visible(*layout, num)) {
 		log_exit("Not visible: %d", num);
@@ -232,7 +232,7 @@ s_point s_tmpl_checker_pos(const int point_idx, s_point point_pos, const int tot
 // todo: compressed
 s_point s_tmpl_checker_last_pos(const s_point point_pos, const int point_idx, const int total) {
 
-	const s_point_layout *layout = &s_point_layout_get(total, false);
+	const s_point_layout *layout = &s_point_layout_get(total, E_UNCOMP);
 
 	//
 	// If the number of half displayed checkers is not null, the position of
@@ -283,7 +283,7 @@ s_point s_tmpl_checker_last_pos(const s_point point_pos, const int point_idx, co
 // todo: unit tests
 s_area s_tmpl_checker_point_area(const s_point point_pos, const int point_idx, const int total) {
 
-	const s_point_layout *layout = &s_point_layout_get(total, false);
+	const s_point_layout *layout = &s_point_layout_get(total, E_UNCOMP);
 
 	s_area result;
 
