@@ -33,6 +33,8 @@
 #include "s_color_def.h"
 #include "direction.h"
 
+#include "s_point_layout.h"
+
 // todo: comment, file, ...
 
 #define MS_SLEEP 80
@@ -196,7 +198,7 @@ void nc_board_init() {
 void s_board_points_add_checkers(const int idx, const e_owner owner, const int num) {
 
 	// todo check second parameter
-	const s_checker_layout checker_layout = s_checker_layout_get(num, false);
+	const s_point_layout layout = s_point_layout_get(num, E_UNCOMP);
 
 	s_point pos = { .row = _points_pos[idx].row + CHECKER_OFFSET_ROW, .col = _points_pos[idx].col + CHECKER_OFFSET_COL };
 
@@ -206,7 +208,7 @@ void s_board_points_add_checkers(const int idx, const e_owner owner, const int n
 
 	for (int i = 0; i < num; i++) {
 
-		tmpl = s_tmpl_checker_get_tmpl(owner, checker_layout, i, reverse);
+		tmpl = s_tmpl_checker_get_tmpl(owner, layout, i, reverse);
 
 		if (tmpl == NULL) {
 			continue;
