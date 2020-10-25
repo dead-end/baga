@@ -90,19 +90,19 @@ extern s_point_layout _point_layout[CHECKER_NUM + 1][2];
 /******************************************************************************
  * The macro checks if the checker with the given index is not visible.
  *****************************************************************************/
-
+// todo: function with checks: i valid
 #define s_point_layout_not_visible(cl,i) ((cl).label_idx >= 0) && ((i) > (cl).label_idx)
 
 /******************************************************************************
  * The macro checks if the checker with the given index has a label.
  *****************************************************************************/
-
+// todo: function with checks: i valid
 #define s_point_layout_has_label(cl,i) ((cl).label_idx == (i))
 
 /******************************************************************************
  * The macro checks if the checker with the given index is displayed half.
  *****************************************************************************/
-
+// todo: function with checks: i valid
 #define s_point_layout_is_half(cl,i) ((i) < (cl).num_half)
 
 /******************************************************************************
