@@ -166,7 +166,7 @@ const s_tarr* s_tmpl_checker_get_tmpl(const e_owner owner, const s_point_layout 
 	//
 	// We get the color index for the current checker.
 	//
-	const int color_idx = s_point_layout_color_idx(point_layout.total, idx);
+	const int color_idx = s_point_layout_color_idx(point_layout, idx);
 
 	//
 	// Select the template, which can be full or half.
