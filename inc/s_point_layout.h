@@ -114,6 +114,18 @@ extern s_point_layout _point_layout[CHECKER_NUM + 1][2];
 #define s_point_layout_is_half(cl,i) ((i) < (cl).num_half)
 
 /******************************************************************************
+ * The macro returns the number of the visible checkers for a given layout.
+ *****************************************************************************/
+
+#define s_point_layout_num_vis(cl) ((cl).label_idx != -1 ? (cl).label_idx + 1 : (cl).total)
+
+/******************************************************************************
+ * The macro returns the number of fully visible checkers for a given layout.
+ *****************************************************************************/
+
+#define s_point_layout_num_full(cl) (s_point_layout_num_vis(cl) - (cl).num_half)
+
+/******************************************************************************
  * Function definitions that are only used for unit tests.
  *****************************************************************************/
 

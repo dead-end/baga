@@ -114,7 +114,7 @@ int s_point_layout_color_idx(const s_point_layout layout, const int idx) {
 	//
 	// Get the number of visible checkers for the point.
 	//
-	const int num_vis = layout.label_idx != -1 ? layout.label_idx + 1 : layout.total;
+	const int num_vis = s_point_layout_num_vis(layout);
 
 #ifdef DEBUG
 
