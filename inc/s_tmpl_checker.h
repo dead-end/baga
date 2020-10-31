@@ -51,6 +51,6 @@ const s_tarr* s_tmpl_checker_get_tmpl(const e_owner owner, const s_point_layout 
 
 s_point s_tmpl_checker_last_pos(const s_point point_pos, const int point_idx, const int total);
 
-s_area s_tmpl_checker_point_area(const s_point point_pos, const int point_idx, const int total);
+s_area s_tmpl_checker_point_area(const s_point point_pos, const bool is_upper);
 
 #endif /* INC_S_TMPL_CHECKER_H_ */

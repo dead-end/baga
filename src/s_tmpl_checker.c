@@ -285,24 +285,18 @@ s_point s_tmpl_checker_last_pos(const s_point point_pos, const int point_idx, co
  *
  *****************************************************************************/
 
-// todo: unit tests
-// todo: move to s_point_layout
-s_area s_tmpl_checker_point_area(const s_point point_pos, const int point_idx, const int total) {
-
-	const s_point_layout layout = s_point_layout_get(total, E_UNCOMP);
-
-	const int num_full = s_point_layout_num_full(layout);
+// todo: unit tests ????
+s_area s_tmpl_checker_point_area(const s_point point_pos, const bool is_upper) {
 
 	s_area result;
 
-	result.dim.row = CHECKER_ROW / 2 * layout.num_half + CHECKER_ROW * num_full;
-	result.dim.col = CHECKER_COL;
+	//
+	// todo: check the max value
+	//
+	result.dim.row = POINTS_ROW + 1;
+	result.dim.col = POINTS_COL;
 
-	if (point_idx < 12) {
-		result.pos.row = point_pos.row;
-	} else {
-		result.pos.row = point_pos.row - result.dim.row + 1;
-	}
+	result.pos.row = (is_upper) ? point_pos.row : point_pos.row - result.dim.row + 1;
 	result.pos.col = point_pos.col;
 
 	log_debug("pos: %d/%d dim: %d/%d", result.pos.row, result.pos.col,result.dim.row, result.dim.col);
