@@ -25,6 +25,8 @@
 #ifndef INC_S_POINT_LAYOUT_H_
 #define INC_S_POINT_LAYOUT_H_
 
+#include <stdbool.h>
+
 #include "bg_defs.h"
 
 /******************************************************************************
@@ -89,27 +91,32 @@ extern s_point_layout _point_layout[CHECKER_NUM + 1][2];
 
 /******************************************************************************
  * The macro checks if the checker with the given index is not visible.
+ *
+ * (Unit tested)
  *****************************************************************************/
-// todo: function with checks: i valid
+
 #define s_point_layout_not_visible(cl,i) ((cl).label_idx >= 0) && ((i) > (cl).label_idx)
 
 /******************************************************************************
  * The macro checks if the checker with the given index has a label.
+ *
+ * (Unit tested)
  *****************************************************************************/
-// todo: function with checks: i valid
+
 #define s_point_layout_has_label(cl,i) ((cl).label_idx == (i))
 
 /******************************************************************************
  * The macro checks if the checker with the given index is displayed half.
+ *
+ * (Unit tested)
  *****************************************************************************/
-// todo: function with checks: i valid
+
 #define s_point_layout_is_half(cl,i) ((i) < (cl).num_half)
 
 /******************************************************************************
- * The macro returns the color index of a given checker.
+ * Function definitions that are only used for unit tests.
  *****************************************************************************/
 
-// todo: unit test
-#define s_point_layout_color_idx(t,i) (reverse_idx(min(CHECK_DIS_MAX, (t)), (i)) + 1)
+int s_point_layout_color_idx(const s_point_layout layout, const int idx);
 
 #endif /* INC_S_POINT_LAYOUT_H_ */

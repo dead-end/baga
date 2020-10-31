@@ -22,6 +22,8 @@
  * SOFTWARE.
  */
 
+#include "lib_logging.h"
+
 #include "s_point_layout.h"
 
 /******************************************************************************
@@ -87,3 +89,50 @@ s_point_layout _point_layout[CHECKER_NUM + 1][2] = {
 
 };
 
+/******************************************************************************
+ * The function returns the color index for a checker on a point. The color
+ * index 0 is reserved for the traveler color. The index of the last visible
+ * checker is always 1.
+ *
+ * total: 4 (un-)compressed
+ * idx:   0 1 2 3
+ * color: 4 3 2 1 <= last visible
+ *
+ * total: 16 uncompressed
+ * idx:   0 1 2 3 4 5 6 7 8 9 10 11 12 13 14 15
+ * color: 9 8 7 6 5 4 3 2 1 <= last visible
+ *
+ * total: 16 compressed
+ * idx:   0 1 2 3 4 5 6 7 8 9 10 11 12 13 14 15
+ * color: 8 7 6 5 4 3 2 1 <= last visible
+ *
+ * (Unit tested)
+ *****************************************************************************/
+
+int s_point_layout_color_idx(const s_point_layout layout, const int idx) {
+
+	//
+	// Get the number of visible checkers for the point.
+	//
+	const int num_vis = layout.label_idx != -1 ? layout.label_idx + 1 : layout.total;
+
+#ifdef DEBUG
+
+	//
+	// Ensure that the index is valid.
+	//
+	if (idx >= num_vis) {
+		log_exit("Invalid index: %d with visible: %d", idx, num_vis);
+	}
+#endif
+
+	//
+	// The colors are assigned in the reverse order.
+	//
+	const int col_idx = reverse_idx(num_vis, idx);
+
+	//
+	// Adding an offset, because the index 0 is used for the traveler.
+	//
+	return col_idx + 1;
+}
