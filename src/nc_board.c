@@ -333,7 +333,7 @@ void travler_move(const int idx_from, const int num_from, const int idx_to, cons
 
 		s_tarr_cp(_nc_board_fg, tmpl, tmpl_pos);
 
-		const s_area area = s_tmpl_checker_point_area(pos_from, idx_from, num_to);
+		const s_area area = s_tmpl_checker_point_area(pos_from, nc_board_is_upper(idx_from));
 		s_tarr_print_area(stdscr, _nc_board_fg, _nc_board_bg, area.pos, area.dim);
 
 		nc_board_refresh(stdscr);
@@ -375,7 +375,7 @@ void travler_move(const int idx_from, const int num_from, const int idx_to, cons
 	if (num_to < CHECK_DIS_FULL) {
 		s_board_points_add_checkers(idx_to, owner, num_to + 1);
 
-		const s_area area = s_tmpl_checker_point_area(pos_to, idx_to, num_to + 1);
+		const s_area area = s_tmpl_checker_point_area(pos_to, nc_board_is_upper(idx_to));
 		s_tarr_print_area(stdscr, _nc_board_fg, _nc_board_bg, area.pos, area.dim);
 
 		nc_board_refresh(stdscr);
