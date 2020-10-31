@@ -267,11 +267,6 @@ void s_tarr_print_area(WINDOW *win, const s_tarr *ta_fg, const s_tarr *ta_bg, co
 
 #ifdef DEBUG
 
-	log_debug("fg dim: %d/%d", ta_fg->dim.row, ta_fg->dim.col);
-	log_debug("bg dim: %d/%d", ta_bg->dim.row, ta_bg->dim.col);
-
-	log_debug("area dim: %d/%d pos: %d/%d", dim.row, dim.col, pos.row, pos.col);
-
 	//
 	// Ensure that both have the same dimension.
 	//
@@ -337,10 +332,6 @@ void s_tarr_del(const s_tarr *ta_target, const s_tarr *ta_del, const s_point pos
 	const int col_end = pos_del.col + ta_del->dim.col;
 
 #ifdef DEBUG
-
-	log_debug("target dim: %d/%d", ta_target->dim.row, ta_target->dim.col);
-	log_debug("delete dim: %d/%d", ta_del->dim.row, ta_del->dim.col);
-	log_debug("delete pos: %d/%d", pos_del.row, pos_del.col);
 
 	//
 	// Ensure that the array is inside the target.
