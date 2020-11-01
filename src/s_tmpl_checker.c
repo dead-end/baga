@@ -285,22 +285,49 @@ s_point s_tmpl_checker_last_pos(const s_point point_pos, const int point_idx, co
  *
  *****************************************************************************/
 
+#define POINT_AREA_ROW (POINTS_ROW + 1)
+
 // todo: unit tests ????
-s_area s_tmpl_checker_point_area(const s_point point_pos, const bool is_upper) {
+s_area s_tmpl_checker_point_area2(const s_point point_pos, const bool is_upper) {
 
 	s_area result;
 
 	//
 	// todo: check the max value
 	//
-	result.dim.row = POINTS_ROW + 1;
+	result.dim.row = POINT_AREA_ROW;
 	result.dim.col = POINTS_COL;
 
 	//
 	// This uses the result.dim.row
 	//
-	result.pos.row = (is_upper) ? point_pos.row : point_pos.row - result.dim.row + 1;
+	result.pos.row = (is_upper) ? point_pos.row : point_pos.row - POINT_AREA_ROW + 1;
 	result.pos.col = point_pos.col;
+
+	log_debug("pos: %d/%d area - pos: %d/%d dim: %d/%d",point_pos.row, point_pos.col, result.pos.row, result.pos.col,result.dim.row, result.dim.col);
+
+	return result;
+}
+
+s_area s_tmpl_checker_point_area(const s_point point_pos, const bool is_upper) {
+
+	const s_area result = {
+
+	//
+	// todo: check the max value
+	//
+			.dim.row = POINT_AREA_ROW,
+
+			.dim.col = POINTS_COL,
+
+			//
+			// This uses the result.dim.row
+			//
+			.pos.row = (is_upper) ? point_pos.row : point_pos.row - POINT_AREA_ROW + 1,
+
+			.pos.col = point_pos.col
+
+	};
 
 	log_debug("pos: %d/%d area - pos: %d/%d dim: %d/%d",point_pos.row, point_pos.col, result.pos.row, result.pos.col,result.dim.row, result.dim.col);
 
