@@ -29,6 +29,7 @@
 #include "s_tmpl_points.h"
 #include "s_color_def.h"
 #include "bg_defs.h"
+#include "s_point_layout.h"
 
 /******************************************************************************
  * Definition of the characters used by the triangles.
@@ -249,7 +250,7 @@ void s_tmpl_point_add_2_tarr(s_tarr *tarr, const s_point *points_pos) {
 
 		tmpl = s_tmpl_point_get_tmpl(i);
 
-		pos = s_tarr_ul_pos_get(tmpl, points_pos[i], (i >= 12));
+		pos = s_tarr_ul_pos_get(tmpl, points_pos[i], !s_point_layout_is_upper(i));
 
 		s_tarr_cp_fg(tarr, tmpl, pos);
 	}
