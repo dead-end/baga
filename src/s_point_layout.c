@@ -136,3 +136,38 @@ int s_point_layout_color_idx(const s_point_layout layout, const int idx) {
 	//
 	return col_idx + 1;
 }
+
+/******************************************************************************
+ * The function returns the area of a point. This is the area of the full point
+ * plus an additional checker. It defines the area which should be updated if
+ * a traveler checker starts or arrives.
+ *
+ * (unit tested)
+ *****************************************************************************/
+
+#define POINT_AREA_ROW (POINTS_ROW + CHECKER_ROW)
+
+s_area s_point_layout_get_area(const s_point point_pos, const bool is_upper) {
+
+	const s_area result = {
+
+	//
+	// The extended area of the point
+	//
+			.dim.row = POINT_AREA_ROW,
+
+			.dim.col = CHECKER_COL,
+
+			//
+			// This uses the result.dim.row which is POINT_AREA_ROW
+			//
+			.pos.row = (is_upper) ? point_pos.row : point_pos.row - POINT_AREA_ROW + 1,
+
+			.pos.col = point_pos.col
+
+	};
+
+	log_debug("pos: %d/%d area - pos: %d/%d dim: %d/%d",point_pos.row, point_pos.col, result.pos.row, result.pos.col,result.dim.row, result.dim.col);
+
+	return result;
+}

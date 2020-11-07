@@ -254,6 +254,39 @@ static void test_s_point_layout_color_idx() {
 }
 
 /******************************************************************************
+ * The function checks the s_tmpl_checker_point_area() function. (This checks
+ * the assumptions not the implementation).
+ *****************************************************************************/
+
+#define AREA_ROW (CHECKER_ROW * (CHECK_DIS_FULL + 1))
+
+static void test_s_point_layout_get_area() {
+	s_area area;
+
+	area = s_point_layout_get_area((s_point ) { 1, 1 }, true);
+
+	ut_check_s_point(&area.dim, &(s_point ) { AREA_ROW, CHECKER_COL }, "dim 1/1 upper");
+	ut_check_s_point(&area.pos, &(s_point ) { 1, 1 }, "pos 1/1 upper");
+
+	//
+	// Example: area-row: 3 pos: 4
+	//
+	// 0
+	// 1 <- pos-row - area-row
+	// ---------------------------
+	// 2 <- pos-row - area-row + 1
+	// 3
+	// 4 <- pos-row
+	// ---------------------------
+	// 5
+	//
+	area = s_point_layout_get_area((s_point ) { 20, 20 }, false);
+
+	ut_check_s_point(&area.dim, &(s_point ) { AREA_ROW, CHECKER_COL }, "dim 20/20 lower");
+	ut_check_s_point(&area.pos, &(s_point ) { 9, 20 }, "pos 20/20 lower");
+}
+
+/******************************************************************************
  * The function is the a wrapper, that triggers the internal unit tests.
  *****************************************************************************/
 
@@ -266,4 +299,6 @@ void ut_s_point_layout_exec() {
 	test_s_point_layout_is_half();
 
 	test_s_point_layout_color_idx();
+
+	test_s_point_layout_get_area();
 }
