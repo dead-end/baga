@@ -42,7 +42,9 @@ typedef struct s_point {
  * Definition of the macros.
  *****************************************************************************/
 
-#define s_point_set(p,r,c) (p)->row = (r);(p)->col = (c)
+#define s_point_set_ptr(p,r,c) (p)->row = (r);(p)->col = (c)
+
+#define s_point_set(p,r,c) (p).row = (r);(p).col = (c)
 
 #define s_point_copy(f,t) (t)->row = (f)->row; (t)->col = (f)->col
 
