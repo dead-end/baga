@@ -133,11 +133,17 @@ extern s_point_layout _point_layout[CHECKER_NUM + 1][2];
 #define s_point_layout_is_upper(i) ((i) < POINTS_HALF)
 
 /******************************************************************************
+ * The macro true if the point with the given index is an upper point.
+ *****************************************************************************/
+
+#define s_point_layout_ext_area(p,u) s_point_layout_get_area((p), POINTS_ROW + CHECKER_ROW, CHECKER_COL, (u))
+
+/******************************************************************************
  * Function definitions that are only used for unit tests.
  *****************************************************************************/
 
 int s_point_layout_color_idx(const s_point_layout layout, const int idx);
 
-s_area s_point_layout_get_area(const s_point point_pos, const bool is_upper);
+s_area s_point_layout_get_area(const s_point point_pos, const int dim_row, const int dim_col, const bool is_upper);
 
 #endif /* INC_S_POINT_LAYOUT_H_ */

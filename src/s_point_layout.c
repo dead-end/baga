@@ -138,36 +138,39 @@ int s_point_layout_color_idx(const s_point_layout layout, const int idx) {
 }
 
 /******************************************************************************
- * The function returns the area of a point. This is the area of the full point
- * plus an additional checker. It defines the area which should be updated if
- * a traveler checker starts or arrives.
+ * The function returns an area for a given position and dimension with respect
+ * to the upper / lower location. In the upper case the position is the upper
+ * left corner of the area. In the lower case it is the lower left position,
+ * which has to be changed to the upper left position.
  *
- * (unit tested)
+ * An example with row = 3 and pos = 5:
+ *
+ * 0
+ * 1
+ * 2 <-pos - row
+ * --------------------------
+ * 3 <-pos - row + 1 = result
+ * 4
+ * 5 <-pos (input param)
+ * --------------------------
+ * 6
  *****************************************************************************/
 
-#define POINT_AREA_ROW (POINTS_ROW + CHECKER_ROW)
-
-s_area s_point_layout_get_area(const s_point point_pos, const bool is_upper) {
+s_area s_point_layout_get_area(const s_point point_pos, const int dim_row, const int dim_col, const bool is_upper) {
 
 	const s_area result = {
 
-	//
-	// The extended area of the point
-	//
-			.dim.row = POINT_AREA_ROW,
+	.dim.row = dim_row,
 
-			.dim.col = CHECKER_COL,
+	.dim.col = dim_col,
 
-			//
-			// This uses the result.dim.row which is POINT_AREA_ROW
-			//
-			.pos.row = (is_upper) ? point_pos.row : point_pos.row - POINT_AREA_ROW + 1,
+	.pos.row = (is_upper) ? point_pos.row : point_pos.row - dim_row + 1,
 
-			.pos.col = point_pos.col
+	.pos.col = point_pos.col
 
 	};
 
-	log_debug("pos: %d/%d area - pos: %d/%d dim: %d/%d",point_pos.row, point_pos.col, result.pos.row, result.pos.col,result.dim.row, result.dim.col);
+	log_debug("area - pos: %d/%d dim: %d/%d", result.pos.row, result.pos.col,result.dim.row, result.dim.col);
 
 	return result;
 }
