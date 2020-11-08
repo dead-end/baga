@@ -99,9 +99,11 @@ void s_tmpl_checker_create() {
 	//
 	// Create color
 	//
-	s_color_def_gradient(_colors[OWNER_BLACK], _COLOR_NUM, "#777777", "#222222");
+	//s_color_def_gradient(_colors[OWNER_BLACK], _COLOR_NUM, "#777777", "#222222");
+	s_color_def_gradient(_colors[OWNER_BLACK], _COLOR_NUM, "#8a8a5c", "#0f0f0a");
 
-	s_color_def_gradient(_colors[OWNER_WHITE], _COLOR_NUM, "#ffffff", "#aaaaaa");
+	//s_color_def_gradient(_colors[OWNER_WHITE], _COLOR_NUM, "#ffffff", "#aaaaaa");
+	s_color_def_gradient(_colors[OWNER_WHITE], _COLOR_NUM, "#ac3939", "#130606");
 
 	//
 	// Create templates
@@ -177,7 +179,7 @@ const s_tarr* s_tmpl_checker_get_tmpl(const e_owner owner, const s_point_layout 
 
 			.chr = EMPTY,
 
-			.fg = _colors[e_owner_other(owner)][COLOR_IDX_FG],
+			.fg = COLOR_WHITE,
 
 			.bg = _colors[owner][color_idx] });
 
@@ -203,7 +205,7 @@ s_point s_tmpl_checker_pos(const int point_idx, s_point point_pos, const int tot
 		log_exit("Not visible: %d", num);
 	}
 
-	const int sign = (point_idx < 12) ? 1 : -1;
+	const int sign = s_point_layout_is_upper(point_idx) ? 1 : -1;
 
 	s_point result;
 	result.col = point_pos.col;
@@ -217,119 +219,6 @@ s_point s_tmpl_checker_pos(const int point_idx, s_point point_pos, const int tot
 	} else {
 		result.row = point_pos.row + sign * (CHECKER_ROW / 2 * layout->num_half + CHECKER_ROW * (num - layout->num_half));
 	}
-
-	return result;
-}
-
-// -----------------------------
-
-/******************************************************************************
- *
- *****************************************************************************/
-
-// todo: ensure it works with half (if half > 0 => last index always the same!!)
-// todo: unit tests
-// todo: compressed
-// todo: move to s_point_layout
-s_point s_tmpl_checker_last_pos(const s_point point_pos, const int point_idx, const int total) {
-
-	//const s_point_layout *layout = &s_point_layout_get(total, E_UNCOMP);
-
-	//
-	// If the number of half displayed checkers is not null, the position of
-	// the last is fixed and the position is the position of the last fully
-	// visible checker with CHECK_DIS_FULL checkers.
-	//
-	const int num_full = min(total, CHECK_DIS_FULL);
-
-	s_point result;
-	result.col = point_pos.col;
-
-	if (point_idx < 12) {
-
-		//
-		// 0  <= Index
-		// 1  11 <= pos
-		// 2  11
-		// 3  22
-		// 4  22
-		// 5  33
-		// 6  33
-		// 7  44 <= result
-		// 8  44
-		//
-		result.row = point_pos.row + CHECKER_ROW * (num_full - 1);
-
-	} else {
-
-		//
-		// 0  <= Index
-		// 1  11 <= result
-		// 2  11
-		// 3  22
-		// 4  22
-		// 5  33
-		// 6  33
-		// 7  44
-		// 8  44 <= pos
-		//
-		result.row = point_pos.row - CHECKER_ROW * num_full + 1;
-	}
-
-	log_debug("result: %d/%d total: %d full: %d", result.row, result.col, total, num_full);
-
-	return result;
-}
-
-/******************************************************************************
- *
- *****************************************************************************/
-
-#define POINT_AREA_ROW (POINTS_ROW + 1)
-
-// todo: unit tests ????
-s_area s_tmpl_checker_point_area2(const s_point point_pos, const bool is_upper) {
-
-	s_area result;
-
-	//
-	// todo: check the max value
-	//
-	result.dim.row = POINT_AREA_ROW;
-	result.dim.col = POINTS_COL;
-
-	//
-	// This uses the result.dim.row
-	//
-	result.pos.row = (is_upper) ? point_pos.row : point_pos.row - POINT_AREA_ROW + 1;
-	result.pos.col = point_pos.col;
-
-	log_debug("pos: %d/%d area - pos: %d/%d dim: %d/%d",point_pos.row, point_pos.col, result.pos.row, result.pos.col,result.dim.row, result.dim.col);
-
-	return result;
-}
-
-s_area s_tmpl_checker_point_area(const s_point point_pos, const bool is_upper) {
-
-	const s_area result = {
-
-	//
-	// todo: check the max value
-	//
-			.dim.row = POINT_AREA_ROW,
-
-			.dim.col = POINTS_COL,
-
-			//
-			// This uses the result.dim.row
-			//
-			.pos.row = (is_upper) ? point_pos.row : point_pos.row - POINT_AREA_ROW + 1,
-
-			.pos.col = point_pos.col
-
-	};
-
-	log_debug("pos: %d/%d area - pos: %d/%d dim: %d/%d",point_pos.row, point_pos.col, result.pos.row, result.pos.col,result.dim.row, result.dim.col);
 
 	return result;
 }
