@@ -44,8 +44,10 @@ extern s_point dirs[4];
  * The definitions of the functions.
  *****************************************************************************/
 
-s_point direction_get(const s_point from, const s_point to);
+s_point direction_to(const s_point from, const s_point to);
 
 #define direction_mov_to(p,d) (p)->row += (d).row ; (p)->col += (d).col
+
+#define direction_get(i) dirs[i]
 
 #endif /* INC_DIRECTION_H_ */
