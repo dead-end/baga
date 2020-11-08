@@ -92,16 +92,16 @@ int main() {
 	s_bg_board bg_board;
 	bg_board_new_game(&bg_board);
 
-	s_board_points_add_checkers(11, OWNER_WHITE, 4);
+	s_board_points_add_checkers(11, OWNER_WHITE, 4, E_UNCOMP);
 
-	s_board_points_add_checkers(7, OWNER_WHITE, 4);
+	s_board_points_add_checkers(7, OWNER_WHITE, 4, E_UNCOMP);
 
-	s_board_points_add_checkers(15, OWNER_WHITE, 4);
+	s_board_points_add_checkers(15, OWNER_WHITE, 6, E_UNCOMP);
 
-	s_board_points_add_checkers(4, OWNER_BLACK, 2);
-	s_board_points_add_checkers(2, OWNER_BLACK, 3);
+	s_board_points_add_checkers(4, OWNER_BLACK, 6, E_UNCOMP);
+	s_board_points_add_checkers(2, OWNER_BLACK, 4, E_UNCOMP);
 
-	s_board_points_add_checkers(0, OWNER_BLACK, 16);
+	s_board_points_add_checkers(0, OWNER_BLACK, 16, E_UNCOMP);
 
 //	s_board_points_add_checkers(0, OWNER_BLACK, 1);
 //	s_board_points_add_checkers(1, OWNER_BLACK, 2);
