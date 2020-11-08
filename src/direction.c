@@ -63,7 +63,7 @@ s_point dirs[4] = {
  * if the source and the target are the same.
  *****************************************************************************/
 
-s_point direction_get(const s_point from, const s_point to) {
+s_point direction_to(const s_point from, const s_point to) {
 
 	//
 	// Direction: UP
