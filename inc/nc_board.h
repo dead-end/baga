@@ -26,6 +26,7 @@
 #define INC_NC_BOARD_H_
 
 #include "bg_defs.h"
+#include "s_point_layout.h"
 
 /******************************************************************************
  * Definitions of various sizes.
@@ -47,12 +48,6 @@
 #define BOARD_COL (5 * BORDER_COL + 2 * BOARD_HALF_COL  + 2 * CHECKER_COL)
 
 /******************************************************************************
- * Definitions macros.
- *****************************************************************************/
-
-#define nc_board_is_upper(i) ((i) < 12)
-
-/******************************************************************************
  * Function definitions that are only used for unit tests.
  *****************************************************************************/
 
@@ -62,6 +57,6 @@ void nc_board_free();
 
 void nc_board_print();
 
-void s_board_points_add_checkers(const int checker_idx, const e_owner owner, const int num);
+void s_board_points_add_checkers(const int checker_idx, const e_owner owner, const int num, const e_compressed compressed);
 
 #endif /* INC_NC_BOARD_H_ */
