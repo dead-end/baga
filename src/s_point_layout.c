@@ -174,3 +174,80 @@ s_area s_point_layout_get_area(const s_point point_pos, const int dim_row, const
 
 	return result;
 }
+
+/******************************************************************************
+ * The function computes the position of a checker. It is called with the
+ * position of a point and computes the position of the n-th full checker on
+ * that point. The point can be compressed, which means that one checker is
+ * reduced.
+ *
+ * Important:
+ * The compressed flag is not trivial. If we have num full: 6, compressed this
+ * means 5 full plus one.
+ *****************************************************************************/
+
+s_point s_point_layout_pos_full(const s_point point_pos, const bool is_upper, const e_compressed compressed, const int num_full) {
+
+#ifdef DEBUG
+
+	//
+	// The maximum number of full checkers is the maximum visible checkers + 1
+	//
+	if (num_full > CHECK_DIS_FULL + 1) {
+		log_exit("Too many full checkers: %d", num_full);
+	}
+
+	//
+	// Ensure that num_full is valid.
+	//
+	if (compressed && num_full < CHECK_DIS_FULL) {
+		log_exit("Compressed: %d", num_full);
+	}
+#endif
+
+	s_point result;
+	result.col = point_pos.col;
+
+	if (is_upper) {
+
+		//
+		// 0  <= Index
+		// 1  11 <= pos
+		// 2  11
+		// 3  22
+		// 4  22
+		// 5  33
+		// 6  33
+		// 7  44 <= result
+		// 8  44
+		//
+		result.row = point_pos.row + CHECKER_ROW * (num_full - 1);
+
+		if (compressed == E_COMP) {
+			result.row--;
+		}
+
+	} else {
+
+		//
+		// 0  <= Index
+		// 1  11 <= result
+		// 2  11
+		// 3  22
+		// 4  22
+		// 5  33
+		// 6  33
+		// 7  44
+		// 8  44 <= pos
+		//
+		result.row = point_pos.row - CHECKER_ROW * (num_full - 1) - CHECKER_ROW + 1;
+
+		if (compressed == E_COMP) {
+			result.row++;
+		}
+	}
+
+	log_debug("pos: %d/%d result: %d/%d full: %d", point_pos.row, point_pos.col, result.row, result.col, num_full);
+
+	return result;
+}
