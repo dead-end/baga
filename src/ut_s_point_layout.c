@@ -287,6 +287,89 @@ static void test_s_point_layout_get_area() {
 	ut_check_s_point(&area.pos, &(s_point ) { 11, 20 }, "pos 11/20 lower");
 }
 
+//s_point s_point_layout_pos_full(const s_point point_pos, const bool is_upper, const e_compressed compressed, const int num_full)
+
+/******************************************************************************
+ * The function checks the s_point_layout_pos_full() function.
+ *****************************************************************************/
+
+#define IS_UPPER true
+
+#define IS_LOWER false
+
+static void test_s_point_layout_pos_full() {
+	s_point result;
+
+	const s_point pos = { 20, 10 };
+
+	//
+	// 20 1 <= pos
+	// 21 1
+	// 22 2
+	// 23 2
+	// 24 3
+	// 25 3
+	// 26 4
+	// 27 4
+	// 28 5
+	// 29 5
+	// 30 6
+	// 31 6
+	//
+	// UPPER UNCOMPRESSED
+	//
+	result = s_point_layout_pos_full(pos, IS_UPPER, E_UNCOMP, 2);
+	ut_check_s_point(&result, &(s_point ) { 22, 10 }, "up-un 2");
+
+	result = s_point_layout_pos_full(pos, IS_UPPER, E_UNCOMP, 5);
+	ut_check_s_point(&result, &(s_point ) { 28, 10 }, "up-un 5");
+
+	result = s_point_layout_pos_full(pos, IS_UPPER, E_UNCOMP, 6);
+	ut_check_s_point(&result, &(s_point ) { 30, 10 }, "up-un 6");
+
+	//
+	// UPPER COMPRESSED
+	//
+	result = s_point_layout_pos_full(pos, IS_UPPER, E_COMP, 5);
+	ut_check_s_point(&result, &(s_point ) { 27, 10 }, "up-comp 5");
+
+	result = s_point_layout_pos_full(pos, IS_UPPER, E_COMP, 6);
+	ut_check_s_point(&result, &(s_point ) { 29, 10 }, "up-comp 6");
+
+	// 09 6
+	// 10 6
+	// 11 5
+	// 12 5
+	// 13 4
+	// 14 4
+	// 15 3
+	// 16 3
+	// 17 2
+	// 18 2
+	// 19 1
+	// 20 1 <= pos
+	//
+	// LOWER UNCOMPRESSED
+	//
+	result = s_point_layout_pos_full(pos, IS_LOWER, E_UNCOMP, 2);
+	ut_check_s_point(&result, &(s_point ) { 17, 10 }, "low-un 2");
+
+	result = s_point_layout_pos_full(pos, IS_LOWER, E_UNCOMP, 5);
+	ut_check_s_point(&result, &(s_point ) { 11, 10 }, "low-un 5");
+
+	result = s_point_layout_pos_full(pos, IS_LOWER, E_UNCOMP, 6);
+	ut_check_s_point(&result, &(s_point ) { 9, 10 }, "low-un 6");
+
+	//
+	// LOWER COMPRESSED
+	//
+	result = s_point_layout_pos_full(pos, IS_LOWER, E_COMP, 5);
+	ut_check_s_point(&result, &(s_point ) { 12, 10 }, "low-comp 5");
+
+	result = s_point_layout_pos_full(pos, IS_LOWER, E_COMP, 6);
+	ut_check_s_point(&result, &(s_point ) { 10, 10 }, "low-comp 6");
+}
+
 /******************************************************************************
  * The function is the a wrapper, that triggers the internal unit tests.
  *****************************************************************************/
@@ -302,4 +385,6 @@ void ut_s_point_layout_exec() {
 	test_s_point_layout_color_idx();
 
 	test_s_point_layout_get_area();
+
+	test_s_point_layout_pos_full();
 }
