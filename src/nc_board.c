@@ -37,8 +37,8 @@
 
 // todo: comment, file, ...
 
-#define MS_SLEEP 80
-//#define MS_SLEEP 550
+//#define MS_SLEEP 80
+#define MS_SLEEP 500
 
 #define ms_sleep() if (napms(MS_SLEEP) != OK) { log_exit_str("sleep failed!"); }
 
@@ -195,14 +195,14 @@ void nc_board_init() {
  *
  *****************************************************************************/
 
-void s_board_points_add_checkers(const int idx, const e_owner owner, const int num) {
+void s_board_points_add_checkers(const int idx, const e_owner owner, const int num, const e_compressed compressed) {
 
 	// todo check second parameter
-	const s_point_layout layout = s_point_layout_get(num, E_UNCOMP);
+	const s_point_layout layout = s_point_layout_get(num, compressed);
 
 	s_point pos = { .row = _points_pos[idx].row + CHECKER_OFFSET_ROW, .col = _points_pos[idx].col + CHECKER_OFFSET_COL };
 
-	const bool reverse = (idx >= 12);
+	const bool reverse = !s_point_layout_is_upper(idx);
 
 	const s_tarr *tmpl;
 
@@ -272,7 +272,7 @@ static void traveler_move_line(const s_tarr *tmpl, s_point *tmpl_pos, const s_po
 	}
 #endif
 
-	const s_point dir = direction_get(*tmpl_pos, target);
+	const s_point dir = direction_to(*tmpl_pos, target);
 
 	while (true) {
 
@@ -309,7 +309,19 @@ static void traveler_move_line(const s_tarr *tmpl, s_point *tmpl_pos, const s_po
  *
  *****************************************************************************/
 
+static void traveler_move_to(const s_tarr *tmpl, s_point *tmpl_pos, const e_dir dir) {
+
+	direction_mov_to(tmpl_pos, direction_get(dir));
+
+	s_tarr_cp(_nc_board_fg, tmpl, *tmpl_pos);
+}
+
+/******************************************************************************
+ *
+ *****************************************************************************/
+
 void travler_move(const int idx_from, const int num_from, const int idx_to, const int num_to, const e_owner owner) {
+	s_area area;
 
 	const s_point pos_from = { .row = _points_pos[idx_from].row + CHECKER_OFFSET_ROW, .col = _points_pos[idx_from].col + CHECKER_OFFSET_COL };
 
@@ -322,26 +334,53 @@ void travler_move(const int idx_from, const int num_from, const int idx_to, cons
 
 	s_point target;
 
+	const bool from_is_upper = s_point_layout_is_upper(idx_from);
+	const bool to_is_upper = s_point_layout_is_upper(idx_to);
+
 	//
 	// Phase 1
 	//
 	if (num_from <= CHECK_DIS_FULL) {
 
-		s_board_points_add_checkers(idx_from, owner, num_from - 1);
+		s_board_points_add_checkers(idx_from, owner, num_from - 1, E_UNCOMP);
 
-		tmpl_pos = s_tmpl_checker_last_pos(pos_from, idx_from, num_from);
+		tmpl_pos = s_point_layout_pos_full(pos_from, from_is_upper, E_UNCOMP, min(num_from, CHECK_DIS_FULL));
 
 		s_tarr_cp(_nc_board_fg, tmpl, tmpl_pos);
 
-		const s_area area = s_tmpl_checker_point_area(pos_from, nc_board_is_upper(idx_from));
+		area = s_point_layout_ext_area(pos_from, from_is_upper);
+		s_tarr_print_area(stdscr, _nc_board_fg, _nc_board_bg, area.pos, area.dim);
+
+		nc_board_refresh(stdscr);
+		ms_sleep();
+
+		traveler_del(tmpl, tmpl_pos);
+
+	} else {
+		s_board_points_add_checkers(idx_from, owner, num_from - 1, E_COMP);
+
+		tmpl_pos = s_point_layout_pos_full(pos_from, from_is_upper, E_COMP, CHECK_DIS_FULL + 1);
+
+		s_tarr_cp(_nc_board_fg, tmpl, tmpl_pos);
+
+		area = s_point_layout_ext_area(pos_from, from_is_upper);
+		s_tarr_print_area(stdscr, _nc_board_fg, _nc_board_bg, area.pos, area.dim);
+
+		nc_board_refresh(stdscr);
+		ms_sleep();
+
+		// ------------------
+		traveler_del(tmpl, tmpl_pos);
+
+		traveler_move_to(tmpl, &tmpl_pos, from_is_upper ? E_DIR_DOWN : E_DIR_UP);
+
+		s_board_points_add_checkers(idx_from, owner, num_from - 1, E_UNCOMP);
+
 		s_tarr_print_area(stdscr, _nc_board_fg, _nc_board_bg, area.pos, area.dim);
 
 		nc_board_refresh(stdscr);
 
 		traveler_del(tmpl, tmpl_pos);
-
-	} else {
-		log_exit_str("Unimplemented!");
 	}
 
 	ms_sleep();
@@ -349,39 +388,65 @@ void travler_move(const int idx_from, const int num_from, const int idx_to, cons
 	//
 	// Move to traveler line
 	//
-	target.row = TRAVEL_ROW;
-	target.col = tmpl_pos.col;
+	s_point_set(target, TRAVEL_ROW, tmpl_pos.col);
 	traveler_move_line(tmpl, &tmpl_pos, target);
 
 	//
 	// Move along the traveler line
 	//
-	target.row = TRAVEL_ROW;
-	target.col = pos_to.col;
+
+	s_point_set(target, TRAVEL_ROW, pos_to.col);
 	traveler_move_line(tmpl, &tmpl_pos, target);
 
 	//
 	// Move from traveler line
 	//
-	const s_point last_pos = s_tmpl_checker_last_pos(pos_to, idx_to, num_to + 1);
+	const s_point last_pos = s_point_layout_pos_full(pos_to, to_is_upper, E_UNCOMP, min(num_to + 1, CHECK_DIS_FULL + 1));
 
-	target.row = last_pos.row;
-	target.col = last_pos.col;
+	s_point_set(target, last_pos.row, last_pos.col);
 	traveler_move_line(tmpl, &tmpl_pos, target);
 
 	//
 	// Phase
 	//
 	if (num_to < CHECK_DIS_FULL) {
-		s_board_points_add_checkers(idx_to, owner, num_to + 1);
+		s_board_points_add_checkers(idx_to, owner, num_to + 1, E_UNCOMP);
 
-		const s_area area = s_tmpl_checker_point_area(pos_to, nc_board_is_upper(idx_to));
+		area = s_point_layout_ext_area(pos_to, to_is_upper);
 		s_tarr_print_area(stdscr, _nc_board_fg, _nc_board_bg, area.pos, area.dim);
 
 		nc_board_refresh(stdscr);
+		ms_sleep();
 
 	} else {
-		log_exit_str("Unimplemented!");
+
+		traveler_del(tmpl, tmpl_pos);
+
+		traveler_move_to(tmpl, &tmpl_pos, to_is_upper ? E_DIR_UP : E_DIR_DOWN);
+
+		s_board_points_add_checkers(idx_to, owner, num_to, E_COMP);
+
+		area = s_point_layout_ext_area(pos_to, to_is_upper);
+
+		s_tarr_print_area(stdscr, _nc_board_fg, _nc_board_bg, area.pos, area.dim);
+
+		//
+		// Do pause
+		//
+		nc_board_refresh(stdscr);
+		ms_sleep();
+
+		//
+		// Delete the traveler and print the final result.
+		//
+		traveler_del(tmpl, tmpl_pos);
+
+		s_board_points_add_checkers(idx_to, owner, num_to + 1, E_UNCOMP);
+
+		s_tarr_print_area(stdscr, _nc_board_fg, _nc_board_bg, area.pos, area.dim);
+
+		nc_board_refresh(stdscr);
+		ms_sleep();
 	}
 }
 
@@ -392,8 +457,12 @@ void travler_move(const int idx_from, const int num_from, const int idx_to, cons
 void nc_board_test() {
 	log_debug_str("start");
 
-	travler_move(4, 2, 2, 3, OWNER_BLACK);
+	travler_move(4, 6, 2, 4, OWNER_BLACK);
 
-	travler_move(15, 4, 7, 4, OWNER_WHITE);
+	travler_move(2, 5, 4, 5, OWNER_BLACK);
+
+	travler_move(15, 6, 7, 4, OWNER_WHITE);
+
+	travler_move(7, 5, 15, 5, OWNER_WHITE);
 
 }
