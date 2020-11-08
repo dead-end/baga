@@ -146,4 +146,6 @@ int s_point_layout_color_idx(const s_point_layout layout, const int idx);
 
 s_area s_point_layout_get_area(const s_point point_pos, const int dim_row, const int dim_col, const bool is_upper);
 
+s_point s_point_layout_pos_full(const s_point point_pos, const bool is_upper, const e_compressed compressed, const int num_full);
+
 #endif /* INC_S_POINT_LAYOUT_H_ */
