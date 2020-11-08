@@ -37,25 +37,25 @@ void test_direction_get() {
 	//
 	// UP
 	//
-	result = direction_get((s_point ) { 8, 10 }, (s_point ) { 3, 10 });
+	result = direction_to((s_point ) { 8, 10 }, (s_point ) { 3, 10 });
 	ut_check_s_point(&result, &dirs[E_DIR_UP], "up");
 
 	//
 	// DOWN
 	//
-	result = direction_get((s_point ) { 4, 3 }, (s_point ) { 5, 3 });
+	result = direction_to((s_point ) { 4, 3 }, (s_point ) { 5, 3 });
 	ut_check_s_point(&result, &dirs[E_DIR_DOWN], "down");
 
 	//
 	// LEFT
 	//
-	result = direction_get((s_point ) { 0, 3 }, (s_point ) { 0, 0 });
+	result = direction_to((s_point ) { 0, 3 }, (s_point ) { 0, 0 });
 	ut_check_s_point(&result, &dirs[E_DIR_LEFT], "left");
 
 	//
 	// RIGHT
 	//
-	result = direction_get((s_point ) { 9, 1 }, (s_point ) { 9, 11 });
+	result = direction_to((s_point ) { 9, 1 }, (s_point ) { 9, 11 });
 	ut_check_s_point(&result, &dirs[E_DIR_RIGHT], "right");
 }
 
