@@ -89,7 +89,6 @@ static void s_tmpl_checker_set_label(s_tarr *tmpl, const int total, const bool r
 
 }
 
-// ----------------------- INTERFACE ------------------------------------------
 /******************************************************************************
  * The function initializes the template structures and the color array.
  *****************************************************************************/
@@ -99,10 +98,8 @@ void s_tmpl_checker_create() {
 	//
 	// Create color
 	//
-	//s_color_def_gradient(_colors[OWNER_BLACK], _COLOR_NUM, "#777777", "#222222");
 	s_color_def_gradient(_colors[OWNER_BLACK], _COLOR_NUM, "#8a8a5c", "#0f0f0a");
 
-	//s_color_def_gradient(_colors[OWNER_WHITE], _COLOR_NUM, "#ffffff", "#aaaaaa");
 	s_color_def_gradient(_colors[OWNER_WHITE], _COLOR_NUM, "#ac3939", "#130606");
 
 	//
@@ -191,34 +188,4 @@ const s_tarr* s_tmpl_checker_get_tmpl(const e_owner owner, const s_point_layout 
 	}
 
 	return tmpl;
-}
-
-/******************************************************************************
- *
- *****************************************************************************/
-// todo:unused
-s_point s_tmpl_checker_pos(const int point_idx, s_point point_pos, const int total, const int num) {
-
-	const s_point_layout *layout = &s_point_layout_get(total, E_UNCOMP);
-
-	if (s_point_layout_not_visible(*layout, num)) {
-		log_exit("Not visible: %d", num);
-	}
-
-	const int sign = s_point_layout_is_upper(point_idx) ? 1 : -1;
-
-	s_point result;
-	result.col = point_pos.col;
-
-	if (layout->num_half == 0) {
-		result.row = point_pos.row + sign * (CHECKER_ROW * num);
-
-	} else if (layout->num_half >= num) {
-		result.row = point_pos.row + sign * (CHECKER_ROW / 2 * num);
-
-	} else {
-		result.row = point_pos.row + sign * (CHECKER_ROW / 2 * layout->num_half + CHECKER_ROW * (num - layout->num_half));
-	}
-
-	return result;
 }

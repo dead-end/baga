@@ -28,11 +28,7 @@
 #include <stdbool.h>
 
 #include "bg_defs.h"
-
 #include "s_tarr.h"
-
-#include "s_area.h"
-
 #include "s_point_layout.h"
 
 /******************************************************************************
