@@ -61,6 +61,8 @@ s_point dirs[4] = {
  * with the direction. It is assumed that the movement can be only horizontal
  * or vertical. This means the rows or columns have to be equal. It is an error
  * if the source and the target are the same.
+ *
+ * (unit tested)
  *****************************************************************************/
 
 s_point direction_to(const s_point from, const s_point to) {
