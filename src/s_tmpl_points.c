@@ -135,7 +135,10 @@ static void s_tmpl_point_create() {
 	//
 	// Black points
 	//
-	s_color_def_gradient(colors, POINTS_ROW, "#ff8000", "#cc6600");
+	// TODO: define final colors
+	//s_color_def_gradient(colors, POINTS_ROW, "#ff8000", "#cc6600");
+
+	s_color_def_gradient(colors, POINTS_ROW, "#ffffff", "#cccccc");
 
 	_tmpls[OWNER_BLACK][ORIENT_TOP] = s_tarr_new(POINTS_ROW, POINTS_COL);
 
@@ -148,7 +151,10 @@ static void s_tmpl_point_create() {
 	//
 	// White points
 	//
-	s_color_def_gradient(colors, POINTS_ROW, "#804000", "#4d2800");
+	// TODO: define final colors
+	//s_color_def_gradient(colors, POINTS_ROW, "#804000", "#4d2800");
+
+	s_color_def_gradient(colors, POINTS_ROW, "#555555", "#222222");
 
 	_tmpls[OWNER_WHITE][ORIENT_TOP] = s_tarr_new(POINTS_ROW, POINTS_COL);
 
