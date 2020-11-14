@@ -23,6 +23,7 @@
  */
 
 #include "bg_board.h"
+#include "nc_board.h"
 
 #include "lib_logging.h"
 
@@ -100,4 +101,19 @@ void bg_board_new_game(s_bg_board *bg_board) {
 
 	bg_board->bg_point[idx_black(11)].num = 5;
 	bg_board->bg_point[idx_black(11)].owner = OWNER_BLACK;
+}
+
+/******************************************************************************
+ * The function prints the checkers to the board.
+ *****************************************************************************/
+
+void bg_board_print(s_bg_board *bg_board) {
+
+	for (int i = 0; i < POINTS_NUM; i++) {
+
+		if (bg_board->bg_point[i].num != 0) {
+
+			s_board_points_add_checkers(i, bg_board->bg_point[i].owner, bg_board->bg_point[i].num, E_UNCOMP);
+		}
+	}
 }
