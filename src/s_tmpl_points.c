@@ -195,7 +195,7 @@ static s_tarr* s_tmpl_point_get_tmpl(const int point_idx) {
  * The functions computes the positions of the points.
  *****************************************************************************/
 
-void s_tmpl_points_set_pos(s_point *point_pos, const s_area *area_board_outer, const s_area *area_board_inner) {
+void s_tmpl_points_set_pos(s_pos *point_pos, const s_area *area_board_outer, const s_area *area_board_inner) {
 
 	const int quarter = POINTS_NUM / 4;
 
@@ -209,27 +209,30 @@ void s_tmpl_points_set_pos(s_point *point_pos, const s_area *area_board_outer, c
 		//
 		// Upper right triangles
 		//
-		point_pos[0 * quarter + i].row = area_board_inner->pos.row;
-		point_pos[0 * quarter + i].col = area_board_inner->pos.col + reverse_idx(quarter, i) * POINTS_COL;
+		point_pos[0 * quarter + i].pos.row = area_board_inner->pos.row;
+		point_pos[0 * quarter + i].pos.col = area_board_inner->pos.col + reverse_idx(quarter, i) * POINTS_COL;
+		point_pos[0 * quarter + i].is_upper = true;
 
 		//
 		// Upper left triangles
 		//
-		point_pos[1 * quarter + i].row = area_board_outer->pos.row;
-		point_pos[1 * quarter + i].col = area_board_outer->pos.col + reverse_idx(quarter, i) * POINTS_COL;
+		point_pos[1 * quarter + i].pos.row = area_board_outer->pos.row;
+		point_pos[1 * quarter + i].pos.col = area_board_outer->pos.col + reverse_idx(quarter, i) * POINTS_COL;
+		point_pos[1 * quarter + i].is_upper = true;
 
 		//
 		// Lower left triangles
 		//
-		point_pos[2 * quarter + i].row = lower_outer_row;
-		point_pos[2 * quarter + i].col = area_board_outer->pos.col + i * POINTS_COL;
+		point_pos[2 * quarter + i].pos.row = lower_outer_row;
+		point_pos[2 * quarter + i].pos.col = area_board_outer->pos.col + i * POINTS_COL;
+		point_pos[2 * quarter + i].is_upper = false;
 
 		//
 		// Lower right triangles
 		//
-		point_pos[3 * quarter + i].row = lower_inner_row;
-		point_pos[3 * quarter + i].col = area_board_inner->pos.col + i * POINTS_COL;
-
+		point_pos[3 * quarter + i].pos.row = lower_inner_row;
+		point_pos[3 * quarter + i].pos.col = area_board_inner->pos.col + i * POINTS_COL;
+		point_pos[3 * quarter + i].is_upper = false;
 	}
 }
 
@@ -239,7 +242,7 @@ void s_tmpl_points_set_pos(s_point *point_pos, const s_area *area_board_outer, c
  * points have different colors and the last 12 points are upside down.
  *****************************************************************************/
 
-void s_tmpl_point_add_2_tarr(s_tarr *tarr, const s_point *points_pos) {
+void s_tmpl_point_add_2_tarr(s_tarr *tarr, const s_pos *points_pos) {
 
 	//
 	// Allocate and initialize the point templates.
@@ -256,7 +259,7 @@ void s_tmpl_point_add_2_tarr(s_tarr *tarr, const s_point *points_pos) {
 
 		tmpl = s_tmpl_point_get_tmpl(i);
 
-		pos = s_tarr_ul_pos_get(tmpl, points_pos[i], !s_point_layout_is_upper(i));
+		pos = s_tarr_ul_pos_get(tmpl, points_pos[i].pos, !(points_pos[i].is_upper));
 
 		s_tarr_cp_fg(tarr, tmpl, pos);
 	}

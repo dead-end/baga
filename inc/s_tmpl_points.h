@@ -29,13 +29,14 @@
 
 #include "s_area.h"
 #include "s_tarr.h"
+#include "s_pos.h"
 
 /******************************************************************************
  * Declaration of the functions.
  *****************************************************************************/
 
-void s_tmpl_points_set_pos(s_point *point_pos, const s_area *area_board_outer, const s_area *area_board_inner);
+void s_tmpl_points_set_pos(s_pos *point_pos, const s_area *area_board_outer, const s_area *area_board_inner);
 
-void s_tmpl_point_add_2_tarr(s_tarr *tarr, const s_point *points_pos);
+void s_tmpl_point_add_2_tarr(s_tarr *tarr, const s_pos *points_pos);
 
 #endif /* INC_S_TMPL_POINTS_H_ */
