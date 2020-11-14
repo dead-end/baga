@@ -275,19 +275,17 @@ static void test_s_point_layout_get_area() {
 	//
 	// The upper case is trivial
 	//
-	area = s_point_layout_get_area((s_point ) { 20, 20 }, 10, 10, true);
+	area = s_point_layout_get_area(&(s_pos ) { .pos.row = 20, .pos.col = 20, .is_upper = true }, 10, 10);
 	ut_check_s_point(&area.dim, &(s_point ) { 10, 10 }, "dim 10/10 upper");
 	ut_check_s_point(&area.pos, &(s_point ) { 20, 20 }, "pos 20/20 upper");
 
 	//
 	// The lower case is changes the row
 	//
-	area = s_point_layout_get_area((s_point ) { 20, 20 }, 10, 10, false);
+	area = s_point_layout_get_area(&(s_pos ) { .pos.row = 20, .pos.col = 20, .is_upper = false }, 10, 10);
 	ut_check_s_point(&area.dim, &(s_point ) { 10, 10 }, "dim 10/10 lower");
 	ut_check_s_point(&area.pos, &(s_point ) { 11, 20 }, "pos 11/20 lower");
 }
-
-//s_point s_point_layout_pos_full(const s_point point_pos, const bool is_upper, const e_compressed compressed, const int num_full)
 
 /******************************************************************************
  * The function checks the s_point_layout_pos_full() function.
@@ -300,7 +298,7 @@ static void test_s_point_layout_get_area() {
 static void test_s_point_layout_pos_full() {
 	s_point result;
 
-	const s_point pos = { 20, 10 };
+	s_pos pos = { .pos.row = 20, .pos.col = 10, .is_upper = true };
 
 	//
 	// 20 1 <= pos
@@ -318,22 +316,22 @@ static void test_s_point_layout_pos_full() {
 	//
 	// UPPER UNCOMPRESSED
 	//
-	result = s_point_layout_pos_full(pos, IS_UPPER, E_UNCOMP, 2);
+	result = s_point_layout_pos_full(&pos, E_UNCOMP, 2);
 	ut_check_s_point(&result, &(s_point ) { 22, 10 }, "up-un 2");
 
-	result = s_point_layout_pos_full(pos, IS_UPPER, E_UNCOMP, 5);
+	result = s_point_layout_pos_full(&pos, E_UNCOMP, 5);
 	ut_check_s_point(&result, &(s_point ) { 28, 10 }, "up-un 5");
 
-	result = s_point_layout_pos_full(pos, IS_UPPER, E_UNCOMP, 6);
+	result = s_point_layout_pos_full(&pos, E_UNCOMP, 6);
 	ut_check_s_point(&result, &(s_point ) { 30, 10 }, "up-un 6");
 
 	//
 	// UPPER COMPRESSED
 	//
-	result = s_point_layout_pos_full(pos, IS_UPPER, E_COMP, 5);
+	result = s_point_layout_pos_full(&pos, E_COMP, 5);
 	ut_check_s_point(&result, &(s_point ) { 27, 10 }, "up-comp 5");
 
-	result = s_point_layout_pos_full(pos, IS_UPPER, E_COMP, 6);
+	result = s_point_layout_pos_full(&pos, E_COMP, 6);
 	ut_check_s_point(&result, &(s_point ) { 29, 10 }, "up-comp 6");
 
 	// 09 6
@@ -351,22 +349,24 @@ static void test_s_point_layout_pos_full() {
 	//
 	// LOWER UNCOMPRESSED
 	//
-	result = s_point_layout_pos_full(pos, IS_LOWER, E_UNCOMP, 2);
+	pos.is_upper = false;
+
+	result = s_point_layout_pos_full(&pos, E_UNCOMP, 2);
 	ut_check_s_point(&result, &(s_point ) { 17, 10 }, "low-un 2");
 
-	result = s_point_layout_pos_full(pos, IS_LOWER, E_UNCOMP, 5);
+	result = s_point_layout_pos_full(&pos, E_UNCOMP, 5);
 	ut_check_s_point(&result, &(s_point ) { 11, 10 }, "low-un 5");
 
-	result = s_point_layout_pos_full(pos, IS_LOWER, E_UNCOMP, 6);
+	result = s_point_layout_pos_full(&pos, E_UNCOMP, 6);
 	ut_check_s_point(&result, &(s_point ) { 9, 10 }, "low-un 6");
 
 	//
 	// LOWER COMPRESSED
 	//
-	result = s_point_layout_pos_full(pos, IS_LOWER, E_COMP, 5);
+	result = s_point_layout_pos_full(&pos, E_COMP, 5);
 	ut_check_s_point(&result, &(s_point ) { 12, 10 }, "low-comp 5");
 
-	result = s_point_layout_pos_full(pos, IS_LOWER, E_COMP, 6);
+	result = s_point_layout_pos_full(&pos, E_COMP, 6);
 	ut_check_s_point(&result, &(s_point ) { 10, 10 }, "low-comp 6");
 }
 

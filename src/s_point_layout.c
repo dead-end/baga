@@ -156,7 +156,7 @@ int s_point_layout_color_idx(const s_point_layout layout, const int idx) {
  * 6
  *****************************************************************************/
 
-s_area s_point_layout_get_area(const s_point point_pos, const int dim_row, const int dim_col, const bool is_upper) {
+s_area s_point_layout_get_area(const s_pos *pos, const int dim_row, const int dim_col) {
 
 	const s_area result = {
 
@@ -164,9 +164,9 @@ s_area s_point_layout_get_area(const s_point point_pos, const int dim_row, const
 
 	.dim.col = dim_col,
 
-	.pos.row = (is_upper) ? point_pos.row : point_pos.row - dim_row + 1,
+	.pos.row = (pos->is_upper) ? pos->pos.row : pos->pos.row - dim_row + 1,
 
-	.pos.col = point_pos.col
+	.pos.col = pos->pos.col
 
 	};
 
@@ -186,7 +186,7 @@ s_area s_point_layout_get_area(const s_point point_pos, const int dim_row, const
  * means 5 full plus one.
  *****************************************************************************/
 
-s_point s_point_layout_pos_full(const s_point point_pos, const bool is_upper, const e_compressed compressed, const int num_full) {
+s_point s_point_layout_pos_full(const s_pos *pos, const e_compressed compressed, const int num_full) {
 
 #ifdef DEBUG
 
@@ -206,9 +206,9 @@ s_point s_point_layout_pos_full(const s_point point_pos, const bool is_upper, co
 #endif
 
 	s_point result;
-	result.col = point_pos.col;
+	result.col = pos->pos.col;
 
-	if (is_upper) {
+	if (pos->is_upper) {
 
 		//
 		// 0  <= Index
@@ -221,7 +221,7 @@ s_point s_point_layout_pos_full(const s_point point_pos, const bool is_upper, co
 		// 7  44 <= result
 		// 8  44
 		//
-		result.row = point_pos.row + CHECKER_ROW * (num_full - 1);
+		result.row = pos->pos.row + CHECKER_ROW * (num_full - 1);
 
 		if (compressed == E_COMP) {
 			result.row--;
@@ -240,14 +240,14 @@ s_point s_point_layout_pos_full(const s_point point_pos, const bool is_upper, co
 		// 7  44
 		// 8  44 <= pos
 		//
-		result.row = point_pos.row - CHECKER_ROW * (num_full - 1) - CHECKER_ROW + 1;
+		result.row = pos->pos.row - CHECKER_ROW * (num_full - 1) - CHECKER_ROW + 1;
 
 		if (compressed == E_COMP) {
 			result.row++;
 		}
 	}
 
-	log_debug("pos: %d/%d result: %d/%d full: %d", point_pos.row, point_pos.col, result.row, result.col, num_full);
+	log_debug("pos: %d/%d result: %d/%d full: %d", pos->pos.row, pos->pos.col, result.row, result.col, num_full);
 
 	return result;
 }

@@ -29,6 +29,7 @@
 
 #include "bg_defs.h"
 #include "s_area.h"
+#include "s_pos.h"
 
 /******************************************************************************
  * The definition of the checkers on a point.
@@ -136,7 +137,7 @@ extern s_point_layout _point_layout[CHECKER_NUM + 1][2];
  * The macro true if the point with the given index is an upper point.
  *****************************************************************************/
 
-#define s_point_layout_ext_area(p,u) s_point_layout_get_area((p), POINTS_ROW + CHECKER_ROW, CHECKER_COL, (u))
+#define s_point_layout_ext_area(p) s_point_layout_get_area((p), POINTS_ROW + CHECKER_ROW, CHECKER_COL)
 
 /******************************************************************************
  * Function definitions that are only used for unit tests.
@@ -144,8 +145,8 @@ extern s_point_layout _point_layout[CHECKER_NUM + 1][2];
 
 int s_point_layout_color_idx(const s_point_layout layout, const int idx);
 
-s_area s_point_layout_get_area(const s_point point_pos, const int dim_row, const int dim_col, const bool is_upper);
+s_area s_point_layout_get_area(const s_pos *pos, const int dim_row, const int dim_col);
 
-s_point s_point_layout_pos_full(const s_point point_pos, const bool is_upper, const e_compressed compressed, const int num_full);
+s_point s_point_layout_pos_full(const s_pos *pos, const e_compressed compressed, const int num_full);
 
 #endif /* INC_S_POINT_LAYOUT_H_ */
