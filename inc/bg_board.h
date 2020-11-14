@@ -75,6 +75,9 @@ void bg_board_init(s_bg_board *bg_board);
 
 void bg_board_new_game(s_bg_board *bg_board);
 
+// TODO: wrong
 void nc_board_test();
+
+void bg_board_print(s_bg_board *bg_board);
 
 #endif /* INC_BG_BOARD_H_ */
