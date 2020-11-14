@@ -90,45 +90,10 @@ int main() {
 	// Initialize the game board function
 	//
 	s_bg_board bg_board;
+
 	bg_board_new_game(&bg_board);
 
-	s_board_points_add_checkers(11, OWNER_WHITE, 4, E_UNCOMP);
-
-	s_board_points_add_checkers(7, OWNER_WHITE, 4, E_UNCOMP);
-
-	s_board_points_add_checkers(15, OWNER_WHITE, 6, E_UNCOMP);
-
-	s_board_points_add_checkers(4, OWNER_BLACK, 6, E_UNCOMP);
-	s_board_points_add_checkers(2, OWNER_BLACK, 4, E_UNCOMP);
-
-	s_board_points_add_checkers(0, OWNER_BLACK, 16, E_UNCOMP);
-
-//	s_board_points_add_checkers(0, OWNER_BLACK, 1);
-//	s_board_points_add_checkers(1, OWNER_BLACK, 2);
-//	s_board_points_add_checkers(2, OWNER_BLACK, 3);
-//	s_board_points_add_checkers(3, OWNER_BLACK, 4);
-//	s_board_points_add_checkers(4, OWNER_BLACK, 5);
-//	s_board_points_add_checkers(5, OWNER_BLACK, 6);
-//	s_board_points_add_checkers(6, OWNER_BLACK, 7);
-//	s_board_points_add_checkers(7, OWNER_BLACK, 8);
-//	s_board_points_add_checkers(8, OWNER_BLACK, 9);
-//	s_board_points_add_checkers(9, OWNER_BLACK, 10);
-//	s_board_points_add_checkers(10, OWNER_BLACK, 11);
-//	s_board_points_add_checkers(11, OWNER_BLACK, 12);
-//
-//	s_board_points_add_checkers(12, OWNER_WHITE, 1);
-//	s_board_points_add_checkers(13, OWNER_WHITE, 2);
-//	s_board_points_add_checkers(14, OWNER_WHITE, 3);
-//	s_board_points_add_checkers(15, OWNER_WHITE, 4);
-//	s_board_points_add_checkers(16, OWNER_WHITE, 5);
-//	s_board_points_add_checkers(17, OWNER_WHITE, 6);
-//
-//	s_board_points_add_checkers(18, OWNER_WHITE, 7);
-//	s_board_points_add_checkers(19, OWNER_WHITE, 8);
-//	s_board_points_add_checkers(20, OWNER_WHITE, 9);
-//	s_board_points_add_checkers(21, OWNER_WHITE, 10);
-//	s_board_points_add_checkers(22, OWNER_WHITE, 11);
-//	s_board_points_add_checkers(23, OWNER_WHITE, 16);
+	bg_board_print(&bg_board);
 
 	//
 	// Print the initialized board
