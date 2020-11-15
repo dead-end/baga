@@ -45,7 +45,11 @@
 //
 #define BOARD_ROW (2 * BORDER_ROW + BOARD_HALF_ROW)
 
-#define BOARD_COL (5 * BORDER_COL + 2 * BOARD_HALF_COL  + 2 * CHECKER_COL)
+#define BOARD_COL (5 * BORDER_COL + 2 * BOARD_HALF_COL  + 2 * POINTS_COL)
+
+//
+// TODO: simple bear off area
+// #define BOARD_COL (5 * BORDER_COL + 2 * BOARD_HALF_COL  + 2 * CHECKER_COL)
 
 /******************************************************************************
  * Function definitions that are only used for unit tests.
