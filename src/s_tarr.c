@@ -26,6 +26,7 @@
 #include "lib_color.h"
 #include "lib_color_pair.h"
 
+#include "bg_defs.h"
 #include "s_tarr.h"
 
 /******************************************************************************
@@ -131,7 +132,7 @@ void s_tarr_set_gradient(s_tarr *tarr, const wchar_t chr, const short fg_color, 
  * inside a s_tarr structure.
  *****************************************************************************/
 
-void s_tarr_set_bg(s_tarr *tarr, const s_point pos, const s_point dim, const short *bg_colors) {
+void s_tarr_set_bg(s_tarr *tarr, const s_point pos, const s_point dim, const short *bg_colors, const bool reverse) {
 
 	//
 	// Store the position of the area.
@@ -142,7 +143,11 @@ void s_tarr_set_bg(s_tarr *tarr, const s_point pos, const s_point dim, const sho
 	for (int row = 0; row < dim.row; row++) {
 		for (int col = 0; col < dim.col; col++) {
 
-			s_tarr_get(tarr, pos_row + row, pos_col + col).bg = bg_colors[row];
+			if (reverse) {
+				s_tarr_get(tarr, pos_row + row, pos_col + col).bg = bg_colors[reverse_idx(dim.row, row)];
+			} else {
+				s_tarr_get(tarr, pos_row + row, pos_col + col).bg = bg_colors[row];
+			}
 		}
 	}
 }
