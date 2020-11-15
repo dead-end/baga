@@ -50,4 +50,12 @@ typedef struct s_point {
 
 #define s_point_same(p,q) (((p)->row == (q)->row) && ((p)->col == (q)->col))
 
+/******************************************************************************
+ * The definition of the functions.
+ *****************************************************************************/
+
+int s_point_dist(const s_point from, const s_point to);
+
+int s_point_smaller_dist(const s_point from, const s_point to, const int dist_cur);
+
 #endif /* INC_LIB_S_POINT_H_ */
