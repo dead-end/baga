@@ -22,8 +22,28 @@
  * SOFTWARE.
  */
 
+#include "lib_logging.h"
 #include "bg_defs.h"
 #include "s_pos.h"
+
+/******************************************************************************
+ * The positions of the point, bar bear off areas. This is the upper left
+ * corner for upper areas and the lower left corner of lower areas.
+ *****************************************************************************/
+
+static s_pos _pos_points[POINTS_NUM];
+
+static s_pos _pos_bar[NUM_PLAYER];
+
+static s_pos _pos_bear_off[NUM_PLAYER];
+
+/******************************************************************************
+ * TODO: not clear if this is the desired approach.
+ *****************************************************************************/
+
+s_pos* s_pos_get_points() {
+	return _pos_points;
+}
 
 /******************************************************************************
  * The function returns a s_pos struct with the position of a checker. The
@@ -31,15 +51,126 @@
  *****************************************************************************/
 
 s_pos s_pos_checker_get(const s_pos *pos) {
+	s_pos result;
 
-	return (s_pos ) {
+	result.pos.row = pos->pos.row;
+	result.pos.col = pos->pos.col + CHECKER_OFFSET_COL;
+	result.is_upper = pos->is_upper;
 
-			.pos.row = pos->pos.row,
+	return result;
+}
 
-			.pos.col = pos->pos.col + CHECKER_OFFSET_COL,
+/******************************************************************************
+ * The function returns the position of a checker on a point / bar / bear off
+ * area. The checker may be smaller than the containing area.
+ *****************************************************************************/
 
-			.is_upper = pos->is_upper
+s_pos s_pos_get_checker(const e_pos type, const int idx) {
+	s_pos result;
 
-			} ;
-		}
+	switch (type) {
 
+	case E_POS_BAR:
+
+		result.pos.row = _pos_bar[idx].pos.row;
+		result.pos.col = _pos_bar[idx].pos.col + CHECKER_OFFSET_COL;
+		result.is_upper = _pos_bar[idx].is_upper;
+
+		return result;
+
+	case E_POS_BEAR_OFF:
+
+		result.pos.row = _pos_bear_off[idx].pos.row;
+		result.pos.col = _pos_bear_off[idx].pos.col + CHECKER_OFFSET_COL;
+		result.is_upper = _pos_bear_off[idx].is_upper;
+
+		return result;
+
+	case E_POS_POINTS:
+
+		result.pos.row = _pos_points[idx].pos.row;
+		result.pos.col = _pos_points[idx].pos.col + CHECKER_OFFSET_COL;
+		result.is_upper = _pos_points[idx].is_upper;
+
+		return result;
+
+	default:
+		log_exit("Unknown type: %d", type)
+		;
+	}
+}
+
+/******************************************************************************
+ * The function sets the positions of the checkers on the bear off areas.
+ *****************************************************************************/
+
+void s_pos_set_bear_off(const s_area *area_bear_off) {
+
+	_pos_bear_off[0].pos.row = area_bear_off->pos.row;
+	_pos_bear_off[0].pos.col = area_bear_off->pos.col;
+	_pos_bear_off[0].is_upper = true;
+
+	_pos_bear_off[1].pos.row = area_bear_off->pos.row + area_bear_off->dim.row - 1;
+	_pos_bear_off[1].pos.col = area_bear_off->pos.col;
+	_pos_bear_off[1].is_upper = false;
+}
+
+/******************************************************************************
+ * The function sets the positions of the checkers on the bar areas.
+ *****************************************************************************/
+
+void s_pos_set_bar(const s_area *area_bar) {
+
+	_pos_bar[0].pos.row = area_bar->pos.row;
+	_pos_bar[0].pos.col = area_bar->pos.col;
+	_pos_bar[0].is_upper = true;
+
+	_pos_bar[1].pos.row = area_bar->pos.row + area_bar->dim.row - 1;
+	_pos_bar[1].pos.col = area_bar->pos.col;
+	_pos_bar[1].is_upper = false;
+}
+
+/******************************************************************************
+ * The function sets the positions of the checkers on the points.
+ *****************************************************************************/
+
+void s_pos_set_points(const s_area *area_board_outer, const s_area *area_board_inner) {
+
+	const int quarter = POINTS_NUM / 4;
+
+	log_debug("inner board - pos: %d/%d dim: %d/%d", area_board_inner->pos.row, area_board_inner->pos.col, area_board_inner->dim.row, area_board_inner->dim.col);
+
+	const int lower_inner_row = area_board_inner->pos.row + area_board_inner->dim.row - 1;
+	const int lower_outer_row = area_board_outer->pos.row + area_board_outer->dim.row - 1;
+
+	for (int i = 0; i < quarter; i++) {
+
+		//
+		// Upper right triangles
+		//
+		_pos_points[0 * quarter + i].pos.row = area_board_inner->pos.row;
+		_pos_points[0 * quarter + i].pos.col = area_board_inner->pos.col + reverse_idx(quarter, i) * POINTS_COL;
+		_pos_points[0 * quarter + i].is_upper = true;
+
+		//
+		// Upper left triangles
+		//
+		_pos_points[1 * quarter + i].pos.row = area_board_outer->pos.row;
+		_pos_points[1 * quarter + i].pos.col = area_board_outer->pos.col + reverse_idx(quarter, i) * POINTS_COL;
+		_pos_points[1 * quarter + i].is_upper = true;
+
+		//
+		// Lower left triangles
+		//
+		_pos_points[2 * quarter + i].pos.row = lower_outer_row;
+		_pos_points[2 * quarter + i].pos.col = area_board_outer->pos.col + i * POINTS_COL;
+		_pos_points[2 * quarter + i].is_upper = false;
+
+		//
+		// Lower right triangles
+		//
+		_pos_points[3 * quarter + i].pos.row = lower_inner_row;
+		_pos_points[3 * quarter + i].pos.col = area_board_inner->pos.col + i * POINTS_COL;
+		_pos_points[3 * quarter + i].is_upper = false;
+	}
+}

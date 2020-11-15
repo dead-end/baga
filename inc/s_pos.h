@@ -28,9 +28,11 @@
 #include <stdbool.h>
 
 #include "lib_s_point.h"
+#include "s_area.h"
 
 /******************************************************************************
- * The struct contains the position information of a point.
+ * The struct contains the position information of a point, the bar and the
+ * bear off area.
  *****************************************************************************/
 
 typedef struct {
@@ -46,9 +48,29 @@ typedef struct {
 } s_pos;
 
 /******************************************************************************
+ * An enumeration for the three types of areas, which can contain checkers.
+ *****************************************************************************/
+
+typedef enum {
+
+	E_POS_POINTS = 0, E_POS_BAR = 1, E_POS_BEAR_OFF = 2
+
+} e_pos;
+
+/******************************************************************************
  * The function declarations.
  *****************************************************************************/
 
+s_pos* s_pos_get_points();
+
 s_pos s_pos_checker_get(const s_pos *pos);
+
+s_pos s_pos_get_checker(const e_pos type, const int idx);
+
+void s_pos_set_bear_off(const s_area *area_bear_off);
+
+void s_pos_set_bar(const s_area *area_bar);
+
+void s_pos_set_points(const s_area *area_board_outer, const s_area *area_board_inner);
 
 #endif /* INC_S_POS_H_ */
