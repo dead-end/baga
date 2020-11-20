@@ -31,6 +31,20 @@
 #include "s_area.h"
 
 /******************************************************************************
+ * Global definitions of the different areas of the game.
+ *****************************************************************************/
+// TODO: ensure that all areas are necessary as global vars.
+extern s_area g_area_board_outer;
+
+extern s_area g_area_bar_inner;
+
+extern s_area g_area_board_inner;
+
+extern s_area g_area_bear_off;
+
+extern s_area g_area_board;
+
+/******************************************************************************
  * The struct contains the position information of a point, the bar and the
  * bear off area.
  *****************************************************************************/
@@ -60,6 +74,8 @@ typedef enum {
 /******************************************************************************
  * The function declarations.
  *****************************************************************************/
+
+void s_pos_init();
 
 s_pos* s_pos_get_points();
 

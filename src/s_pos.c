@@ -27,6 +27,31 @@
 #include "s_pos.h"
 
 /******************************************************************************
+ * Definitions of the various areas of the board. An area has a position and a
+ * dimension. The main board has the following four areas:
+ *
+ * outer | inner | inner | bear
+ * board | bar   | board | off
+ *****************************************************************************/
+
+#define BORDER_ROW 1
+
+#define BORDER_COL 2
+
+s_area g_area_board_outer;
+
+s_area g_area_bar_inner;
+
+s_area g_area_board_inner;
+
+s_area g_area_bear_off;
+
+//
+// The total area of the board
+//
+s_area g_area_board;
+
+/******************************************************************************
  * The positions of the point, bar bear off areas. This is the upper left
  * corner for upper areas and the lower left corner of lower areas.
  *****************************************************************************/
@@ -36,6 +61,61 @@ static s_pos _pos_points[POINTS_NUM];
 static s_pos _pos_bar[NUM_PLAYER];
 
 static s_pos _pos_bear_off[NUM_PLAYER];
+
+/******************************************************************************
+ * The function initializes the different areas of the board.
+ *****************************************************************************/
+
+void s_pos_init() {
+
+	const int board_half_row = (2 * POINTS_ROW + CHECKER_ROW + 2 * BORDER_ROW);
+	const int board_half_col = (6 * POINTS_COL);
+
+	//
+	// area: outer board
+	//
+	g_area_board_outer.dim.row = board_half_row;
+	g_area_board_outer.dim.col = board_half_col;
+
+	g_area_board_outer.pos.row = BORDER_ROW;
+	g_area_board_outer.pos.col = BORDER_COL;
+
+	//
+	// area: inner bar
+	//
+	g_area_bar_inner.dim.row = board_half_row;
+	g_area_bar_inner.dim.col = POINTS_COL;
+
+	g_area_bar_inner.pos.row = BORDER_ROW;
+	g_area_bar_inner.pos.col = g_area_board_outer.pos.col + g_area_board_outer.dim.col + BORDER_COL;
+
+	//
+	// area: inner board
+	//
+	g_area_board_inner.dim.row = board_half_row;
+	g_area_board_inner.dim.col = board_half_col;
+
+	g_area_board_inner.pos.row = BORDER_ROW;
+	g_area_board_inner.pos.col = g_area_bar_inner.pos.col + g_area_bar_inner.dim.col + BORDER_COL;
+
+	//
+	// area: bear off
+	//
+	g_area_bear_off.dim.row = board_half_row;
+	g_area_bear_off.dim.col = POINTS_COL;
+
+	g_area_bear_off.pos.row = BORDER_ROW;
+	g_area_bear_off.pos.col = g_area_board_inner.pos.col + g_area_board_inner.dim.col + BORDER_COL;
+
+	//
+	// area: total board
+	//
+	g_area_board.dim.row = 2 * BORDER_ROW + board_half_row;
+	g_area_board.dim.col = g_area_bear_off.pos.col + g_area_bear_off.dim.col + BORDER_COL;
+
+	g_area_board.pos.row = 0;
+	g_area_board.pos.col = 0;
+}
 
 /******************************************************************************
  * TODO: not clear if this is the desired approach.
