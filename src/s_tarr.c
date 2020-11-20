@@ -134,6 +134,8 @@ void s_tarr_set_gradient(s_tarr *tarr, const wchar_t chr, const short fg_color, 
 
 void s_tarr_set_bg(s_tarr *tarr, const s_point pos, const s_point dim, const short *bg_colors, const bool reverse) {
 
+	log_debug("pos: %d/%d dim: %d/%d", pos.row, pos.col, dim.row, dim.col);
+
 	//
 	// Store the position of the area.
 	//
