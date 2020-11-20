@@ -29,29 +29,6 @@
 #include "s_point_layout.h"
 
 /******************************************************************************
- * Definitions of various sizes.
- *****************************************************************************/
-
-#define BORDER_ROW 1
-
-#define BORDER_COL 2
-
-#define BOARD_HALF_ROW (2 * POINTS_ROW + CHECKER_ROW + 2 * BORDER_ROW)
-
-#define BOARD_HALF_COL (6 * POINTS_COL)
-
-//
-// Total rows and columns
-//
-#define BOARD_ROW (2 * BORDER_ROW + BOARD_HALF_ROW)
-
-#define BOARD_COL (5 * BORDER_COL + 2 * BOARD_HALF_COL  + 2 * POINTS_COL)
-
-//
-// TODO: simple bear off area
-// #define BOARD_COL (5 * BORDER_COL + 2 * BOARD_HALF_COL  + 2 * CHECKER_COL)
-
-/******************************************************************************
  * Function definitions that are only used for unit tests.
  *****************************************************************************/
 
