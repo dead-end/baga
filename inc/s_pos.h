@@ -31,18 +31,31 @@
 #include "s_area.h"
 
 /******************************************************************************
- * Global definitions of the different areas of the game.
+ * Definitions of the various areas of the board. An area has a position and a
+ * dimension. The main board has the following four areas:
+ *
+ * outer | inner | inner | bear
+ * board | bar   | board | off
  *****************************************************************************/
-// TODO: ensure that all areas are necessary as global vars.
-extern s_area g_area_board_outer;
 
-extern s_area g_area_bar_inner;
+typedef struct {
 
-extern s_area g_area_board_inner;
+	s_area board_outer;
 
-extern s_area g_area_bear_off;
+	s_area bar_inner;
 
-extern s_area g_area_board;
+	s_area board_inner;
+
+	s_area bear_off;
+
+	s_point board_dim;
+
+} s_board_areas;
+
+//
+// Export of the data
+//
+extern s_board_areas board_areas;
 
 /******************************************************************************
  * The struct contains the position information of a point, the bar and the
