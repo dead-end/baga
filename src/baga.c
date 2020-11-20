@@ -31,6 +31,7 @@
 #include "nc_board.h"
 
 #include "lib_logging.h"
+#include "s_pos.h"
 
 /******************************************************************************
  * The exit callback function resets the terminal and frees the memory.
@@ -80,6 +81,8 @@ int main() {
 	log_debug_str("Starting baga...");
 
 	init();
+
+	s_pos_init();
 
 	//
 	// Initialize the ncurses board function
