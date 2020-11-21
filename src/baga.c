@@ -82,12 +82,12 @@ int main() {
 
 	init();
 
-	s_pos_init();
+	const s_board_areas *board_areas = s_pos_init();
 
 	//
 	// Initialize the ncurses board function
 	//
-	nc_board_init(&board_areas);
+	nc_board_init(board_areas);
 
 	//
 	// Initialize the game board function
