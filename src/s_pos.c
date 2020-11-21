@@ -52,10 +52,85 @@ static s_pos _pos_bar[NUM_PLAYER];
 static s_pos _pos_bear_off[NUM_PLAYER];
 
 /******************************************************************************
+ * The function sets the positions of the checkers on the bear off areas.
+ *****************************************************************************/
+
+static void s_pos_set_bear_off(s_pos *pos_bear_off, const s_area *area_bear_off) {
+
+	pos_bear_off[0].pos.row = area_bear_off->pos.row;
+	pos_bear_off[0].pos.col = area_bear_off->pos.col;
+	pos_bear_off[0].is_upper = true;
+
+	pos_bear_off[1].pos.row = area_bear_off->pos.row + area_bear_off->dim.row - 1;
+	pos_bear_off[1].pos.col = area_bear_off->pos.col;
+	pos_bear_off[1].is_upper = false;
+}
+
+/******************************************************************************
+ * The function sets the positions of the checkers on the bar areas.
+ *****************************************************************************/
+
+static void s_pos_set_bar(s_pos *pos_bar, const s_area *area_bar) {
+
+	pos_bar[0].pos.row = area_bar->pos.row;
+	pos_bar[0].pos.col = area_bar->pos.col;
+	pos_bar[0].is_upper = true;
+
+	pos_bar[1].pos.row = area_bar->pos.row + area_bar->dim.row - 1;
+	pos_bar[1].pos.col = area_bar->pos.col;
+	pos_bar[1].is_upper = false;
+}
+
+/******************************************************************************
+ * The function sets the positions of the checkers on the points.
+ *****************************************************************************/
+
+static void s_pos_set_points(s_pos *pos_points, const s_area *area_board_outer, const s_area *area_board_inner) {
+
+	const int quarter = POINTS_NUM / 4;
+
+	log_debug("inner board - pos: %d/%d dim: %d/%d", area_board_inner->pos.row, area_board_inner->pos.col, area_board_inner->dim.row, area_board_inner->dim.col);
+
+	const int lower_inner_row = area_board_inner->pos.row + area_board_inner->dim.row - 1;
+	const int lower_outer_row = area_board_outer->pos.row + area_board_outer->dim.row - 1;
+
+	for (int i = 0; i < quarter; i++) {
+
+		//
+		// Upper right triangles
+		//
+		pos_points[0 * quarter + i].pos.row = area_board_inner->pos.row;
+		pos_points[0 * quarter + i].pos.col = area_board_inner->pos.col + reverse_idx(quarter, i) * POINTS_COL;
+		pos_points[0 * quarter + i].is_upper = true;
+
+		//
+		// Upper left triangles
+		//
+		pos_points[1 * quarter + i].pos.row = area_board_outer->pos.row;
+		pos_points[1 * quarter + i].pos.col = area_board_outer->pos.col + reverse_idx(quarter, i) * POINTS_COL;
+		pos_points[1 * quarter + i].is_upper = true;
+
+		//
+		// Lower left triangles
+		//
+		pos_points[2 * quarter + i].pos.row = lower_outer_row;
+		pos_points[2 * quarter + i].pos.col = area_board_outer->pos.col + i * POINTS_COL;
+		pos_points[2 * quarter + i].is_upper = false;
+
+		//
+		// Lower right triangles
+		//
+		pos_points[3 * quarter + i].pos.row = lower_inner_row;
+		pos_points[3 * quarter + i].pos.col = area_board_inner->pos.col + i * POINTS_COL;
+		pos_points[3 * quarter + i].is_upper = false;
+	}
+}
+
+/******************************************************************************
  * The function initializes the different areas of the board.
  *****************************************************************************/
 
-const s_board_areas* s_pos_init() {
+static void s_pos_areas_init(s_board_areas *board_areas) {
 
 	const int board_half_row = (2 * POINTS_ROW + CHECKER_ROW + 2 * BORDER_ROW);
 	const int board_half_col = (6 * POINTS_COL);
@@ -63,44 +138,65 @@ const s_board_areas* s_pos_init() {
 	//
 	// area: outer board
 	//
-	_board_areas.board_outer.dim.row = board_half_row;
-	_board_areas.board_outer.dim.col = board_half_col;
+	board_areas->board_outer.dim.row = board_half_row;
+	board_areas->board_outer.dim.col = board_half_col;
 
-	_board_areas.board_outer.pos.row = BORDER_ROW;
-	_board_areas.board_outer.pos.col = BORDER_COL;
+	board_areas->board_outer.pos.row = BORDER_ROW;
+	board_areas->board_outer.pos.col = BORDER_COL;
 
 	//
 	// area: inner bar
 	//
-	_board_areas.bar_inner.dim.row = board_half_row;
-	_board_areas.bar_inner.dim.col = POINTS_COL;
+	board_areas->bar_inner.dim.row = board_half_row;
+	board_areas->bar_inner.dim.col = POINTS_COL;
 
-	_board_areas.bar_inner.pos.row = BORDER_ROW;
-	_board_areas.bar_inner.pos.col = _board_areas.board_outer.pos.col + _board_areas.board_outer.dim.col + BORDER_COL;
+	board_areas->bar_inner.pos.row = BORDER_ROW;
+	board_areas->bar_inner.pos.col = board_areas->board_outer.pos.col + board_areas->board_outer.dim.col + BORDER_COL;
 
 	//
 	// area: inner board
 	//
-	_board_areas.board_inner.dim.row = board_half_row;
-	_board_areas.board_inner.dim.col = board_half_col;
+	board_areas->board_inner.dim.row = board_half_row;
+	board_areas->board_inner.dim.col = board_half_col;
 
-	_board_areas.board_inner.pos.row = BORDER_ROW;
-	_board_areas.board_inner.pos.col = _board_areas.bar_inner.pos.col + _board_areas.bar_inner.dim.col + BORDER_COL;
+	board_areas->board_inner.pos.row = BORDER_ROW;
+	board_areas->board_inner.pos.col = board_areas->bar_inner.pos.col + board_areas->bar_inner.dim.col + BORDER_COL;
 
 	//
 	// area: bear off
 	//
-	_board_areas.bear_off.dim.row = board_half_row;
-	_board_areas.bear_off.dim.col = POINTS_COL;
+	board_areas->bear_off.dim.row = board_half_row;
+	board_areas->bear_off.dim.col = POINTS_COL;
 
-	_board_areas.bear_off.pos.row = BORDER_ROW;
-	_board_areas.bear_off.pos.col = _board_areas.board_inner.pos.col + _board_areas.board_inner.dim.col + BORDER_COL;
+	board_areas->bear_off.pos.row = BORDER_ROW;
+	board_areas->bear_off.pos.col = board_areas->board_inner.pos.col + board_areas->board_inner.dim.col + BORDER_COL;
 
 	//
 	// area: total board
 	//
-	_board_areas.board_dim.row = 2 * BORDER_ROW + board_half_row;
-	_board_areas.board_dim.col = _board_areas.bear_off.pos.col + _board_areas.bear_off.dim.col + BORDER_COL;
+	board_areas->board_dim.row = 2 * BORDER_ROW + board_half_row;
+	board_areas->board_dim.col = board_areas->bear_off.pos.col + board_areas->bear_off.dim.col + BORDER_COL;
+}
+
+/******************************************************************************
+ * The function initializes the areas and positions.
+ *****************************************************************************/
+
+const s_board_areas* s_pos_init() {
+
+	//
+	// Areas
+	//
+	s_pos_areas_init(&_board_areas);
+
+	//
+	// Positions
+	//
+	s_pos_set_bear_off(_pos_bear_off, &_board_areas.bear_off);
+
+	s_pos_set_bar(_pos_bar, &_board_areas.bar_inner);
+
+	s_pos_set_points(_pos_points, &_board_areas.board_outer, &_board_areas.board_inner);
 
 	return &_board_areas;
 }
@@ -111,21 +207,6 @@ const s_board_areas* s_pos_init() {
 
 const s_pos* s_pos_get_points() {
 	return _pos_points;
-}
-
-/******************************************************************************
- * The function returns a s_pos struct with the position of a checker. The
- * position is the position of the whole point and the checker is smaller.
- *****************************************************************************/
-
-s_pos s_pos_checker_get(const s_pos *pos) {
-	s_pos result;
-
-	result.pos.row = pos->pos.row;
-	result.pos.col = pos->pos.col + CHECKER_OFFSET_COL;
-	result.is_upper = pos->is_upper;
-
-	return result;
 }
 
 /******************************************************************************
@@ -165,80 +246,5 @@ s_pos s_pos_get_checker(const e_pos type, const int idx) {
 	default:
 		log_exit("Unknown type: %d", type)
 		;
-	}
-}
-
-/******************************************************************************
- * The function sets the positions of the checkers on the bear off areas.
- *****************************************************************************/
-
-void s_pos_set_bear_off(const s_area *area_bear_off) {
-
-	_pos_bear_off[0].pos.row = area_bear_off->pos.row;
-	_pos_bear_off[0].pos.col = area_bear_off->pos.col;
-	_pos_bear_off[0].is_upper = true;
-
-	_pos_bear_off[1].pos.row = area_bear_off->pos.row + area_bear_off->dim.row - 1;
-	_pos_bear_off[1].pos.col = area_bear_off->pos.col;
-	_pos_bear_off[1].is_upper = false;
-}
-
-/******************************************************************************
- * The function sets the positions of the checkers on the bar areas.
- *****************************************************************************/
-
-void s_pos_set_bar(const s_area *area_bar) {
-
-	_pos_bar[0].pos.row = area_bar->pos.row;
-	_pos_bar[0].pos.col = area_bar->pos.col;
-	_pos_bar[0].is_upper = true;
-
-	_pos_bar[1].pos.row = area_bar->pos.row + area_bar->dim.row - 1;
-	_pos_bar[1].pos.col = area_bar->pos.col;
-	_pos_bar[1].is_upper = false;
-}
-
-/******************************************************************************
- * The function sets the positions of the checkers on the points.
- *****************************************************************************/
-
-void s_pos_set_points(const s_area *area_board_outer, const s_area *area_board_inner) {
-
-	const int quarter = POINTS_NUM / 4;
-
-	log_debug("inner board - pos: %d/%d dim: %d/%d", area_board_inner->pos.row, area_board_inner->pos.col, area_board_inner->dim.row, area_board_inner->dim.col);
-
-	const int lower_inner_row = area_board_inner->pos.row + area_board_inner->dim.row - 1;
-	const int lower_outer_row = area_board_outer->pos.row + area_board_outer->dim.row - 1;
-
-	for (int i = 0; i < quarter; i++) {
-
-		//
-		// Upper right triangles
-		//
-		_pos_points[0 * quarter + i].pos.row = area_board_inner->pos.row;
-		_pos_points[0 * quarter + i].pos.col = area_board_inner->pos.col + reverse_idx(quarter, i) * POINTS_COL;
-		_pos_points[0 * quarter + i].is_upper = true;
-
-		//
-		// Upper left triangles
-		//
-		_pos_points[1 * quarter + i].pos.row = area_board_outer->pos.row;
-		_pos_points[1 * quarter + i].pos.col = area_board_outer->pos.col + reverse_idx(quarter, i) * POINTS_COL;
-		_pos_points[1 * quarter + i].is_upper = true;
-
-		//
-		// Lower left triangles
-		//
-		_pos_points[2 * quarter + i].pos.row = lower_outer_row;
-		_pos_points[2 * quarter + i].pos.col = area_board_outer->pos.col + i * POINTS_COL;
-		_pos_points[2 * quarter + i].is_upper = false;
-
-		//
-		// Lower right triangles
-		//
-		_pos_points[3 * quarter + i].pos.row = lower_inner_row;
-		_pos_points[3 * quarter + i].pos.col = area_board_inner->pos.col + i * POINTS_COL;
-		_pos_points[3 * quarter + i].is_upper = false;
 	}
 }

@@ -87,14 +87,6 @@ const s_board_areas* s_pos_init();
 
 const s_pos* s_pos_get_points();
 
-s_pos s_pos_checker_get(const s_pos *pos);
-
 s_pos s_pos_get_checker(const e_pos type, const int idx);
-
-void s_pos_set_bear_off(const s_area *area_bear_off);
-
-void s_pos_set_bar(const s_area *area_bar);
-
-void s_pos_set_points(const s_area *area_board_outer, const s_area *area_board_inner);
 
 #endif /* INC_S_POS_H_ */
