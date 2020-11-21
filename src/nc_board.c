@@ -47,51 +47,6 @@ static WINDOW *_win_board;
 #define TRAVEL_ROW POINTS_ROW + 2
 
 /******************************************************************************
- * Definitions of the various areas of the board. An area has a position and a
- * dimension. The main board has the following four areas:
- *
- * outer | inner | inner | bear
- * board | bar   | board | off
- *****************************************************************************/
-
-// TODO: create function that initializes the areas. Define the dimension and set the position.
-//
-// Outer board
-//
-static const s_area _area_board_outer = {
-
-.pos = { .row = BORDER_ROW, .col = BORDER_COL },
-
-.dim = { .row = BOARD_HALF_ROW, .col = BOARD_HALF_COL } };
-
-//
-// Inner bar
-//
-static const s_area _area_bar_inner = {
-
-.pos = { .row = BORDER_ROW, .col = BORDER_COL + BOARD_HALF_COL + BORDER_COL },
-
-.dim = { .row = BOARD_HALF_ROW, .col = POINTS_COL } };
-
-//
-// Inner board
-//
-static const s_area _area_board_inner = {
-
-.pos = { .row = BORDER_ROW, .col = BORDER_COL + BOARD_HALF_COL + BORDER_COL + POINTS_COL + BORDER_COL },
-
-.dim = { .row = BOARD_HALF_ROW, .col = BOARD_HALF_COL } };
-
-//
-// bear off area (right bar)
-//
-static const s_area _area_bear_off = {
-
-.pos = { .row = BORDER_ROW, .col = BORDER_COL + BOARD_HALF_COL + BORDER_COL + POINTS_COL + BORDER_COL + BOARD_HALF_COL + BORDER_COL },
-
-.dim = { .row = BOARD_HALF_ROW, .col = POINTS_COL } };
-
-/******************************************************************************
  * We have two two-dimensional arrays, which represents the foreground and the
  * background. The background contains the board and the foreground the
  * checkers on the board. So the foreground is mostly transparent.
@@ -105,52 +60,52 @@ static s_tarr *_nc_board_fg;
  * The function initializes the background of the board.
  *****************************************************************************/
 
-static void nc_board_init_bg(s_tarr *board_bg, const s_area *area_board_outer, const s_area *area_board_inner) {
+static void nc_board_init_bg(s_tarr *board_bg, const s_board_areas *board_areas) {
 
 	//
 	// Set the background of the complete board.
 	//
-	short color_bar_bg[BOARD_ROW];
+	short color_bar_bg[board_areas->board_dim.row];
 
 	// TODO: choose final color
 	//s_color_def_gradient(color_bar_bg, BOARD_ROW, "#1a0d00", "#663500");
 
-	s_color_def_gradient(color_bar_bg, BOARD_ROW, "#22222f", "#55555f");
+	s_color_def_gradient(color_bar_bg, board_areas->board_dim.row, "#22222f", "#55555f");
 
 	s_tarr_set_gradient(board_bg, EMPTY, 0, color_bar_bg);
 
 	// TODO: param
 	// TODO: color
-	s_tarr_set_bg(board_bg, _area_bar_inner.pos, _area_bar_inner.dim, color_bar_bg, true);
+	s_tarr_set_bg(board_bg, board_areas->bar_inner.pos, board_areas->bar_inner.dim, color_bar_bg, true);
 
-	s_tarr_set_bg(board_bg, _area_bear_off.pos, _area_bear_off.dim, color_bar_bg, true);
+	s_tarr_set_bg(board_bg, board_areas->bear_off.pos, board_areas->bear_off.dim, color_bar_bg, true);
 
 	//
 	// Set the background of the inner / outer board.
 	//
-	short color_board_bg[BOARD_HALF_ROW];
+	short color_board_bg[board_areas->board_outer.dim.row];
 
 	// TODO: choose final color
 	//s_color_def_gradient(color_board_bg, BOARD_HALF_ROW, "#ffe6cc", "#ff9933");
 
-	s_color_def_gradient(color_board_bg, BOARD_HALF_ROW, "#88888f", "#cccccf");
+	s_color_def_gradient(color_board_bg, board_areas->board_outer.dim.row, "#88888f", "#cccccf");
 
-	s_tarr_set_bg(board_bg, area_board_outer->pos, area_board_outer->dim, color_board_bg, false);
+	s_tarr_set_bg(board_bg, board_areas->board_outer.pos, board_areas->board_outer.dim, color_board_bg, false);
 
-	s_tarr_set_bg(board_bg, area_board_inner->pos, area_board_inner->dim, color_board_bg, false);
+	s_tarr_set_bg(board_bg, board_areas->board_inner.pos, board_areas->board_inner.dim, color_board_bg, false);
 }
 
 /******************************************************************************
  * The function allocates the resources for the board.
  *****************************************************************************/
 
-static void nc_board_alloc() {
+static void nc_board_alloc(const s_point board_dim) {
 
 	log_debug_str("Allocating resources!");
 
-	_nc_board_bg = s_tarr_new(BOARD_ROW, BOARD_COL);
+	_nc_board_bg = s_tarr_new(board_dim.row, board_dim.col);
 
-	_nc_board_fg = s_tarr_new(BOARD_ROW, BOARD_COL);
+	_nc_board_fg = s_tarr_new(board_dim.row, board_dim.col);
 
 	s_tmpl_checker_create();
 }
@@ -174,22 +129,22 @@ void nc_board_free() {
  * The function initializes the board.
  *****************************************************************************/
 
-void nc_board_init() {
+void nc_board_init(s_board_areas *board_areas) {
 
 	_win_board = stdscr;
 
-	nc_board_alloc();
+	nc_board_alloc(board_areas->board_dim);
 
-	nc_board_init_bg(_nc_board_bg, &_area_board_outer, &_area_board_inner);
+	nc_board_init_bg(_nc_board_bg, board_areas);
 
 	//
 	// Positions
 	//
-	s_pos_set_bear_off(&_area_bear_off);
+	s_pos_set_bear_off(&board_areas->bear_off);
 
-	s_pos_set_bar(&_area_bar_inner);
+	s_pos_set_bar(&board_areas->bar_inner);
 
-	s_pos_set_points(&_area_board_outer, &_area_board_inner);
+	s_pos_set_points(&board_areas->board_outer, &board_areas->board_inner);
 
 	//
 	// Add points to the board
@@ -511,10 +466,4 @@ void nc_board_test() {
 	pos_to = s_pos_get_checker(E_POS_BAR, OWNER_WHITE);
 
 	travler_move(&pos_from, 1, &pos_to, 0, OWNER_WHITE);
-
-//
-//	travler_move(&_pos_points[10], 1, &_pos_points[11], 4, OWNER_WHITE);
-//
-//	travler_move(&_pos_points[12], 5, &_pos_points[16], 5, OWNER_BLACK);
-
 }
