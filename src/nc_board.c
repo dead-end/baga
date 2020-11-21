@@ -144,8 +144,6 @@ void nc_board_init(const s_board_areas *board_areas) {
 	// Initialize the foreground board as unset.
 	//
 	s_tarr_set(_nc_board_fg, ( s_tchar ) { TCHAR_CHR_UNUSED, -1, -1 });
-
-	log_debug_str("end");
 }
 
 /******************************************************************************
@@ -212,8 +210,6 @@ static void win_board_refresh(const bool do_sleep) {
 void nc_board_print() {
 
 	s_tarr_print_area(_win_board, _nc_board_fg, _nc_board_bg, (s_point ) { 0, 0 }, _nc_board_fg->dim);
-
-// TODO: is the thecorrect place for wmove? => win_board_refresh
 
 	//
 	// Move the cursor to a save place and do the refreshing. If the cursor
