@@ -138,15 +138,6 @@ void nc_board_init(const s_board_areas *board_areas) {
 	nc_board_init_bg(_nc_board_bg, board_areas);
 
 	//
-	// Positions
-	//
-	s_pos_set_bear_off(&board_areas->bear_off);
-
-	s_pos_set_bar(&board_areas->bar_inner);
-
-	s_pos_set_points(&board_areas->board_outer, &board_areas->board_inner);
-
-	//
 	// Add points to the board
 	//
 	s_tmpl_point_add_2_tarr(_nc_board_bg, s_pos_get_points());
