@@ -41,7 +41,7 @@ static WINDOW *_win_board;
 
 // todo: comment, file, ...
 
-#define MS_SLEEP 80
+#define MS_SLEEP 40
 //#define MS_SLEEP 500
 
 #define TRAVEL_ROW POINTS_ROW + 2
