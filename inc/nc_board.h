@@ -32,7 +32,7 @@
  * Function definitions that are only used for unit tests.
  *****************************************************************************/
 
-void nc_board_init(s_board_areas *board_areas);
+void nc_board_init(const s_board_areas *board_areas);
 
 void nc_board_free();
 

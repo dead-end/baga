@@ -129,7 +129,7 @@ void nc_board_free() {
  * The function initializes the board.
  *****************************************************************************/
 
-void nc_board_init(s_board_areas *board_areas) {
+void nc_board_init(const s_board_areas *board_areas) {
 
 	_win_board = stdscr;
 
