@@ -52,11 +52,6 @@ typedef struct {
 
 } s_board_areas;
 
-//
-// Export of the data
-//
-extern s_board_areas board_areas;
-
 /******************************************************************************
  * The struct contains the position information of a point, the bar and the
  * bear off area.
@@ -88,7 +83,7 @@ typedef enum {
  * The function declarations.
  *****************************************************************************/
 
-void s_pos_init();
+const s_board_areas* s_pos_init();
 
 s_pos* s_pos_get_points();
 

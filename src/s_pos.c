@@ -38,7 +38,7 @@
 
 #define BORDER_COL 2
 
-s_board_areas board_areas;
+s_board_areas _board_areas;
 
 /******************************************************************************
  * The positions of the point, bar bear off areas. This is the upper left
@@ -54,8 +54,8 @@ static s_pos _pos_bear_off[NUM_PLAYER];
 /******************************************************************************
  * The function initializes the different areas of the board.
  *****************************************************************************/
-// TODO: maybe return the s_board_areas and use it for the initialization.
-void s_pos_init() {
+
+const s_board_areas* s_pos_init() {
 
 	const int board_half_row = (2 * POINTS_ROW + CHECKER_ROW + 2 * BORDER_ROW);
 	const int board_half_col = (6 * POINTS_COL);
@@ -63,44 +63,46 @@ void s_pos_init() {
 	//
 	// area: outer board
 	//
-	board_areas.board_outer.dim.row = board_half_row;
-	board_areas.board_outer.dim.col = board_half_col;
+	_board_areas.board_outer.dim.row = board_half_row;
+	_board_areas.board_outer.dim.col = board_half_col;
 
-	board_areas.board_outer.pos.row = BORDER_ROW;
-	board_areas.board_outer.pos.col = BORDER_COL;
+	_board_areas.board_outer.pos.row = BORDER_ROW;
+	_board_areas.board_outer.pos.col = BORDER_COL;
 
 	//
 	// area: inner bar
 	//
-	board_areas.bar_inner.dim.row = board_half_row;
-	board_areas.bar_inner.dim.col = POINTS_COL;
+	_board_areas.bar_inner.dim.row = board_half_row;
+	_board_areas.bar_inner.dim.col = POINTS_COL;
 
-	board_areas.bar_inner.pos.row = BORDER_ROW;
-	board_areas.bar_inner.pos.col = board_areas.board_outer.pos.col + board_areas.board_outer.dim.col + BORDER_COL;
+	_board_areas.bar_inner.pos.row = BORDER_ROW;
+	_board_areas.bar_inner.pos.col = _board_areas.board_outer.pos.col + _board_areas.board_outer.dim.col + BORDER_COL;
 
 	//
 	// area: inner board
 	//
-	board_areas.board_inner.dim.row = board_half_row;
-	board_areas.board_inner.dim.col = board_half_col;
+	_board_areas.board_inner.dim.row = board_half_row;
+	_board_areas.board_inner.dim.col = board_half_col;
 
-	board_areas.board_inner.pos.row = BORDER_ROW;
-	board_areas.board_inner.pos.col = board_areas.bar_inner.pos.col + board_areas.bar_inner.dim.col + BORDER_COL;
+	_board_areas.board_inner.pos.row = BORDER_ROW;
+	_board_areas.board_inner.pos.col = _board_areas.bar_inner.pos.col + _board_areas.bar_inner.dim.col + BORDER_COL;
 
 	//
 	// area: bear off
 	//
-	board_areas.bear_off.dim.row = board_half_row;
-	board_areas.bear_off.dim.col = POINTS_COL;
+	_board_areas.bear_off.dim.row = board_half_row;
+	_board_areas.bear_off.dim.col = POINTS_COL;
 
-	board_areas.bear_off.pos.row = BORDER_ROW;
-	board_areas.bear_off.pos.col = board_areas.board_inner.pos.col + board_areas.board_inner.dim.col + BORDER_COL;
+	_board_areas.bear_off.pos.row = BORDER_ROW;
+	_board_areas.bear_off.pos.col = _board_areas.board_inner.pos.col + _board_areas.board_inner.dim.col + BORDER_COL;
 
 	//
 	// area: total board
 	//
-	board_areas.board_dim.row = 2 * BORDER_ROW + board_half_row;
-	board_areas.board_dim.col = board_areas.bear_off.pos.col + board_areas.bear_off.dim.col + BORDER_COL;
+	_board_areas.board_dim.row = 2 * BORDER_ROW + board_half_row;
+	_board_areas.board_dim.col = _board_areas.bear_off.pos.col + _board_areas.bear_off.dim.col + BORDER_COL;
+
+	return &_board_areas;
 }
 
 /******************************************************************************
