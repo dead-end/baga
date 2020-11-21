@@ -30,6 +30,7 @@
 
 #include "nc_board.h"
 
+#include "lib_string.h"
 #include "lib_logging.h"
 #include "s_pos.h"
 
@@ -70,7 +71,50 @@ static void init() {
 		log_exit_str("Unable to start color!");
 	}
 
-	curs_set(0);
+	//
+	// Disable line buffering.
+	//
+	if (raw() == ERR) {
+		log_exit_str("Unable to set raw mode.");
+	}
+
+	//
+	// Disable echoing.
+	//
+	if (noecho() == ERR) {
+		log_exit_str("Unable to switch off echoing.");
+	}
+
+	//
+	// Enable keypad for the terminal.
+	//
+	if (keypad(stdscr, TRUE) == ERR) {
+		log_exit_str("Unable to enable the keypad of the terminal.");
+	}
+
+	//
+	// Switch off the cursor.
+	//
+	if (curs_set(0) == ERR) {
+		log_exit_str("Unable to set cursor visibility.");
+	}
+
+	//
+	// Disable ESC delay. (The man page says: "These functions all return TRUE
+	// or FALSE, except as noted." which seems not to be correct.
+	//
+	set_escdelay(0);
+
+	if (has_mouse()) {
+		log_exit_str("Terminal does not support a mouse!");
+	}
+
+	//
+	// Register mouse events (which do not have a propper error handling)
+	//
+	mousemask(BUTTON1_PRESSED | REPORT_MOUSE_POSITION, NULL);
+
+	mouseinterval(0);
 }
 
 /******************************************************************************
@@ -78,6 +122,9 @@ static void init() {
  *****************************************************************************/
 
 int main() {
+	MEVENT event;
+	s_pos_idx pos_idx;
+
 	log_debug_str("Starting baga...");
 
 	init();
@@ -110,4 +157,93 @@ int main() {
 	getch();
 
 	log_debug_str("Ending baga...");
+
+	for (;;) {
+		int c = wgetch(stdscr);
+
+		//
+		// Exit with 'q'
+		//
+		if (c == 'q') {
+			break;
+		}
+
+		if (c == ERR) {
+			log_debug_str("Nothing happened.");
+			continue;
+		}
+
+		if (c == KEY_RESIZE) {
+
+			log_debug_str("reseize");
+
+			nc_board_print();
+
+		} else if (c == 27) {
+
+			log_debug_str("esc");
+
+		} else {
+
+			switch (c) {
+
+			case KEY_MOUSE:
+				log_debug_str("mouse");
+
+				if (getmouse(&event) != OK) {
+
+					//
+					// Report the details of the mouse event.
+					//
+					log_exit("Unable to get mouse event! mask: %s coords: %d/%d/%d", bool_str(event.bstate == 0), event.x, event.y, event.z);
+				}
+
+				if (event.bstate & BUTTON1_PRESSED) {
+					//const s_point event_point = { event.y, event.x };
+
+					s_pos_mouse_target((s_point ) { event.y, event.x }, &pos_idx);
+
+					continue;
+				}
+
+				break;
+
+			case KEY_UP:
+				log_debug_str("KEY_UP");
+				break;
+
+			case KEY_DOWN:
+				log_debug_str("KEY_DOWN");
+				break;
+
+			case KEY_LEFT:
+				log_debug_str("KEY_LEFT");
+				break;
+
+			case KEY_RIGHT:
+				log_debug_str("KEY_RIGHT");
+				break;
+
+			case '\t':
+				log_debug_str("tab");
+				break;
+
+			case 10:
+				log_debug_str("enter");
+
+				break;
+
+			default:
+				log_debug("Pressed key %d (%s)", c, keyname(c));
+				continue;
+			}
+		}
+
+//
+// Do a refresh
+//
+// TODO
+	}
+
+	exit(EXIT_SUCCESS);
 }
