@@ -87,7 +87,7 @@ int main() {
 	//
 	// Initialize the ncurses board function
 	//
-	nc_board_init(board_areas);
+	nc_board_init(&board_areas);
 
 	//
 	// Initialize the game board function
