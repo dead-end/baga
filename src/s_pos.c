@@ -151,7 +151,7 @@ static void s_pos_areas_init(s_board_areas *board_areas) {
 	board_areas->bar_inner.dim.col = POINTS_COL;
 
 	board_areas->bar_inner.pos.row = BORDER_ROW;
-	board_areas->bar_inner.pos.col = board_areas->board_outer.pos.col + board_areas->board_outer.dim.col + BORDER_COL;
+	board_areas->bar_inner.pos.col = board_areas->board_outer.pos.col + board_areas->board_outer.dim.col;
 
 	//
 	// area: inner board
@@ -160,7 +160,7 @@ static void s_pos_areas_init(s_board_areas *board_areas) {
 	board_areas->board_inner.dim.col = board_half_col;
 
 	board_areas->board_inner.pos.row = BORDER_ROW;
-	board_areas->board_inner.pos.col = board_areas->bar_inner.pos.col + board_areas->bar_inner.dim.col + BORDER_COL;
+	board_areas->board_inner.pos.col = board_areas->bar_inner.pos.col + board_areas->bar_inner.dim.col;
 
 	//
 	// area: bear off
