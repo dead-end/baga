@@ -213,6 +213,17 @@ void nc_board_print() {
 
 	s_tarr_print_area(_win_board, _nc_board_fg, _nc_board_bg, (s_point ) { 0, 0 }, _nc_board_fg->dim);
 
+// TODO: is the thecorrect place for wmove? => win_board_refresh
+
+	//
+	// Move the cursor to a save place and do the refreshing. If the cursor
+	// is not moved a flickering can occur. (I am not sure if this is necessary
+	// for this game, but I had trouble with it in the past)
+	//
+	if (wmove(_win_board, 0, 0) == ERR) {
+		log_exit_str("Unable to move the cursor!");
+	}
+
 	win_board_refresh(false);
 }
 
@@ -307,7 +318,7 @@ static void traveler_move_line(const s_tarr *tmpl, s_point *tmpl_pos, const s_po
 }
 
 /******************************************************************************
- *
+ * The function moves the checker in the given direction.
  *****************************************************************************/
 
 static void traveler_move_to(const s_tarr *tmpl, s_point *tmpl_pos, const e_dir dir) {
@@ -321,7 +332,7 @@ static void traveler_move_to(const s_tarr *tmpl, s_point *tmpl_pos, const e_dir 
  *
  *****************************************************************************/
 
-void travler_move(const s_pos *checker_from, const int num_from, const s_pos *checker_to, const int num_to, const e_owner owner) {
+static void travler_move(const s_pos *checker_from, const int num_from, const s_pos *checker_to, const int num_to, const e_owner owner) {
 	s_area area;
 
 	const s_tarr *tmpl = s_tmpl_checker_get_travler(owner);
