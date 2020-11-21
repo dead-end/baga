@@ -76,8 +76,6 @@ static void nc_board_init_bg(s_tarr *board_bg, const s_board_areas *board_areas)
 
 	// TODO: param
 	// TODO: color
-	s_tarr_set_bg(board_bg, board_areas->bar_inner.pos, board_areas->bar_inner.dim, color_bar_bg, true);
-
 	s_tarr_set_bg(board_bg, board_areas->bear_off.pos, board_areas->bear_off.dim, color_bar_bg, true);
 
 	//
