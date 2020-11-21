@@ -30,6 +30,9 @@
  * The array contains the s_points with the movements. To move from one
  * position in a given direction, add the s_point to the position. The index of
  * the array is the enum e_dir value.
+ *
+ * The width of a character is half of the height of a character, so the up /
+ * down direction is double of the left / right direction.
  *****************************************************************************/
 
 s_point dirs[4] = {
@@ -47,12 +50,12 @@ s_point dirs[4] = {
 		//
 		// Direction: RIGHT
 		//
-		[E_DIR_RIGHT] = { 0, 2 },
+		[E_DIR_RIGHT] = { 0, 1 },
 
 		//
 		// Direction: LEFT
 		//
-		[E_DIR_LEFT] = { 0, -2 },
+		[E_DIR_LEFT] = { 0, -1 },
 
 };
 
