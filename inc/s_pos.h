@@ -85,7 +85,7 @@ typedef enum {
 
 const s_board_areas* s_pos_init();
 
-s_pos* s_pos_get_points();
+const s_pos* s_pos_get_points();
 
 s_pos s_pos_checker_get(const s_pos *pos);
 

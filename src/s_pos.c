@@ -109,7 +109,7 @@ const s_board_areas* s_pos_init() {
  * TODO: not clear if this is the desired approach.
  *****************************************************************************/
 
-s_pos* s_pos_get_points() {
+const s_pos* s_pos_get_points() {
 	return _pos_points;
 }
 
