@@ -75,9 +75,19 @@ typedef struct {
 
 typedef enum {
 
-	E_POS_POINTS = 0, E_POS_BAR = 1, E_POS_BEAR_OFF = 2
+	E_POS_POINTS = 0, E_POS_BAR = 1, E_POS_BEAR_OFF = 2, E_POS_NONE = -1,
 
 } e_pos;
+
+// TODO: rename s_pos, s_pos_idx, e_pos
+
+typedef struct {
+
+	e_pos pos_type;
+
+	int idx;
+
+} s_pos_idx;
 
 /******************************************************************************
  * The function declarations.
@@ -88,5 +98,7 @@ const s_board_areas* s_pos_init();
 const s_pos* s_pos_get_points();
 
 s_pos s_pos_get_checker(const e_pos type, const int idx);
+
+void s_pos_mouse_target(const s_point mouse, s_pos_idx *pos_idx);
 
 #endif /* INC_S_POS_H_ */

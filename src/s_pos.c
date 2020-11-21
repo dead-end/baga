@@ -25,6 +25,7 @@
 #include "lib_logging.h"
 #include "bg_defs.h"
 #include "s_pos.h"
+#include "lib_string.h"
 
 /******************************************************************************
  * Definitions of the various areas of the board. An area has a position and a
@@ -247,4 +248,81 @@ s_pos s_pos_get_checker(const e_pos type, const int idx) {
 		log_exit("Unknown type: %d", type)
 		;
 	}
+}
+
+/******************************************************************************
+ *
+ *****************************************************************************/
+
+bool s_area_is_inside(const s_area *area, const s_point point) {
+
+	//
+	// Upper left corner
+	//
+	if (point.row < area->pos.row || point.col < area->pos.col) {
+		return false;
+
+	}
+
+	//
+	// lower right corner
+	//
+	if (point.row > (area->pos.row + area->dim.row - 1) || point.col > (area->pos.col + area->dim.col - 1)) {
+		return false;
+	}
+
+	return true;
+}
+
+int s_pos_get_idx(const s_area *area, const s_point point) {
+	const int col = (point.col - area->pos.col) / 6;
+	return col;
+}
+
+#define is_upper(a,p) ((a).pos.row + (a).dim.row / 2 > (p).row)
+
+#define get_col(a,p) (((p).col - (a).pos.col) / 6)
+
+/******************************************************************************
+ *
+ *****************************************************************************/
+
+void s_pos_mouse_target(const s_point mouse, s_pos_idx *pos_idx) {
+	log_debug("Mouse: %d/%d", mouse.row, mouse.col);
+
+	if (s_area_is_inside(&_board_areas.board_inner, mouse)) {
+		pos_idx->pos_type = E_POS_POINTS;
+
+		if (is_upper(_board_areas.board_inner, mouse)) {
+			pos_idx->idx = 5 - get_col(_board_areas.board_inner, mouse);
+
+		} else {
+			pos_idx->idx = 18 + get_col(_board_areas.board_inner, mouse);
+		}
+
+	} else if (s_area_is_inside(&_board_areas.board_outer, mouse)) {
+		pos_idx->pos_type = E_POS_POINTS;
+
+		if (is_upper(_board_areas.board_outer, mouse)) {
+			pos_idx->idx = 11 - get_col(_board_areas.board_outer, mouse);
+
+		} else {
+			pos_idx->idx = 12 + get_col(_board_areas.board_outer, mouse);
+		}
+
+	} else if (s_area_is_inside(&_board_areas.bar_inner, mouse)) {
+		pos_idx->pos_type = E_POS_BAR;
+		pos_idx->idx = is_upper(_board_areas.bar_inner, mouse) ? OWNER_BLACK : OWNER_WHITE;
+
+	} else if (s_area_is_inside(&_board_areas.bear_off, mouse)) {
+		pos_idx->pos_type = E_POS_BEAR_OFF;
+		pos_idx->idx = is_upper(_board_areas.bear_off, mouse) ? OWNER_BLACK : OWNER_WHITE;
+
+	} else {
+
+		pos_idx->pos_type = E_POS_NONE;
+		pos_idx->idx = -1;
+	}
+
+	log_debug("result %d/%d", pos_idx->pos_type, pos_idx->idx);
 }
