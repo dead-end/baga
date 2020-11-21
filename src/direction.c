@@ -50,12 +50,12 @@ s_point dirs[4] = {
 		//
 		// Direction: RIGHT
 		//
-		[E_DIR_RIGHT] = { 0, 1 },
+		[E_DIR_RIGHT] = { 0, 2 },
 
 		//
 		// Direction: LEFT
 		//
-		[E_DIR_LEFT] = { 0, -1 },
+		[E_DIR_LEFT] = { 0, -2 },
 
 };
 
