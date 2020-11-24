@@ -89,6 +89,7 @@ SRC_LIBS = \
 INC_ADD = \
 	$(INCLUDE_DIR)/lib_s_tchar.h \
 	$(INCLUDE_DIR)/bg_defs.h   \
+	$(INCLUDE_DIR)/s_field.h   \
 
 OBJ_LIBS = $(subst $(SRC_DIR),$(BUILD_DIR),$(subst .c,.o,$(SRC_LIBS)))
 
