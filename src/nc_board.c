@@ -178,7 +178,7 @@ void s_board_points_add_checkers_pos(s_pos pos, const e_owner owner, const int n
 
 void s_board_points_add_checkers(const int idx, const e_owner owner, const int num, const e_compressed compressed) {
 
-	const s_pos pos_tmp = s_pos_get_checker(E_POS_POINTS, idx);
+	const s_pos pos_tmp = s_pos_get_checker((s_field ) { E_FIELD_POINTS, idx });
 
 	s_board_points_add_checkers_pos(pos_tmp, owner, num, compressed);
 }
@@ -288,7 +288,7 @@ static void traveler_move_line(const s_tarr *tmpl, s_point *tmpl_pos, const s_po
 		dist = s_point_smaller_dist(*tmpl_pos, target, dist);
 #endif
 
-		log_debug("cur: %d/%d target: %d/%d", tmpl_pos->row, tmpl_pos->col, target.row, target.col );
+		log_debug("cur: %d/%d target: %d/%d", tmpl_pos->row, tmpl_pos->col, target.row, target.col);
 
 		//
 		// Copy the checker template to the position
@@ -448,18 +448,18 @@ void nc_board_test() {
 
 	s_pos pos_from, pos_to;
 
-	pos_from = s_pos_get_checker(E_POS_POINTS, 11);
-	pos_to = s_pos_get_checker(E_POS_POINTS, 10);
+	pos_from = s_pos_get_checker((s_field ) { E_FIELD_POINTS, 11 });
+	pos_to = s_pos_get_checker((s_field ) { E_FIELD_POINTS, 10 });
 
 	travler_move(&pos_from, 5, &pos_to, 0, OWNER_WHITE);
 
-	pos_from = s_pos_get_checker(E_POS_POINTS, 0);
-	pos_to = s_pos_get_checker(E_POS_BEAR_OFF, OWNER_WHITE);
+	pos_from = s_pos_get_checker((s_field ) { E_FIELD_POINTS, 0 });
+	pos_to = s_pos_get_checker((s_field ) { E_FIELD_BEAR_OFF, OWNER_WHITE });
 
 	travler_move(&pos_from, 2, &pos_to, 0, OWNER_WHITE);
 
-	pos_from = s_pos_get_checker(E_POS_POINTS, 0);
-	pos_to = s_pos_get_checker(E_POS_BAR, OWNER_WHITE);
+	pos_from = s_pos_get_checker((s_field ) { E_FIELD_POINTS, 0 });
+	pos_to = s_pos_get_checker((s_field ) { E_FIELD_BAR, OWNER_WHITE });
 
 	travler_move(&pos_from, 1, &pos_to, 0, OWNER_WHITE);
 }
