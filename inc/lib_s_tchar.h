@@ -48,6 +48,8 @@ typedef struct {
 
 #define TCHAR_CHR_UNUSED L'\0'
 
+#define S_TCHAR_UNUSED (s_tchar ) { TCHAR_CHR_UNUSED, -1, -1 }
+
 #define s_tchar_set(t,c,f,b) (t)->chr = (c) ; (t)->fg = (f) ; (t)->bg = (b)
 
 #define s_tchar_is_defined(t) ((t)->chr != TCHAR_CHR_UNUSED)
