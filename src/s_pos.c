@@ -215,114 +215,121 @@ const s_pos* s_pos_get_points() {
  * area. The checker may be smaller than the containing area.
  *****************************************************************************/
 
-s_pos s_pos_get_checker(const e_pos type, const int idx) {
+s_pos s_pos_get_checker(const s_field field) {
 	s_pos result;
 
-	switch (type) {
+	switch (field.type) {
 
-	case E_POS_BAR:
+	case E_FIELD_BAR:
 
-		result.pos.row = _pos_bar[idx].pos.row;
-		result.pos.col = _pos_bar[idx].pos.col + CHECKER_OFFSET_COL;
-		result.is_upper = _pos_bar[idx].is_upper;
-
-		return result;
-
-	case E_POS_BEAR_OFF:
-
-		result.pos.row = _pos_bear_off[idx].pos.row;
-		result.pos.col = _pos_bear_off[idx].pos.col + CHECKER_OFFSET_COL;
-		result.is_upper = _pos_bear_off[idx].is_upper;
+		result.pos.row = _pos_bar[field.idx].pos.row;
+		result.pos.col = _pos_bar[field.idx].pos.col + CHECKER_OFFSET_COL;
+		result.is_upper = _pos_bar[field.idx].is_upper;
 
 		return result;
 
-	case E_POS_POINTS:
+	case E_FIELD_BEAR_OFF:
 
-		result.pos.row = _pos_points[idx].pos.row;
-		result.pos.col = _pos_points[idx].pos.col + CHECKER_OFFSET_COL;
-		result.is_upper = _pos_points[idx].is_upper;
+		result.pos.row = _pos_bear_off[field.idx].pos.row;
+		result.pos.col = _pos_bear_off[field.idx].pos.col + CHECKER_OFFSET_COL;
+		result.is_upper = _pos_bear_off[field.idx].is_upper;
+
+		return result;
+
+	case E_FIELD_POINTS:
+
+		result.pos.row = _pos_points[field.idx].pos.row;
+		result.pos.col = _pos_points[field.idx].pos.col + CHECKER_OFFSET_COL;
+		result.is_upper = _pos_points[field.idx].is_upper;
 
 		return result;
 
 	default:
-		log_exit("Unknown type: %d", type)
+		log_exit("Unknown type: %d", field.type)
 		;
 	}
 }
 
 /******************************************************************************
+ * The macro is called with an area and a point. The area has to be the inner
+ * or the outer board and the point has to be inside.
  *
+ * The macro checks if the point is on the upper or lower half of the board.
  *****************************************************************************/
 
-bool s_area_is_inside(const s_area *area, const s_point point) {
-
-	//
-	// Upper left corner
-	//
-	if (point.row < area->pos.row || point.col < area->pos.col) {
-		return false;
-
-	}
-
-	//
-	// lower right corner
-	//
-	if (point.row > (area->pos.row + area->dim.row - 1) || point.col > (area->pos.col + area->dim.col - 1)) {
-		return false;
-	}
-
-	return true;
-}
-
-int s_pos_get_idx(const s_area *area, const s_point point) {
-	const int col = (point.col - area->pos.col) / 6;
-	return col;
-}
-
-#define is_upper(a,p) ((a).pos.row + (a).dim.row / 2 > (p).row)
-
-#define get_col(a,p) (((p).col - (a).pos.col) / 6)
+#define s_pos_is_point_upper(a,p) ((a).pos.row + (a).dim.row / 2 > (p).row)
 
 /******************************************************************************
+ * The macro is called with an area and a point. The area has to be the inner
+ * or the outer board and the point has to be inside.
  *
+ * The macro returns the index of the point starting left with 0 to right with
+ * 5.
  *****************************************************************************/
 
-void s_pos_mouse_target(const s_point mouse, s_pos_idx *pos_idx) {
-	log_debug("Mouse: %d/%d", mouse.row, mouse.col);
+#define s_pos_get_point_idx(a,p) (((p).col - (a).pos.col) / 6)
 
+/******************************************************************************
+ * The function is called with a mouse position and returns the field for this
+ * position. This can be one of the points / bar / bear off.
+ *****************************************************************************/
+
+void s_pos_mouse_target(const s_point mouse, s_field *field) {
+
+	//
+	// Inner board
+	//
 	if (s_area_is_inside(&_board_areas.board_inner, mouse)) {
-		pos_idx->pos_type = E_POS_POINTS;
 
-		if (is_upper(_board_areas.board_inner, mouse)) {
-			pos_idx->idx = 5 - get_col(_board_areas.board_inner, mouse);
+		const int idx = s_pos_get_point_idx(_board_areas.board_inner, mouse);
 
-		} else {
-			pos_idx->idx = 18 + get_col(_board_areas.board_inner, mouse);
-		}
-
-	} else if (s_area_is_inside(&_board_areas.board_outer, mouse)) {
-		pos_idx->pos_type = E_POS_POINTS;
-
-		if (is_upper(_board_areas.board_outer, mouse)) {
-			pos_idx->idx = 11 - get_col(_board_areas.board_outer, mouse);
+		if (s_pos_is_point_upper(_board_areas.board_inner, mouse)) {
+			s_field_set_ptr(field, E_FIELD_POINTS, 5 - idx);
 
 		} else {
-			pos_idx->idx = 12 + get_col(_board_areas.board_outer, mouse);
+			s_field_set_ptr(field, E_FIELD_POINTS, 18 + idx);
 		}
 
-	} else if (s_area_is_inside(&_board_areas.bar_inner, mouse)) {
-		pos_idx->pos_type = E_POS_BAR;
-		pos_idx->idx = is_upper(_board_areas.bar_inner, mouse) ? OWNER_BLACK : OWNER_WHITE;
-
-	} else if (s_area_is_inside(&_board_areas.bear_off, mouse)) {
-		pos_idx->pos_type = E_POS_BEAR_OFF;
-		pos_idx->idx = is_upper(_board_areas.bear_off, mouse) ? OWNER_BLACK : OWNER_WHITE;
-
-	} else {
-
-		pos_idx->pos_type = E_POS_NONE;
-		pos_idx->idx = -1;
 	}
 
-	log_debug("result %d/%d", pos_idx->pos_type, pos_idx->idx);
+	//
+	// Outer board
+	//
+	else if (s_area_is_inside(&_board_areas.board_outer, mouse)) {
+
+		const int idx = s_pos_get_point_idx(_board_areas.board_outer, mouse);
+
+		if (s_pos_is_point_upper(_board_areas.board_outer, mouse)) {
+			s_field_set_ptr(field, E_FIELD_POINTS, 11 - idx);
+
+		} else {
+			s_field_set_ptr(field, E_FIELD_POINTS, 12 + idx);
+		}
+
+	}
+
+	//
+	// Inner bar
+	//
+	else if (s_area_is_inside(&_board_areas.bar_inner, mouse)) {
+		field->type = E_FIELD_BAR;
+		field->idx = s_pos_is_point_upper(_board_areas.bar_inner, mouse) ? OWNER_BLACK : OWNER_WHITE;
+	}
+
+	//
+	// Bear off area
+	//
+	else if (s_area_is_inside(&_board_areas.bear_off, mouse)) {
+		field->type = E_FIELD_BEAR_OFF;
+		field->idx = s_pos_is_point_upper(_board_areas.bear_off, mouse) ? OWNER_BLACK : OWNER_WHITE;
+	}
+
+	//
+	// Not inside one of the relevant areas.
+	//
+	else {
+		s_field_set_none_ptr(field);
+	}
+
+	log_debug("mouse: %d/%d result: %d/%d", mouse.row, mouse.col, field->type, field->idx);
 }
