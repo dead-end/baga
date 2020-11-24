@@ -22,45 +22,13 @@
  * SOFTWARE.
  */
 
-#include <stdlib.h>
-#include <locale.h>
-
-#include "lib_logging.h"
-
-#include "ut_lib_color_pair.h"
-#include "ut_lib_string.h"
-#include "ut_s_color_def.h"
-#include "ut_direction.h"
-#include "ut_s_point_layout.h"
-#include "ut_s_area.h"
-#include "ut_s_tarr.h"
+#ifndef INC_UT_S_TARR_H_
+#define INC_UT_S_TARR_H_
 
 /******************************************************************************
- * The main function delegates the call to the individual unit test functions.
+ * Declaration of the test function.
  *****************************************************************************/
 
-int main() {
+void ut_s_tarr_exec();
 
-	//
-	// Set the locale to support wchar_t
-	//
-	if (setlocale(LC_CTYPE, "") == NULL) {
-		log_exit_str("Unable to set the locale.");
-	}
-
-	ut_lib_color_pair_exec();
-
-	ut_lib_string_exec();
-
-	ut_s_color_def_exec();
-
-	ut_direction_exec();
-
-	ut_s_point_layout_exec();
-
-	ut_s_area_exec();
-
-	ut_s_tarr_exec();
-
-	return EXIT_SUCCESS;
-}
+#endif /* INC_UT_S_TARR_H_ */
