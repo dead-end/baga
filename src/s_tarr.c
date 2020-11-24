@@ -333,10 +333,10 @@ void s_tarr_print_area(WINDOW *win, const s_tarr *ta_fg, const s_tarr *ta_bg, co
  * The function deletes the s_tarr on the target at a given position.
  *****************************************************************************/
 
-void s_tarr_del(const s_tarr *ta_target, const s_tarr *ta_del, const s_point pos_del) {
+void s_tarr_del(const s_tarr *ta_target, const s_point dim_del, const s_point pos_del) {
 
-	const int row_end = pos_del.row + ta_del->dim.row;
-	const int col_end = pos_del.col + ta_del->dim.col;
+	const int row_end = pos_del.row + dim_del.row;
+	const int col_end = pos_del.col + dim_del.col;
 
 #ifdef DEBUG
 
