@@ -242,7 +242,7 @@ static void travleler_print(const s_tarr *tmpl, const s_point tmpl_pos) {
 
 static void traveler_del(const s_tarr *tmpl, const s_point tmpl_pos) {
 
-	s_tarr_del(_nc_board_fg, tmpl, tmpl_pos);
+	s_tarr_del(_nc_board_fg, tmpl->dim, tmpl_pos);
 
 	s_tarr_print_area(_win_board, _nc_board_fg, _nc_board_bg, tmpl_pos, tmpl->dim);
 }
