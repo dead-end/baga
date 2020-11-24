@@ -55,8 +55,8 @@ typedef struct {
 
 } s_field;
 
-#define s_field_ptr_set(f,t,i) (f)->type = (t) ; (f)->idx = (i)
+#define s_field_set_ptr(f,t,i) (f)->type = (t) ; (f)->idx = (i)
 
-#define s_field_ptr_set_none(f) s_field_ptr_set(f, E_FIELD_NONE, -1)
+#define s_field_set_none_ptr(f) s_field_set_ptr(f, E_FIELD_NONE, -1)
 
 #endif /* INC_S_FIELD_H_ */
