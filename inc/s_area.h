@@ -25,6 +25,8 @@
 #ifndef INC_S_AREA_H_
 #define INC_S_AREA_H_
 
+#include <stdbool.h>
+
 #include "lib_s_point.h"
 
 /******************************************************************************
@@ -38,5 +40,11 @@ typedef struct {
 	s_point dim;
 
 } s_area;
+
+/******************************************************************************
+ * Definition of functions and macros.
+ *****************************************************************************/
+
+bool s_area_is_inside(const s_area *area, const s_point point);
 
 #endif /* INC_S_AREA_H_ */
