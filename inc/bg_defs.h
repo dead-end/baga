@@ -42,6 +42,8 @@
 
 #define POINTS_HALF 12
 
+#define POINTS_QUARTER 6
+
 //
 // The dimension of a checker (gaming piece)
 //

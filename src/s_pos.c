@@ -284,10 +284,10 @@ void s_pos_mouse_target(const s_point mouse, s_field *field) {
 		const int idx = s_pos_get_point_idx(_board_areas.board_inner, mouse);
 
 		if (s_pos_is_point_upper(_board_areas.board_inner, mouse)) {
-			s_field_set_ptr(field, E_FIELD_POINTS, 5 - idx);
+			s_field_set_ptr(field, E_FIELD_POINTS, POINTS_QUARTER -1 - idx);
 
 		} else {
-			s_field_set_ptr(field, E_FIELD_POINTS, 18 + idx);
+			s_field_set_ptr(field, E_FIELD_POINTS, 3 * POINTS_QUARTER + idx);
 		}
 
 	}
@@ -300,10 +300,10 @@ void s_pos_mouse_target(const s_point mouse, s_field *field) {
 		const int idx = s_pos_get_point_idx(_board_areas.board_outer, mouse);
 
 		if (s_pos_is_point_upper(_board_areas.board_outer, mouse)) {
-			s_field_set_ptr(field, E_FIELD_POINTS, 11 - idx);
+			s_field_set_ptr(field, E_FIELD_POINTS, 2 * POINTS_QUARTER -1 - idx);
 
 		} else {
-			s_field_set_ptr(field, E_FIELD_POINTS, 12 + idx);
+			s_field_set_ptr(field, E_FIELD_POINTS, 2 * POINTS_QUARTER + idx);
 		}
 
 	}
