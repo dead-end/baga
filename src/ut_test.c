@@ -32,6 +32,7 @@
 #include "ut_s_color_def.h"
 #include "ut_direction.h"
 #include "ut_s_point_layout.h"
+#include "ut_s_area.h"
 
 /******************************************************************************
  * The main function delegates the call to the individual unit test functions.
@@ -55,6 +56,8 @@ int main() {
 	ut_direction_exec();
 
 	ut_s_point_layout_exec();
+
+	ut_s_area_exec();
 
 	return EXIT_SUCCESS;
 }
