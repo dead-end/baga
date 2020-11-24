@@ -75,6 +75,8 @@ SRC_LIBS = \
 	$(SRC_DIR)/s_tmpl_points.c  \
 	$(SRC_DIR)/s_tarr.c  \
 	$(SRC_DIR)/s_pos.c  \
+	$(SRC_DIR)/s_area.c  \
+	$(SRC_DIR)/ut_s_area.c  \
 	$(SRC_DIR)/direction.c  \
 	$(SRC_DIR)/ut_direction.c  \
 	$(SRC_DIR)/s_point_layout.c  \
@@ -87,7 +89,6 @@ SRC_LIBS = \
 INC_ADD = \
 	$(INCLUDE_DIR)/lib_s_tchar.h \
 	$(INCLUDE_DIR)/bg_defs.h   \
-	$(INCLUDE_DIR)/s_area.h      \
 
 OBJ_LIBS = $(subst $(SRC_DIR),$(BUILD_DIR),$(subst .c,.o,$(SRC_LIBS)))
 
