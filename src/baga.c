@@ -123,7 +123,7 @@ static void init() {
 
 int main() {
 	MEVENT event;
-	s_pos_idx pos_idx;
+	s_field pos_field;
 
 	log_debug_str("Starting baga...");
 
@@ -201,7 +201,7 @@ int main() {
 				if (event.bstate & BUTTON1_PRESSED) {
 					//const s_point event_point = { event.y, event.x };
 
-					s_pos_mouse_target((s_point ) { event.y, event.x }, &pos_idx);
+					s_pos_mouse_target((s_point ) { event.y, event.x }, &pos_field);
 
 					continue;
 				}
