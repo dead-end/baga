@@ -95,3 +95,17 @@ void ut_check_char_str(const char *current, const char *expected, const char *ms
 
 	log_debug("[%s] OK - Strings are equal: '%s'", msg, current);
 }
+
+/******************************************************************************
+ * The function checks whether a wchar_t parameter has the expected value or
+ * not.
+ *****************************************************************************/
+
+void ut_check_wchar_t(const wchar_t current, const wchar_t expected, const char *msg) {
+
+	if (current != expected) {
+		log_exit("[%s] current: '%lc' expected: '%lc'", msg, current, expected);
+	}
+
+	log_debug("[%s] OK - Strings are equal: '%lc'", msg, current);
+}
