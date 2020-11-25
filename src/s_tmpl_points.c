@@ -84,6 +84,24 @@ static const wchar_t _tchar_points[POINTS_ROW][POINTS_COL] = {
 };
 
 /******************************************************************************
+ * The orientation is currently used for templates of points. Points are
+ * triangles. The orientation shows where the pointed corner is:
+ *
+ *    o   ooooooo
+ *   ooo   ooooo
+ *  ooooo   ooo
+ * ooooooo   o
+ *****************************************************************************/
+
+#define NUM_ORIENT 2
+
+#define ORIENT_TOP 0
+
+#define ORIENT_BOT 1
+
+#define e_orient_idx(i) ((i) < POINTS_HALF ? ORIENT_TOP : ORIENT_BOT)
+
+/******************************************************************************
  * The array with the four templates for the points:
  *
  * black / white - top / bottom.
@@ -136,8 +154,6 @@ static void s_tmpl_point_create() {
 	// Black points
 	//
 	// TODO: define final colors
-	//s_color_def_gradient(colors, POINTS_ROW, "#ff8000", "#cc6600");
-
 	s_color_def_gradient(colors, POINTS_ROW, "#ffffff", "#cccccc");
 
 	_tmpls[OWNER_BLACK][ORIENT_TOP] = s_tarr_new(POINTS_ROW, POINTS_COL);
@@ -152,8 +168,6 @@ static void s_tmpl_point_create() {
 	// White points
 	//
 	// TODO: define final colors
-	//s_color_def_gradient(colors, POINTS_ROW, "#804000", "#4d2800");
-
 	s_color_def_gradient(colors, POINTS_ROW, "#555555", "#222222");
 
 	_tmpls[OWNER_WHITE][ORIENT_TOP] = s_tarr_new(POINTS_ROW, POINTS_COL);
@@ -188,7 +202,7 @@ static void s_tmpl_point_free() {
 
 static s_tarr* s_tmpl_point_get_tmpl(const int point_idx) {
 
-	return _tmpls[point_idx % NUM_PLAYER][point_idx < POINTS_HALF ? 0 : 1];
+	return _tmpls[point_idx % NUM_PLAYER][e_orient_idx(point_idx)];
 }
 
 /******************************************************************************
