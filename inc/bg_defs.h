@@ -116,6 +116,7 @@ typedef enum {
 // TODO: comments
 #define NUM_ORIENT 2
 
+// currently used for point templates, maybe the wrong place.
 typedef enum {
 
 	ORIENT_TOP = 0, ORIENT_BOT = 1
