@@ -64,6 +64,8 @@ s_tarr* s_tarr_new(const int row, const int col) {
 
 /******************************************************************************
  * The function frees the s_tarr structure.
+ *
+ * (unit tested)
  *****************************************************************************/
 
 void s_tarr_free(s_tarr **tarr) {
@@ -107,8 +109,39 @@ void s_tarr_set(s_tarr *tarr, const s_tchar tchar) {
 }
 
 /******************************************************************************
+ * The function deletes the s_tarr on the target at a given position.
+ *
+ * (unit tested)
+ *****************************************************************************/
+
+void s_tarr_del(const s_tarr *ta_target, const s_point dim_del, const s_point pos_del) {
+
+	const int row_end = pos_del.row + dim_del.row;
+	const int col_end = pos_del.col + dim_del.col;
+
+#ifdef DEBUG
+
+	//
+	// Ensure that the array is inside the target.
+	//
+	if (ta_target->dim.row < row_end || ta_target->dim.col < col_end) {
+		log_exit_str("Delete array not inside!");
+	}
+#endif
+
+	for (int row = pos_del.row; row < row_end; row++) {
+		for (int col = pos_del.col; col < col_end; col++) {
+
+			s_tarr_get(ta_target, row, col) = (s_tchar ) { TCHAR_CHR_UNUSED, -1, -1 };
+		}
+	}
+}
+
+/******************************************************************************
  * The function initializes the array with a wchar_t character, a foreground
  * color and an array with a background gradient.
+ *
+ * (unit tested)
  *****************************************************************************/
 
 void s_tarr_set_gradient(s_tarr *tarr, const wchar_t chr, const short fg_color, const short *bg_colors) {
@@ -128,13 +161,54 @@ void s_tarr_set_gradient(s_tarr *tarr, const wchar_t chr, const short fg_color, 
 }
 
 /******************************************************************************
+ * The function copies the from_array to the to_array at a given position.
+ *
+ * (unit tested)
+ *****************************************************************************/
+
+void s_tarr_cp(s_tarr *to_arr, const s_tarr *from_arr, const s_point pos) {
+	log_debug("pos: %d/%d", pos.row, pos.col);
+
+#ifdef DEBUG
+
+	//
+	// Ensure that the source array fits inside the target.
+	//
+	if (to_arr->dim.row < pos.row + from_arr->dim.row || to_arr->dim.col < pos.col + from_arr->dim.col) {
+		log_exit_str("Array not inside!");
+	}
+
+#endif
+
+	for (int row = 0; row < from_arr->dim.row; row++) {
+		for (int col = 0; col < from_arr->dim.col; col++) {
+
+			s_tarr_get(to_arr, pos.row + row, pos.col + col) = s_tarr_get(from_arr, row, col);
+		}
+	}
+}
+
+/******************************************************************************
  * The function sets the background color with a gradient for a given area
  * inside a s_tarr structure.
+ *
+ * (unit tested)
  *****************************************************************************/
 
 void s_tarr_set_bg(s_tarr *tarr, const s_point pos, const s_point dim, const short *bg_colors, const bool reverse) {
 
 	log_debug("pos: %d/%d dim: %d/%d", pos.row, pos.col, dim.row, dim.col);
+
+#ifdef DEBUG
+
+	//
+	// Ensure that the area fits inside the target.
+	//
+	if (tarr->dim.row < pos.row + dim.row || tarr->dim.col < pos.col + dim.col) {
+		log_exit_str("Area not inside!");
+	}
+
+#endif
 
 	//
 	// Store the position of the area.
@@ -157,9 +231,22 @@ void s_tarr_set_bg(s_tarr *tarr, const s_point pos, const s_point dim, const sho
 /******************************************************************************
  * The function copies the foreground (character and color) from a template to
  * a s_tarr. The background of the target is untouched.
+ *
+ * (unit tested)
  *****************************************************************************/
 
 void s_tarr_cp_fg(s_tarr *to_arr, const s_tarr *from_arr, const s_point pos) {
+
+#ifdef DEBUG
+
+	//
+	// Ensure that the area fits inside the target.
+	//
+	if (to_arr->dim.row < pos.row + from_arr->dim.row || to_arr->dim.col < pos.col + from_arr->dim.col) {
+		log_exit_str("Array not inside!");
+	}
+
+#endif
 
 	const s_tchar *from;
 	s_tchar *to;
@@ -172,20 +259,6 @@ void s_tarr_cp_fg(s_tarr *to_arr, const s_tarr *from_arr, const s_point pos) {
 
 			to->chr = from->chr;
 			to->fg = from->fg;
-		}
-	}
-}
-
-/******************************************************************************
- * The function copies the from_array to the to_array at a given position.
- *****************************************************************************/
-
-void s_tarr_cp(s_tarr *to_arr, const s_tarr *from_arr, const s_point pos) {
-
-	for (int row = 0; row < from_arr->dim.row; row++) {
-		for (int col = 0; col < from_arr->dim.col; col++) {
-
-			s_tarr_get(to_arr, pos.row + row, pos.col + col) = s_tarr_get(from_arr, row, col);
 		}
 	}
 }
@@ -212,6 +285,8 @@ void s_tarr_cp(s_tarr *to_arr, const s_tarr *from_arr, const s_point pos) {
  * |
  * | <- param pos
  * +---+
+ *
+ * (unit tested)
  *****************************************************************************/
 
 s_point s_tarr_cp_pos(s_tarr *to_arr, const s_tarr *from_arr, s_point pos, const bool reverse) {
@@ -225,7 +300,7 @@ s_point s_tarr_cp_pos(s_tarr *to_arr, const s_tarr *from_arr, s_point pos, const
 	}
 
 	//
-	// Do the copying.
+	// Do the copying. (It ensures that the source fits in the target.)
 	//
 	s_tarr_cp(to_arr, from_arr, pos);
 
@@ -251,6 +326,8 @@ s_point s_tarr_cp_pos(s_tarr *to_arr, const s_tarr *from_arr, s_point pos, const
  * |        |
  * | <- lower left
  * +--------+
+ *
+ * (unit tested)
  *****************************************************************************/
 
 s_point s_tarr_ul_pos_get(const s_tarr *tarr, s_point cur_pos, const bool reverse) {
@@ -325,33 +402,6 @@ void s_tarr_print_area(WINDOW *win, const s_tarr *ta_fg, const s_tarr *ta_bg, co
 			attrset(COLOR_PAIR(cp));
 
 			mvwprintw(win, row, col, "%lc", tchar->chr);
-		}
-	}
-}
-
-/******************************************************************************
- * The function deletes the s_tarr on the target at a given position.
- *****************************************************************************/
-
-void s_tarr_del(const s_tarr *ta_target, const s_point dim_del, const s_point pos_del) {
-
-	const int row_end = pos_del.row + dim_del.row;
-	const int col_end = pos_del.col + dim_del.col;
-
-#ifdef DEBUG
-
-	//
-	// Ensure that the array is inside the target.
-	//
-	if (ta_target->dim.row < row_end || ta_target->dim.col < col_end) {
-		log_exit_str("Delete array not inside!");
-	}
-#endif
-
-	for (int row = pos_del.row; row < row_end; row++) {
-		for (int col = pos_del.col; col < col_end; col++) {
-
-			s_tarr_get(ta_target, row, col) = (s_tchar ) { TCHAR_CHR_UNUSED, -1, -1 };
 		}
 	}
 }
