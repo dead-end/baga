@@ -68,8 +68,6 @@ static void nc_board_init_bg(s_tarr *board_bg, const s_board_areas *board_areas)
 	short color_bar_bg[board_areas->board_dim.row];
 
 	// TODO: choose final color
-	//s_color_def_gradient(color_bar_bg, BOARD_ROW, "#1a0d00", "#663500");
-
 	s_color_def_gradient(color_bar_bg, board_areas->board_dim.row, "#22222f", "#55555f");
 
 	s_tarr_set_gradient(board_bg, EMPTY, 0, color_bar_bg);
@@ -84,8 +82,6 @@ static void nc_board_init_bg(s_tarr *board_bg, const s_board_areas *board_areas)
 	short color_board_bg[board_areas->board_outer.dim.row];
 
 	// TODO: choose final color
-	//s_color_def_gradient(color_board_bg, BOARD_HALF_ROW, "#ffe6cc", "#ff9933");
-
 	s_color_def_gradient(color_board_bg, board_areas->board_outer.dim.row, "#88888f", "#cccccf");
 
 	s_tarr_set_bg(board_bg, board_areas->board_outer.pos, board_areas->board_outer.dim, color_board_bg, false);
@@ -143,7 +139,7 @@ void nc_board_init(const s_board_areas *board_areas) {
 	//
 	// Initialize the foreground board as unset.
 	//
-	s_tarr_set(_nc_board_fg, ( s_tchar ) { TCHAR_CHR_UNUSED, -1, -1 });
+	s_tarr_set(_nc_board_fg, S_TCHAR_UNUSED);
 }
 
 /******************************************************************************
@@ -176,11 +172,11 @@ void s_board_points_add_checkers_pos(s_pos pos, const e_owner owner, const int n
  *
  *****************************************************************************/
 
-void s_board_points_add_checkers(const int idx, const e_owner owner, const int num, const e_compressed compressed) {
+void s_board_add_checkers(const s_field field, const e_owner owner, const int num) {
 
-	const s_pos pos_tmp = s_pos_get_checker((s_field ) { E_FIELD_POINTS, idx });
+	const s_pos pos_tmp = s_pos_get_checker(field);
 
-	s_board_points_add_checkers_pos(pos_tmp, owner, num, compressed);
+	s_board_points_add_checkers_pos(pos_tmp, owner, num, E_UNCOMP);
 }
 
 /******************************************************************************
@@ -413,7 +409,6 @@ static void travler_move(const s_pos *checker_from, const int num_from, const s_
 		// Write the increased checker, which overwrites the traveler, so it
 		// does not have to be deleted.
 		//
-
 		s_board_points_add_checkers_pos(*checker_to, owner, num_to + 1, E_UNCOMP);
 		s_tarr_print_area(_win_board, _nc_board_fg, _nc_board_bg, area.pos, area.dim);
 

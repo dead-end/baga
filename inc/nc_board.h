@@ -38,6 +38,6 @@ void nc_board_free();
 
 void nc_board_print();
 
-void s_board_points_add_checkers(const int checker_idx, const e_owner owner, const int num, const e_compressed compressed);
+void s_board_add_checkers(const s_field field, const e_owner owner, const int num);
 
 #endif /* INC_NC_BOARD_H_ */
