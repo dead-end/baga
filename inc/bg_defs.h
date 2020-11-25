@@ -110,17 +110,4 @@ typedef enum {
 
 #define e_owner_other(o) (((o) + 1) % 2)
 
-/******************************************************************************
- *
- *****************************************************************************/
-// TODO: comments
-#define NUM_ORIENT 2
-
-// currently used for point templates, maybe the wrong place.
-typedef enum {
-
-	ORIENT_TOP = 0, ORIENT_BOT = 1
-
-} e_orient;
-
 #endif /* INC_BG_DEFS_H_ */
