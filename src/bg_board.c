@@ -109,11 +109,14 @@ void bg_board_new_game(s_bg_board *bg_board) {
 
 void bg_board_print(s_bg_board *bg_board) {
 
+	s_field field = { .type = E_FIELD_POINTS };
+
 	for (int i = 0; i < POINTS_NUM; i++) {
 
 		if (bg_board->bg_point[i].num != 0) {
 
-			s_board_points_add_checkers(i, bg_board->bg_point[i].owner, bg_board->bg_point[i].num, E_UNCOMP);
+			field.idx = i;
+			s_board_add_checkers(field, bg_board->bg_point[i].owner, bg_board->bg_point[i].num);
 		}
 	}
 }
