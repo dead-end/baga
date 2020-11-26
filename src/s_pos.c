@@ -23,9 +23,10 @@
  */
 
 #include "lib_logging.h"
+#include "lib_utils.h"
+#include "lib_string.h"
 #include "bg_defs.h"
 #include "s_pos.h"
-#include "lib_string.h"
 
 /******************************************************************************
  * Definitions of the various areas of the board. An area has a position and a
@@ -101,14 +102,14 @@ static void s_pos_set_points(s_pos *pos_points, const s_area *area_board_outer, 
 		// Upper right triangles
 		//
 		pos_points[0 * quarter + i].pos.row = area_board_inner->pos.row;
-		pos_points[0 * quarter + i].pos.col = area_board_inner->pos.col + reverse_idx(quarter, i) * POINTS_COL;
+		pos_points[0 * quarter + i].pos.col = area_board_inner->pos.col + lu_reverse_idx(quarter, i) * POINTS_COL;
 		pos_points[0 * quarter + i].is_upper = true;
 
 		//
 		// Upper left triangles
 		//
 		pos_points[1 * quarter + i].pos.row = area_board_outer->pos.row;
-		pos_points[1 * quarter + i].pos.col = area_board_outer->pos.col + reverse_idx(quarter, i) * POINTS_COL;
+		pos_points[1 * quarter + i].pos.col = area_board_outer->pos.col + lu_reverse_idx(quarter, i) * POINTS_COL;
 		pos_points[1 * quarter + i].is_upper = true;
 
 		//
