@@ -22,18 +22,17 @@
  * SOFTWARE.
  */
 
-#include "lib_curses.h"
 #include "lib_logging.h"
-#include "nc_board.h"
-
+#include "lib_utils.h"
+#include "lib_curses.h"
+#include "s_color_def.h"
 #include "s_area.h"
 #include "s_tmpl_points.h"
 #include "s_tmpl_checker.h"
-#include "nc_board.h"
-#include "s_color_def.h"
-#include "direction.h"
-
 #include "s_point_layout.h"
+#include "direction.h"
+#include "nc_board.h"
+#include "nc_board.h"
 
 static WINDOW *_win_board;
 
@@ -342,7 +341,7 @@ static void travler_move(const s_pos *checker_from, const int num_from, const s_
 		//
 		// Add the traveler
 		//
-		tmpl_pos = s_point_layout_pos_full(checker_from, E_UNCOMP, min(num_from, CHECK_DIS_FULL));
+		tmpl_pos = s_point_layout_pos_full(checker_from, E_UNCOMP, lu_min(num_from, CHECK_DIS_FULL));
 		s_tarr_cp(_nc_board_fg, tmpl, tmpl_pos);
 
 		s_tarr_print_area(_win_board, _nc_board_fg, _nc_board_bg, area.pos, area.dim);
@@ -390,7 +389,7 @@ static void travler_move(const s_pos *checker_from, const int num_from, const s_
 
 	traveler_move_line(tmpl, &tmpl_pos, (s_point ) { .row = TRAVEL_ROW, .col = checker_to->pos.col });
 
-	const s_point last_pos = s_point_layout_pos_full(checker_to, E_UNCOMP, min(num_to + 1, CHECK_DIS_FULL + 1));
+	const s_point last_pos = s_point_layout_pos_full(checker_to, E_UNCOMP, lu_min(num_to + 1, CHECK_DIS_FULL + 1));
 
 	traveler_move_line(tmpl, &tmpl_pos, (s_point ) { .row = last_pos.row, .col = last_pos.col });
 
