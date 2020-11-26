@@ -41,6 +41,6 @@ s_point ls_strs_dim(const char *strs[]);
 
 char* ls_trim(char *str);
 
-char* ls_cpy_str_centered(char *to, const int size, const char *from);
+char* ls_cpy_centered(char *to, const int size, const char *from);
 
 #endif /* INC_LIB_STRING_H_ */
