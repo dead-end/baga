@@ -22,10 +22,12 @@
  * SOFTWARE.
  */
 
-#include "lib_s_point.h"
-
 #include <string.h>
 #include <ctype.h>
+
+#include "lib_utils.h"
+#include "lib_logging.h"
+#include "lib_s_point.h"
 
 /******************************************************************************
  * The function is called with an array of strings, which is NULL terminated.
@@ -34,7 +36,7 @@
  * (Unit tested)
  *****************************************************************************/
 
-s_point strs_dim(const char *strs[]) {
+s_point ls_strs_dim(const char *strs[]) {
 	s_point dim = { .row = 0, .col = -1 };
 
 	int col;
@@ -60,7 +62,7 @@ s_point strs_dim(const char *strs[]) {
  * (Unit tested)
  *****************************************************************************/
 
-char* trim(char *str) {
+char* ls_trim(char *str) {
 	char *ptr;
 
 	//
@@ -72,10 +74,64 @@ char* trim(char *str) {
 	//
 	// skip tailing white spaces by overwriting them with '\0'
 	//
-	size_t len = strlen(ptr);
+	const size_t len = strlen(ptr);
 	for (int i = len - 1; i >= 0 && isspace(ptr[i]); i--) {
 		ptr[i] = '\0';
 	}
 
 	return ptr;
+}
+
+/******************************************************************************
+ * The function copies the source string centered to the target string.
+ *
+ * Example:
+ *
+ * - source string: 123
+ * - target size: 9 (with \0)
+ *
+ * 012345678
+ *   1234  \0
+ *
+ * (Unit tested)
+ *****************************************************************************/
+
+char* ls_cpy_centered(char *to, const int size, const char *from) {
+
+	const int src_len = strlen(from);
+
+#ifdef DEBUG
+
+	//
+	// Ensure that the string fits in the target.
+	//
+	if (src_len > size) {
+		log_exit("String too long: %s", from);
+	}
+#endif
+
+	const int start = lu_center(size - 1, src_len);
+	const int end = start + src_len;
+
+	//
+	// Copy the source to the destination with the padding.
+	//
+	for (int i = 0; i < size - 1; i++) {
+
+		if (i < start || i >= end) {
+			to[i] = ' ';
+
+		} else {
+			to[i] = from[i - start];
+		}
+	}
+
+	//
+	// Add terminating \0 to the target
+	//
+	to[size - 1] = '\0';
+
+	log_debug("source: '%s' target: '%s' start-idx: %d end-idx: %d source-len: %d size: %d", from, to, start, end, src_len, size);
+
+	return to;
 }
