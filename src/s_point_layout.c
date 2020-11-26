@@ -22,8 +22,8 @@
  * SOFTWARE.
  */
 
+#include "lib_utils.h"
 #include "lib_logging.h"
-
 #include "s_point_layout.h"
 
 /******************************************************************************
@@ -129,7 +129,7 @@ int s_point_layout_color_idx(const s_point_layout layout, const int idx) {
 	//
 	// The colors are assigned in the reverse order.
 	//
-	const int col_idx = reverse_idx(num_vis, idx);
+	const int col_idx = lu_reverse_idx(num_vis, idx);
 
 	//
 	// Adding an offset, because the index 0 is used for the traveler.
@@ -170,7 +170,7 @@ s_area s_point_layout_get_area(const s_pos *pos, const int dim_row, const int di
 
 	};
 
-	log_debug("area - pos: %d/%d dim: %d/%d", result.pos.row, result.pos.col,result.dim.row, result.dim.col);
+	log_debug("area - pos: %d/%d dim: %d/%d", result.pos.row, result.pos.col, result.dim.row, result.dim.col);
 
 	return result;
 }
