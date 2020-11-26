@@ -22,10 +22,10 @@
  * SOFTWARE.
  */
 
-#include "bg_board.h"
-#include "nc_board.h"
-
 #include "lib_logging.h"
+#include "lib_utils.h"
+#include "nc_board.h"
+#include "bg_board.h"
 
 /******************************************************************************
  * The definition of the index for black and white. White is playing from upper
@@ -34,7 +34,7 @@
 
 #define idx_white(i) (i)
 
-#define idx_black(i) reverse_idx(POINTS_NUM,i)
+#define idx_black(i) lu_reverse_idx(POINTS_NUM,i)
 
 /******************************************************************************
  * The function initializes the bg board struct. No checker are placed.
