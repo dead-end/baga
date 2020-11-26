@@ -31,14 +31,16 @@
  * Definition of the macros.
  *****************************************************************************/
 
-#define bool_str(b) ((b) ? "true" : "false")
+#define ls_bool_str(b) ((b) ? "true" : "false")
 
 /******************************************************************************
  * The definition of the functions.
  *****************************************************************************/
 
-s_point strs_dim(const char *strs[]);
+s_point ls_strs_dim(const char *strs[]);
 
-char* trim(char *str);
+char* ls_trim(char *str);
+
+char* ls_cpy_str_centered(char *to, const int size, const char *from);
 
 #endif /* INC_LIB_STRING_H_ */
