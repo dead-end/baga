@@ -25,11 +25,11 @@
 #include <stdbool.h>
 
 #include "lib_logging.h"
-
-#include "s_tmpl_points.h"
-#include "s_color_def.h"
+#include "lib_utils.h"
 #include "bg_defs.h"
+#include "s_color_def.h"
 #include "s_point_layout.h"
+#include "s_tmpl_points.h"
 
 /******************************************************************************
  * Definition of the characters used by the triangles.
@@ -130,7 +130,7 @@ static void s_tmpl_point_cp(s_tarr *tmpl, const wchar_t chr_tmpl[POINTS_ROW][POI
 			//
 			// If required, we copy the characters with reversed rows.
 			//
-			row_reverse = reverse ? reverse_idx(POINTS_ROW, row) : row;
+			row_reverse = reverse ? lu_reverse_idx(POINTS_ROW, row) : row;
 
 			tchr->chr = chr_tmpl[row_reverse][col];
 			tchr->fg = fg[row];
@@ -224,14 +224,14 @@ void s_tmpl_points_set_pos(s_pos *point_pos, const s_area *area_board_outer, con
 		// Upper right triangles
 		//
 		point_pos[0 * quarter + i].pos.row = area_board_inner->pos.row;
-		point_pos[0 * quarter + i].pos.col = area_board_inner->pos.col + reverse_idx(quarter, i) * POINTS_COL;
+		point_pos[0 * quarter + i].pos.col = area_board_inner->pos.col + lu_reverse_idx(quarter, i) * POINTS_COL;
 		point_pos[0 * quarter + i].is_upper = true;
 
 		//
 		// Upper left triangles
 		//
 		point_pos[1 * quarter + i].pos.row = area_board_outer->pos.row;
-		point_pos[1 * quarter + i].pos.col = area_board_outer->pos.col + reverse_idx(quarter, i) * POINTS_COL;
+		point_pos[1 * quarter + i].pos.col = area_board_outer->pos.col + lu_reverse_idx(quarter, i) * POINTS_COL;
 		point_pos[1 * quarter + i].is_upper = true;
 
 		//
