@@ -66,21 +66,6 @@
 #define POINTS_COL (CHECKER_COL + 2)
 
 //
-// The macro returns the reverse index given a total number and an index.
-//
-#define reverse_idx(t,i) ((t) - 1 - (i))
-
-//
-// The macro returns the maximum of two value.
-//
-#define max(t,i) ((i) > (t) ? (i) : (t))
-
-//
-// The macro returns the maximum of two value.
-//
-#define min(t,i) ((i) > (t) ? (t) : (i))
-
-//
 // Empty wchar_t
 //
 #define EMPTY L' '
