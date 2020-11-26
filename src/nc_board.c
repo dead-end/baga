@@ -22,13 +22,11 @@
  * SOFTWARE.
  */
 
-#include <ncurses.h>
-
+#include "lib_curses.h"
 #include "lib_logging.h"
-#include "s_area.h"
-
 #include "nc_board.h"
 
+#include "s_area.h"
 #include "s_tmpl_points.h"
 #include "s_tmpl_checker.h"
 #include "nc_board.h"
@@ -186,9 +184,7 @@ void s_board_add_checkers(const s_field field, const e_owner owner, const int nu
 
 static void win_board_refresh(const bool do_sleep) {
 
-	if (wrefresh(_win_board) == ERR) {
-		log_exit_str("Unable to refresh window!");
-	}
+	lc_win_refresh(_win_board);
 
 	if (!do_sleep) {
 		return;
