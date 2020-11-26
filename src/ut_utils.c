@@ -62,10 +62,10 @@ void ut_check_short(const short current, const short expected, const char *msg) 
 void ut_check_bool(const bool current, const bool expected, const char *msg) {
 
 	if (current != expected) {
-		log_exit("[%s] current: %s expected: %s", msg, bool_str(current), bool_str(expected));
+		log_exit("[%s] current: %s expected: %s", msg, ls_bool_str(current), ls_bool_str(expected));
 	}
 
-	log_debug("[%s] OK current: %s", msg, bool_str(current));
+	log_debug("[%s] OK current: %s", msg, ls_bool_str(current));
 }
 
 /******************************************************************************
