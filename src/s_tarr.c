@@ -23,6 +23,7 @@
  */
 
 #include "lib_logging.h"
+#include "lib_utils.h"
 #include "lib_color.h"
 #include "lib_color_pair.h"
 
@@ -220,7 +221,7 @@ void s_tarr_set_bg(s_tarr *tarr, const s_point pos, const s_point dim, const sho
 		for (int col = 0; col < dim.col; col++) {
 
 			if (reverse) {
-				s_tarr_get(tarr, pos_row + row, pos_col + col).bg = bg_colors[reverse_idx(dim.row, row)];
+				s_tarr_get(tarr, pos_row + row, pos_col + col).bg = bg_colors[lu_reverse_idx(dim.row, row)];
 			} else {
 				s_tarr_get(tarr, pos_row + row, pos_col + col).bg = bg_colors[row];
 			}
