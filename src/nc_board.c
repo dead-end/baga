@@ -57,15 +57,14 @@ static s_tarr *_nc_board_fg;
  * The function initializes the background of the board.
  *****************************************************************************/
 
-static void nc_board_init_bg(s_tarr *board_bg, const s_board_areas *board_areas) {
+static void nc_board_init_bg(const s_game_cfg *game_cfg, s_tarr *board_bg, const s_board_areas *board_areas) {
 
 	//
 	// Set the background of the complete board.
 	//
 	short color_bar_bg[board_areas->board_dim.row];
 
-	// TODO: choose final color
-	s_color_def_gradient(color_bar_bg, board_areas->board_dim.row, "#22222f", "#55555f");
+	s_color_def_gradient(color_bar_bg, board_areas->board_dim.row, game_cfg->clr_board_start, game_cfg->clr_board_end);
 
 	s_tarr_set_gradient(board_bg, EMPTY, 0, color_bar_bg);
 
@@ -78,8 +77,7 @@ static void nc_board_init_bg(s_tarr *board_bg, const s_board_areas *board_areas)
 	//
 	short color_board_bg[board_areas->board_outer.dim.row];
 
-	// TODO: choose final color
-	s_color_def_gradient(color_board_bg, board_areas->board_outer.dim.row, "#88888f", "#cccccf");
+	s_color_def_gradient(color_board_bg, board_areas->board_outer.dim.row, game_cfg->clr_outer_inner_start, game_cfg->clr_outer_inner_end);
 
 	s_tarr_set_bg(board_bg, board_areas->board_outer.pos, board_areas->board_outer.dim, color_board_bg, false);
 
@@ -90,7 +88,7 @@ static void nc_board_init_bg(s_tarr *board_bg, const s_board_areas *board_areas)
  * The function allocates the resources for the board.
  *****************************************************************************/
 
-static void nc_board_alloc(const s_point board_dim) {
+static void nc_board_alloc(const s_game_cfg *game_cfg, const s_point board_dim) {
 
 	log_debug_str("Allocating resources!");
 
@@ -98,7 +96,7 @@ static void nc_board_alloc(const s_point board_dim) {
 
 	_nc_board_fg = s_tarr_new(board_dim.row, board_dim.col);
 
-	s_tmpl_checker_create();
+	s_tmpl_checker_create(game_cfg);
 }
 
 /******************************************************************************
@@ -120,18 +118,22 @@ void nc_board_free() {
  * The function initializes the board.
  *****************************************************************************/
 
-void nc_board_init(const s_board_areas *board_areas) {
+void nc_board_init(const s_game_cfg *game_cfg, const s_board_areas *board_areas) {
 
 	_win_board = stdscr;
 
-	nc_board_alloc(board_areas->board_dim);
+	nc_board_alloc(game_cfg, board_areas->board_dim);
 
-	nc_board_init_bg(_nc_board_bg, board_areas);
+	nc_board_init_bg(game_cfg, _nc_board_bg, board_areas);
 
 	//
 	// Add points to the board
 	//
+	s_tmpl_point_create(game_cfg);
+
 	s_tmpl_point_add_2_tarr(_nc_board_bg, s_pos_get_points());
+
+	s_tmpl_point_free();
 
 	//
 	// Initialize the foreground board as unset.
