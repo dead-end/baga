@@ -127,6 +127,8 @@ void show_menu() {
  *****************************************************************************/
 
 int main() {
+	s_game_cfg game_cfg;
+
 	MEVENT event;
 	s_field pos_field;
 
@@ -134,12 +136,14 @@ int main() {
 
 	init();
 
+	s_game_cfg_init(&game_cfg);
+
 	const s_board_areas *board_areas = s_pos_init();
 
 	//
 	// Initialize the ncurses board function
 	//
-	nc_board_init(board_areas);
+	nc_board_init(&game_cfg, board_areas);
 
 	show_menu();
 
