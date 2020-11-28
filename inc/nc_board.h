@@ -27,12 +27,13 @@
 
 #include "bg_defs.h"
 #include "s_point_layout.h"
+#include "s_game_cfg.h"
 
 /******************************************************************************
  * Function definitions that are only used for unit tests.
  *****************************************************************************/
 
-void nc_board_init(const s_board_areas *board_areas);
+void nc_board_init(const s_game_cfg *game_cfg, const s_board_areas *board_areas);
 
 void nc_board_free();
 
