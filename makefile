@@ -68,6 +68,8 @@ SRC_LIBS = \
 	$(SRC_DIR)/lib_color_pair.c \
 	$(SRC_DIR)/lib_string.c     \
 	$(SRC_DIR)/lib_s_point.c     \
+	$(SRC_DIR)/lib_curses.c     \
+	$(SRC_DIR)/lib_popup.c     \
 	$(SRC_DIR)/s_color_def.c \
 	$(SRC_DIR)/bg_board.c  \
 	$(SRC_DIR)/nc_board.c  \
@@ -89,6 +91,7 @@ SRC_LIBS = \
 
 INC_ADD = \
 	$(INCLUDE_DIR)/lib_s_tchar.h \
+	$(INCLUDE_DIR)/lib_utils.h \
 	$(INCLUDE_DIR)/bg_defs.h   \
 	$(INCLUDE_DIR)/s_field.h   \
 
