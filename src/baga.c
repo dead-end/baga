@@ -22,17 +22,35 @@
  * SOFTWARE.
  */
 
-#include <bg_board.h>
 #include <locale.h>
-#include <ncurses.h>
-#include <math.h>
-#include <string.h>
 
-#include "nc_board.h"
-
-#include "lib_string.h"
 #include "lib_logging.h"
+#include "lib_curses.h"
+#include "lib_string.h"
+#include "lib_popup.h"
+#include "nc_board.h"
+#include "bg_board.h"
 #include "s_pos.h"
+
+static const char *headers[] = {
+
+" _______            __                                              ",
+
+"|   _   \\---.-.----|  |--.-----.---.-.--------.--------.-----.-----.",
+
+"|.  1   |  _  |  __|    <|  _  |  _  |        |        |  _  |     |",
+
+"|.  _   |___._|____|__|__|___  |___._|__|__|__|__|__|__|_____|__|__|",
+
+"|:  1    \\               |_____|",
+
+"|::.. .  /",
+
+"`-------'",
+
+"",
+
+NULL };
 
 /******************************************************************************
  * The exit callback function resets the terminal and frees the memory.
@@ -42,7 +60,12 @@ static void exit_callback() {
 
 	nc_board_free();
 
-	endwin();
+	//
+	// Finish ncurses stuff
+	//
+	lc_mouse_finish(true);
+
+	lc_curses_finish();
 }
 
 /******************************************************************************
@@ -63,58 +86,40 @@ static void init() {
 	//
 	log_atexit(exit_callback);
 
-	if (initscr() == NULL) {
-		log_exit_str("Unable to init screen!");
+	//
+	// Initialize ncurses stuff
+	//
+	lc_curses_init();
+
+	lc_mouse_init(BUTTON1_PRESSED | REPORT_MOUSE_POSITION, true);
+}
+
+/******************************************************************************
+ *
+ *****************************************************************************/
+
+void show_menu() {
+	log_debug_str("Showing start menu");
+
+	//
+	// Initialize the choices array.
+	//
+	const char *choices[3] = { "New Game", "Exit" };
+
+	//
+	// Process the menu (the second parameter is a flag to ignore ESC)
+	//
+	const int idx = lp_process_menu(headers, choices, 0, true);
+
+	if (idx == 1) {
+		exit(EXIT_SUCCESS);
+
+	} else if (idx == 0) {
+		log_debug_str("New game!");
+
+	} else {
+		log_exit("Unknown index: %d", idx);
 	}
-
-	if (start_color() == ERR) {
-		log_exit_str("Unable to start color!");
-	}
-
-	//
-	// Disable line buffering.
-	//
-	if (raw() == ERR) {
-		log_exit_str("Unable to set raw mode.");
-	}
-
-	//
-	// Disable echoing.
-	//
-	if (noecho() == ERR) {
-		log_exit_str("Unable to switch off echoing.");
-	}
-
-	//
-	// Enable keypad for the terminal.
-	//
-	if (keypad(stdscr, TRUE) == ERR) {
-		log_exit_str("Unable to enable the keypad of the terminal.");
-	}
-
-	//
-	// Switch off the cursor.
-	//
-	if (curs_set(0) == ERR) {
-		log_exit_str("Unable to set cursor visibility.");
-	}
-
-	//
-	// Disable ESC delay. (The man page says: "These functions all return TRUE
-	// or FALSE, except as noted." which seems not to be correct.
-	//
-	set_escdelay(0);
-
-	if (has_mouse()) {
-		log_exit_str("Terminal does not support a mouse!");
-	}
-
-	//
-	// Register mouse events (which do not have a propper error handling)
-	//
-	mousemask(BUTTON1_PRESSED | REPORT_MOUSE_POSITION, NULL);
-
-	mouseinterval(0);
 }
 
 /******************************************************************************
@@ -136,6 +141,8 @@ int main() {
 	//
 	nc_board_init(board_areas);
 
+	show_menu();
+
 	//
 	// Initialize the game board function
 	//
@@ -154,7 +161,7 @@ int main() {
 
 	nc_board_test();
 
-	getch();
+	//getch();
 
 	log_debug_str("Ending baga...");
 
@@ -188,14 +195,14 @@ int main() {
 			switch (c) {
 
 			case KEY_MOUSE:
-				log_debug_str("mouse");
+				//log_debug_str("mouse");
 
 				if (getmouse(&event) != OK) {
 
 					//
 					// Report the details of the mouse event.
 					//
-					log_exit("Unable to get mouse event! mask: %s coords: %d/%d/%d", bool_str(event.bstate == 0), event.x, event.y, event.z);
+					log_exit("Unable to get mouse event! mask: %s coords: %d/%d/%d", ls_bool_str(event.bstate == 0), event.x, event.y, event.z);
 				}
 
 				if (event.bstate & BUTTON1_PRESSED) {
@@ -203,6 +210,8 @@ int main() {
 
 					s_pos_mouse_target((s_point ) { event.y, event.x }, &pos_field);
 
+					continue;
+				} else {
 					continue;
 				}
 
