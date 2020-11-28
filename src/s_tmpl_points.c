@@ -140,10 +140,20 @@ static void s_tmpl_point_cp(s_tarr *tmpl, const wchar_t chr_tmpl[POINTS_ROW][POI
 }
 
 /******************************************************************************
+ * The function returns the template for the points index. The color toggles
+ * and the orientation is reversed on the second half.
+ *****************************************************************************/
+
+static s_tarr* s_tmpl_point_get_tmpl(const int point_idx) {
+
+	return _tmpls[point_idx % NUM_PLAYER][e_orient_idx(point_idx)];
+}
+
+/******************************************************************************
  * The function initializes the four templates for the points.
  *****************************************************************************/
 
-static void s_tmpl_point_create() {
+void s_tmpl_point_create(const s_game_cfg *game_cfg) {
 
 	//
 	// An array for the color gradient.
@@ -153,8 +163,7 @@ static void s_tmpl_point_create() {
 	//
 	// Black points
 	//
-	// TODO: define final colors
-	s_color_def_gradient(colors, POINTS_ROW, "#ffffff", "#cccccc");
+	s_color_def_gradient(colors, POINTS_ROW, game_cfg->clr_points_black_start, game_cfg->clr_points_black_end);
 
 	_tmpls[OWNER_BLACK][ORIENT_TOP] = s_tarr_new(POINTS_ROW, POINTS_COL);
 
@@ -167,8 +176,7 @@ static void s_tmpl_point_create() {
 	//
 	// White points
 	//
-	// TODO: define final colors
-	s_color_def_gradient(colors, POINTS_ROW, "#555555", "#222222");
+	s_color_def_gradient(colors, POINTS_ROW, game_cfg->clr_points_white_start, game_cfg->clr_points_white_end);
 
 	_tmpls[OWNER_WHITE][ORIENT_TOP] = s_tarr_new(POINTS_ROW, POINTS_COL);
 
@@ -184,7 +192,7 @@ static void s_tmpl_point_create() {
  * The function frees the four templates for the points.
  *****************************************************************************/
 
-static void s_tmpl_point_free() {
+void s_tmpl_point_free() {
 
 	s_tarr_free(&_tmpls[OWNER_BLACK][ORIENT_TOP]);
 
@@ -193,16 +201,6 @@ static void s_tmpl_point_free() {
 	s_tarr_free(&_tmpls[OWNER_WHITE][ORIENT_TOP]);
 
 	s_tarr_free(&_tmpls[OWNER_WHITE][ORIENT_BOT]);
-}
-
-/******************************************************************************
- * The function returns the template for the points index. The color toggles
- * and the orientation is reversed on the second half.
- *****************************************************************************/
-
-static s_tarr* s_tmpl_point_get_tmpl(const int point_idx) {
-
-	return _tmpls[point_idx % NUM_PLAYER][e_orient_idx(point_idx)];
 }
 
 /******************************************************************************
@@ -258,11 +256,6 @@ void s_tmpl_points_set_pos(s_pos *point_pos, const s_area *area_board_outer, con
 
 void s_tmpl_point_add_2_tarr(s_tarr *tarr, const s_pos *points_pos) {
 
-	//
-	// Allocate and initialize the point templates.
-	//
-	s_tmpl_point_create();
-
 	s_tarr *tmpl;
 
 	s_point pos;
@@ -277,9 +270,4 @@ void s_tmpl_point_add_2_tarr(s_tarr *tarr, const s_pos *points_pos) {
 
 		s_tarr_cp_fg(tarr, tmpl, pos);
 	}
-
-	//
-	// Do not forget to free the point templates.
-	//
-	s_tmpl_point_free();
 }
