@@ -30,12 +30,13 @@
 #include "bg_defs.h"
 #include "s_tarr.h"
 #include "s_point_layout.h"
+#include "s_game_cfg.h"
 
 /******************************************************************************
  * Declaration of the functions.
  *****************************************************************************/
 
-void s_tmpl_checker_create();
+void s_tmpl_checker_create(const s_game_cfg *game_cfg);
 
 void s_tmpl_checker_free();
 

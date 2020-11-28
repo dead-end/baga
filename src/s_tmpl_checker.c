@@ -93,14 +93,14 @@ static void s_tmpl_checker_set_label(s_tarr *tmpl, const int total, const bool r
  * The function initializes the template structures and the color array.
  *****************************************************************************/
 
-void s_tmpl_checker_create() {
+void s_tmpl_checker_create(const s_game_cfg *game_cfg) {
 
 	//
 	// Create color
 	//
-	s_color_def_gradient(_colors[OWNER_BLACK], _COLOR_NUM, "#8a8a5c", "#0f0f0a");
+	s_color_def_gradient(_colors[OWNER_BLACK], _COLOR_NUM, game_cfg->clr_checker_black_start, game_cfg->clr_checker_black_end);
 
-	s_color_def_gradient(_colors[OWNER_WHITE], _COLOR_NUM, "#ac3939", "#130606");
+	s_color_def_gradient(_colors[OWNER_WHITE], _COLOR_NUM, game_cfg->clr_checker_white_start, game_cfg->clr_checker_white_end);
 
 	//
 	// Create templates
