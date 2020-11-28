@@ -53,6 +53,20 @@ s_point ls_strs_dim(const char *strs[]) {
 }
 
 /******************************************************************************
+ * The function counts the items in a null terminated array of string.
+ *****************************************************************************/
+
+int ls_strs_count(const char *strs[]) {
+	int num_items = 0;
+
+	for (const char **ptr = strs; *ptr != NULL; ptr++, num_items++) {
+		log_debug("Item: '%s'", *ptr);
+	}
+
+	return num_items;
+}
+
+/******************************************************************************
  * The function removes leading and tailing spaces. The process changes the
  * argument string. So do not call the function with a literal string.
  *
