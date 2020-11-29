@@ -31,7 +31,11 @@
 #include "s_tarr.h"
 
 /******************************************************************************
- * The function contains the data necessary for the board.
+ * The struct contains the data necessary for the board.
+ *
+ * We have two two-dimensional arrays, which represents the foreground and the
+ * background. The background contains the board and the foreground the
+ * checkers on the board. So the foreground is mostly transparent.
  *****************************************************************************/
 
 typedef struct {
