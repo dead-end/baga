@@ -35,23 +35,12 @@
 #include "nc_board.h"
 #include "s_board.h"
 
-static WINDOW *_win_board;
-
 // todo: comment, file, ...
 
 #define TRAVEL_ROW POINTS_ROW + 2
 
 /******************************************************************************
- * We have two two-dimensional arrays, which represents the foreground and the
- * background. The background contains the board and the foreground the
- * checkers on the board. So the foreground is mostly transparent.
- *****************************************************************************/
-
-// TODO: not necessary
-//static s_tarr *_nc_board_bg;
-//static s_tarr *_nc_board_fg;
-/******************************************************************************
- *
+ * The s_board struct with the foreground and background arrays and the window.
  *****************************************************************************/
 
 static s_board _board;
@@ -71,8 +60,10 @@ static void nc_board_init_bg(const s_game_cfg *game_cfg, s_tarr *board_bg, const
 
 	s_tarr_set_gradient(board_bg, EMPTY, 0, color_bar_bg);
 
-	// TODO: param
-	// TODO: color
+	//
+	// Set the background of the bear off area, which is the reverse normal
+	// background.
+	//
 	s_tarr_set_bg(board_bg, board_areas->bear_off.pos, board_areas->bear_off.dim, color_bar_bg, true);
 
 	//
@@ -97,11 +88,6 @@ static void nc_board_alloc(const s_game_cfg *game_cfg, const s_point board_dim) 
 
 	s_board_init(&_board, board_dim);
 
-	// TODO: not necessary
-	//_nc_board_bg = _board.bg;
-
-	//_nc_board_fg = _board.fg;
-
 	s_tmpl_checker_create(game_cfg);
 }
 
@@ -124,11 +110,8 @@ void nc_board_free() {
 
 void nc_board_init(const s_game_cfg *game_cfg, const s_board_areas *board_areas) {
 
-	_win_board = stdscr;
-
 	nc_board_alloc(game_cfg, board_areas->board_dim);
 
-	//nc_board_init_bg(game_cfg, _nc_board_bg, board_areas);
 	nc_board_init_bg(game_cfg, _board.bg, board_areas);
 
 	//
@@ -143,7 +126,6 @@ void nc_board_init(const s_game_cfg *game_cfg, const s_board_areas *board_areas)
 	//
 	// Initialize the foreground board as unset.
 	//
-	//s_tarr_set(_nc_board_fg, S_TCHAR_UNUSED);
 	s_tarr_set(_board.fg, S_TCHAR_UNUSED);
 }
 
@@ -151,7 +133,7 @@ void nc_board_init(const s_game_cfg *game_cfg, const s_board_areas *board_areas)
  * The function adds the checkers to the foreground board.
  *****************************************************************************/
 
-void s_board_points_add_checkers_pos(s_pos pos, const e_owner owner, const int num, const e_compressed compressed) {
+void s_board_points_add_checkers_pos(const s_board *board, s_pos pos, const e_owner owner, const int num, const e_compressed compressed) {
 
 	const s_point_layout layout = s_point_layout_get(num, compressed);
 
@@ -169,8 +151,7 @@ void s_board_points_add_checkers_pos(s_pos pos, const e_owner owner, const int n
 		//
 		// The function returns the position of the next checker.
 		//
-		//pos.pos = s_tarr_cp_pos(_nc_board_fg, tmpl, pos.pos, !pos.is_upper);
-		pos.pos = s_tarr_cp_pos(_board.fg, tmpl, pos.pos, !pos.is_upper);
+		pos.pos = s_tarr_cp_pos(board->fg, tmpl, pos.pos, !pos.is_upper);
 	}
 }
 
@@ -182,7 +163,7 @@ void s_board_add_checkers(const s_field field, const e_owner owner, const int nu
 
 	const s_pos pos_tmp = s_pos_get_checker(field);
 
-	s_board_points_add_checkers_pos(pos_tmp, owner, num, E_UNCOMP);
+	s_board_points_add_checkers_pos(&_board, pos_tmp, owner, num, E_UNCOMP);
 }
 
 /******************************************************************************
@@ -198,7 +179,7 @@ void nc_board_print() {
 	// is not moved a flickering can occur. (I am not sure if this is necessary
 	// for this game, but I had trouble with it in the past)
 	//
-	if (wmove(_win_board, 0, 0) == ERR) {
+	if (wmove(_board.win, 0, 0) == ERR) {
 		log_exit_str("Unable to move the cursor!");
 	}
 
@@ -209,7 +190,7 @@ void nc_board_print() {
  *
  *****************************************************************************/
 
-static void travler_move(const s_pos *checker_from, const int num_from, const s_pos *checker_to, const int num_to, const e_owner owner) {
+static void travler_move(const s_board *board, const s_pos *checker_from, const int num_from, const s_pos *checker_to, const int num_to, const e_owner owner) {
 	s_area area;
 
 	const s_tarr *tmpl = s_tmpl_checker_get_travler(owner);
@@ -226,62 +207,62 @@ static void travler_move(const s_pos *checker_from, const int num_from, const s_
 		//
 		// Write the decreased checkers (uncompressed)
 		//
-		s_board_points_add_checkers_pos(*checker_from, owner, num_from - 1, E_UNCOMP);
+		s_board_points_add_checkers_pos(board, *checker_from, owner, num_from - 1, E_UNCOMP);
 
 		//
 		// Add the traveler
 		//
 		tmpl_pos = s_point_layout_pos_full(checker_from, E_UNCOMP, lu_min(num_from, CHECK_DIS_FULL));
-		s_tarr_cp(_board.fg, tmpl, tmpl_pos);
+		s_tarr_cp(board->fg, tmpl, tmpl_pos);
 
-		s_tarr_print_area(_board.win, _board.fg, _board.bg, area.pos, area.dim);
+		s_tarr_print_area(board->win, board->fg, board->bg, area.pos, area.dim);
 
 	} else {
 
 		//
 		// Write the decreased checkers (compressed)
 		//
-		s_board_points_add_checkers_pos(*checker_from, owner, num_from - 1, E_COMP);
+		s_board_points_add_checkers_pos(board, *checker_from, owner, num_from - 1, E_COMP);
 
 		//
 		// Add the traveler
 		//
 		tmpl_pos = s_point_layout_pos_full(checker_from, E_COMP, CHECK_DIS_FULL + 1);
-		s_tarr_cp(_board.fg, tmpl, tmpl_pos);
+		s_tarr_cp(board->fg, tmpl, tmpl_pos);
 
-		s_tarr_print_area(_board.win, _board.fg, _board.bg, area.pos, area.dim);
+		s_tarr_print_area(board->win, board->fg, board->bg, area.pos, area.dim);
 
-		s_board_win_refresh(&_board, true);
+		s_board_win_refresh(board, true);
 
-		s_board_trv_del(&_board, tmpl, tmpl_pos);
+		s_board_trv_del(board, tmpl, tmpl_pos);
 
 		//
 		// Move the traveler
 		//
-		s_board_trv_mv_to(&_board, tmpl, &tmpl_pos, checker_from->is_upper ? E_DIR_DOWN : E_DIR_UP);
+		s_board_trv_mv_to(board, tmpl, &tmpl_pos, checker_from->is_upper ? E_DIR_DOWN : E_DIR_UP);
 
 		//
 		// Write the decreased checkers (uncompressed)
 		//
-		s_board_points_add_checkers_pos(*checker_from, owner, num_from - 1, E_UNCOMP);
+		s_board_points_add_checkers_pos(board, *checker_from, owner, num_from - 1, E_UNCOMP);
 
-		s_tarr_print_area(_board.win, _board.fg, _board.bg, area.pos, area.dim);
+		s_tarr_print_area(board->win, board->fg, board->bg, area.pos, area.dim);
 	}
 
-	s_board_win_refresh(&_board, true);
+	s_board_win_refresh(board, true);
 
-	s_board_trv_del(&_board, tmpl, tmpl_pos);
+	s_board_trv_del(board, tmpl, tmpl_pos);
 
 	//
 	// Phase: walk the line
 	//
-	s_board_trv_mv_line(&_board, tmpl, &tmpl_pos, (s_point ) { .row = TRAVEL_ROW, .col = tmpl_pos.col });
+	s_board_trv_mv_line(board, tmpl, &tmpl_pos, (s_point ) { .row = TRAVEL_ROW, .col = tmpl_pos.col });
 
-	s_board_trv_mv_line(&_board, tmpl, &tmpl_pos, (s_point ) { .row = TRAVEL_ROW, .col = checker_to->pos.col });
+	s_board_trv_mv_line(board, tmpl, &tmpl_pos, (s_point ) { .row = TRAVEL_ROW, .col = checker_to->pos.col });
 
 	const s_point last_pos = s_point_layout_pos_full(checker_to, E_UNCOMP, lu_min(num_to + 1, CHECK_DIS_FULL + 1));
 
-	s_board_trv_mv_line(&_board, tmpl, &tmpl_pos, (s_point ) { .row = last_pos.row, .col = last_pos.col });
+	s_board_trv_mv_line(board, tmpl, &tmpl_pos, (s_point ) { .row = last_pos.row, .col = last_pos.col });
 
 	//
 	// Phase: arrival
@@ -294,29 +275,29 @@ static void travler_move(const s_pos *checker_from, const int num_from, const s_
 		// Write the increased checker, which overwrites the traveler, so it
 		// does not have to be deleted.
 		//
-		s_board_points_add_checkers_pos(*checker_to, owner, num_to + 1, E_UNCOMP);
-		s_tarr_print_area(_board.win, _board.fg, _board.bg, area.pos, area.dim);
+		s_board_points_add_checkers_pos(board, *checker_to, owner, num_to + 1, E_UNCOMP);
+		s_tarr_print_area(board->win, board->fg, board->bg, area.pos, area.dim);
 
 	} else {
 
-		s_board_trv_del(&_board, tmpl, tmpl_pos);
-		s_board_trv_mv_to(&_board, tmpl, &tmpl_pos, checker_to->is_upper ? E_DIR_UP : E_DIR_DOWN);
+		s_board_trv_del(board, tmpl, tmpl_pos);
+		s_board_trv_mv_to(board, tmpl, &tmpl_pos, checker_to->is_upper ? E_DIR_UP : E_DIR_DOWN);
 
-		s_board_points_add_checkers_pos(*checker_to, owner, num_to, E_COMP);
-		s_tarr_print_area(_board.win, _board.fg, _board.bg, area.pos, area.dim);
+		s_board_points_add_checkers_pos(board, *checker_to, owner, num_to, E_COMP);
+		s_tarr_print_area(board->win, board->fg, board->bg, area.pos, area.dim);
 
 		//
 		// Do pause
 		//
-		s_board_win_refresh(&_board, true);
+		s_board_win_refresh(board, true);
 
-		s_board_trv_del(&_board, tmpl, tmpl_pos);
+		s_board_trv_del(board, tmpl, tmpl_pos);
 
-		s_board_points_add_checkers_pos(*checker_to, owner, num_to + 1, E_UNCOMP);
-		s_tarr_print_area(_board.win, _board.fg, _board.bg, area.pos, area.dim);
+		s_board_points_add_checkers_pos(board, *checker_to, owner, num_to + 1, E_UNCOMP);
+		s_tarr_print_area(board->win, board->fg, board->bg, area.pos, area.dim);
 	}
 
-	s_board_win_refresh(&_board, true);
+	s_board_win_refresh(board, true);
 }
 
 /******************************************************************************
@@ -331,15 +312,15 @@ void nc_board_test() {
 	pos_from = s_pos_get_checker((s_field ) { E_FIELD_POINTS, 11 });
 	pos_to = s_pos_get_checker((s_field ) { E_FIELD_POINTS, 10 });
 
-	travler_move(&pos_from, 5, &pos_to, 0, OWNER_WHITE);
+	travler_move(&_board, &pos_from, 5, &pos_to, 0, OWNER_WHITE);
 
 	pos_from = s_pos_get_checker((s_field ) { E_FIELD_POINTS, 0 });
 	pos_to = s_pos_get_checker((s_field ) { E_FIELD_BEAR_OFF, OWNER_WHITE });
 
-	travler_move(&pos_from, 2, &pos_to, 0, OWNER_WHITE);
+	travler_move(&_board, &pos_from, 2, &pos_to, 0, OWNER_WHITE);
 
 	pos_from = s_pos_get_checker((s_field ) { E_FIELD_POINTS, 0 });
 	pos_to = s_pos_get_checker((s_field ) { E_FIELD_BAR, OWNER_WHITE });
 
-	travler_move(&pos_from, 1, &pos_to, 0, OWNER_WHITE);
+	travler_move(&_board, &pos_from, 1, &pos_to, 0, OWNER_WHITE);
 }
