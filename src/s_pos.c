@@ -216,37 +216,37 @@ const s_pos* s_pos_get_points() {
  * area. The checker may be smaller than the containing area.
  *****************************************************************************/
 
-s_pos s_pos_get_checker(const s_field field) {
+s_pos s_pos_get_checker(const s_field_id field_id) {
 	s_pos result;
 
-	switch (field.type) {
+	switch (field_id.type) {
 
 	case E_FIELD_BAR:
 
-		result.pos.row = _pos_bar[field.idx].pos.row;
-		result.pos.col = _pos_bar[field.idx].pos.col + CHECKER_OFFSET_COL;
-		result.is_upper = _pos_bar[field.idx].is_upper;
+		result.pos.row = _pos_bar[field_id.idx].pos.row;
+		result.pos.col = _pos_bar[field_id.idx].pos.col + CHECKER_OFFSET_COL;
+		result.is_upper = _pos_bar[field_id.idx].is_upper;
 
 		return result;
 
 	case E_FIELD_BEAR_OFF:
 
-		result.pos.row = _pos_bear_off[field.idx].pos.row;
-		result.pos.col = _pos_bear_off[field.idx].pos.col + CHECKER_OFFSET_COL;
-		result.is_upper = _pos_bear_off[field.idx].is_upper;
+		result.pos.row = _pos_bear_off[field_id.idx].pos.row;
+		result.pos.col = _pos_bear_off[field_id.idx].pos.col + CHECKER_OFFSET_COL;
+		result.is_upper = _pos_bear_off[field_id.idx].is_upper;
 
 		return result;
 
 	case E_FIELD_POINTS:
 
-		result.pos.row = _pos_points[field.idx].pos.row;
-		result.pos.col = _pos_points[field.idx].pos.col + CHECKER_OFFSET_COL;
-		result.is_upper = _pos_points[field.idx].is_upper;
+		result.pos.row = _pos_points[field_id.idx].pos.row;
+		result.pos.col = _pos_points[field_id.idx].pos.col + CHECKER_OFFSET_COL;
+		result.is_upper = _pos_points[field_id.idx].is_upper;
 
 		return result;
 
 	default:
-		log_exit("Unknown type: %d", field.type)
+		log_exit("Unknown type: %d", field_id.type)
 		;
 	}
 }
@@ -275,7 +275,7 @@ s_pos s_pos_get_checker(const s_field field) {
  * position. This can be one of the points / bar / bear off.
  *****************************************************************************/
 
-void s_pos_mouse_target(const s_point mouse, s_field *field) {
+void s_pos_mouse_target(const s_point mouse, s_field_id *field_id) {
 
 	//
 	// Inner board
@@ -285,10 +285,10 @@ void s_pos_mouse_target(const s_point mouse, s_field *field) {
 		const int idx = s_pos_get_point_idx(_board_areas.board_inner, mouse);
 
 		if (s_pos_is_point_upper(_board_areas.board_inner, mouse)) {
-			s_field_set_ptr(field, E_FIELD_POINTS, POINTS_QUARTER -1 - idx);
+			s_field_id_set_ptr(field_id, E_FIELD_POINTS, POINTS_QUARTER -1 - idx);
 
 		} else {
-			s_field_set_ptr(field, E_FIELD_POINTS, 3 * POINTS_QUARTER + idx);
+			s_field_id_set_ptr(field_id, E_FIELD_POINTS, 3 * POINTS_QUARTER + idx);
 		}
 
 	}
@@ -301,10 +301,10 @@ void s_pos_mouse_target(const s_point mouse, s_field *field) {
 		const int idx = s_pos_get_point_idx(_board_areas.board_outer, mouse);
 
 		if (s_pos_is_point_upper(_board_areas.board_outer, mouse)) {
-			s_field_set_ptr(field, E_FIELD_POINTS, 2 * POINTS_QUARTER -1 - idx);
+			s_field_id_set_ptr(field_id, E_FIELD_POINTS, 2 * POINTS_QUARTER -1 - idx);
 
 		} else {
-			s_field_set_ptr(field, E_FIELD_POINTS, 2 * POINTS_QUARTER + idx);
+			s_field_id_set_ptr(field_id, E_FIELD_POINTS, 2 * POINTS_QUARTER + idx);
 		}
 
 	}
@@ -313,24 +313,24 @@ void s_pos_mouse_target(const s_point mouse, s_field *field) {
 	// Inner bar
 	//
 	else if (s_area_is_inside(&_board_areas.bar_inner, mouse)) {
-		field->type = E_FIELD_BAR;
-		field->idx = s_pos_is_point_upper(_board_areas.bar_inner, mouse) ? OWNER_BLACK : OWNER_WHITE;
+		field_id->type = E_FIELD_BAR;
+		field_id->idx = s_pos_is_point_upper(_board_areas.bar_inner, mouse) ? OWNER_BLACK : OWNER_WHITE;
 	}
 
 	//
 	// Bear off area
 	//
 	else if (s_area_is_inside(&_board_areas.bear_off, mouse)) {
-		field->type = E_FIELD_BEAR_OFF;
-		field->idx = s_pos_is_point_upper(_board_areas.bear_off, mouse) ? OWNER_BLACK : OWNER_WHITE;
+		field_id->type = E_FIELD_BEAR_OFF;
+		field_id->idx = s_pos_is_point_upper(_board_areas.bear_off, mouse) ? OWNER_BLACK : OWNER_WHITE;
 	}
 
 	//
 	// Not inside one of the relevant areas.
 	//
 	else {
-		s_field_set_none_ptr(field);
+		s_field_id_set_none_ptr(field_id);
 	}
 
-	log_debug("mouse: %d/%d result: %d/%d", mouse.row, mouse.col, field->type, field->idx);
+	log_debug("mouse: %d/%d result: %d/%d", mouse.row, mouse.col, field_id->type, field_id->idx);
 }
