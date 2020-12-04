@@ -26,6 +26,7 @@
 #define INC_NC_BOARD_H_
 
 #include "bg_defs.h"
+#include "s_game.h"
 #include "s_point_layout.h"
 #include "s_game_cfg.h"
 
@@ -39,6 +40,9 @@ void nc_board_free();
 
 void nc_board_print();
 
-void s_board_add_checkers(const s_field field, const e_owner owner, const int num);
+// TODO: there is a cross dependency s_game <=> nc_board
+void s_board_add_checkers(const s_field *field);
+
+void nc_board_process(s_game *game, const s_field_id field);
 
 #endif /* INC_NC_BOARD_H_ */
