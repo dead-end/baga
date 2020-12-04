@@ -65,12 +65,14 @@ typedef struct {
 	s_field point[POINTS_NUM];
 
 	//
-	// The fields of type bear off.
+	// The fields of type bear off. The owner (OWNER_BLACK / OWNER_WHITE) is
+	// the index.
 	//
 	s_field bear_off[NUM_PLAYER];
 
 	//
-	// The fields of type bar / reenter.
+	// The fields of type bar / reenter. The owner (OWNER_BLACK / OWNER_WHITE)
+	// is the index.
 	//
 	s_field reenter[NUM_PLAYER];
 
