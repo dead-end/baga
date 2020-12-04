@@ -71,7 +71,7 @@ SRC_LIBS = \
 	$(SRC_DIR)/lib_curses.c     \
 	$(SRC_DIR)/lib_popup.c     \
 	$(SRC_DIR)/s_color_def.c \
-	$(SRC_DIR)/bg_board.c  \
+	$(SRC_DIR)/s_game.c  \
 	$(SRC_DIR)/nc_board.c  \
 	$(SRC_DIR)/s_tmpl_checker.c \
 	$(SRC_DIR)/s_tmpl_points.c  \
