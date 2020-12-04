@@ -22,8 +22,8 @@
  * SOFTWARE.
  */
 
-#ifndef INC_BG_BOARD_H_
-#define INC_BG_BOARD_H_
+#ifndef INC_S_GAME_H_
+#define INC_S_GAME_H_
 
 #include "bg_defs.h"
 #include "s_field_id.h"
@@ -94,4 +94,4 @@ s_field* s_game_can_mv(s_game *game, const s_field *field_src, const int num);
 
 void s_game_mv(s_field *field_src, s_field *field_dst);
 
-#endif /* INC_BG_BOARD_H_ */
+#endif /* INC_S_GAME_H_ */
