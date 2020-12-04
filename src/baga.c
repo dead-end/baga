@@ -29,8 +29,8 @@
 #include "lib_string.h"
 #include "lib_popup.h"
 #include "nc_board.h"
-#include "bg_board.h"
 #include "s_pos.h"
+#include "s_game.h"
 
 static const char *headers[] = {
 
@@ -130,7 +130,7 @@ int main() {
 	s_game_cfg game_cfg;
 
 	MEVENT event;
-	s_field pos_field;
+	s_field_id field_id;
 
 	log_debug_str("Starting baga...");
 
@@ -150,22 +150,16 @@ int main() {
 	//
 	// Initialize the game board function
 	//
-	s_bg_board bg_board;
+	s_game game;
 
-	bg_board_new_game(&bg_board);
+	s_game_new_game(&game);
 
-	bg_board_print(&bg_board);
+	s_game_print(&game);
 
 	//
 	// Print the initialized board
 	//
 	nc_board_print();
-
-	getch();
-
-	nc_board_test();
-
-	//getch();
 
 	log_debug_str("Ending baga...");
 
@@ -199,7 +193,6 @@ int main() {
 			switch (c) {
 
 			case KEY_MOUSE:
-				//log_debug_str("mouse");
 
 				if (getmouse(&event) != OK) {
 
@@ -210,9 +203,9 @@ int main() {
 				}
 
 				if (event.bstate & BUTTON1_PRESSED) {
-					//const s_point event_point = { event.y, event.x };
+					s_pos_mouse_target((s_point ) { event.y, event.x }, &field_id);
 
-					s_pos_mouse_target((s_point ) { event.y, event.x }, &pos_field);
+					nc_board_process(&game, field_id);
 
 					continue;
 				} else {
@@ -252,10 +245,10 @@ int main() {
 			}
 		}
 
-//
-// Do a refresh
-//
-// TODO
+		//
+		// Do a refresh
+		//
+		// TODO
 	}
 
 	exit(EXIT_SUCCESS);
