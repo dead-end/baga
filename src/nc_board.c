@@ -314,7 +314,7 @@ void nc_board_process(s_game *game, const s_field_id id) {
 
 	s_field *field_dst = s_game_can_mv(game, field_src, 1);
 	if (field_dst == NULL) {
-		log_debug("Ignoring event on: %d %d", field_src->id.type, field_src->id.idx);
+		log_debug("field - type: %s owner: %s index: %d num: %d", s_field_type_str(field_src), s_field_owner_str(field_src), field_src->id.idx, field_src->num);
 		return;
 	}
 
