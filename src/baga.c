@@ -205,7 +205,9 @@ int main() {
 				if (event.bstate & BUTTON1_PRESSED) {
 					s_pos_mouse_target((s_point ) { event.y, event.x }, &field_id);
 
-					nc_board_process(&game, field_id);
+					if (field_id.type != E_FIELD_NONE) {
+						nc_board_process(&game, field_id);
+					}
 
 					continue;
 				} else {
