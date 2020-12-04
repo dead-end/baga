@@ -99,8 +99,8 @@ void s_game_new_game(s_game *game) {
 	//
 	// Index 7
 	//
-	s_game_set(game->point[idx_white(7)], 5, OWNER_WHITE);
-	s_game_set(game->point[idx_black(7)], 5, OWNER_BLACK);
+	s_game_set(game->point[idx_white(7)], 3, OWNER_WHITE);
+	s_game_set(game->point[idx_black(7)], 3, OWNER_BLACK);
 
 	//
 	// Index 11
