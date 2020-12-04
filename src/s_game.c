@@ -222,3 +222,51 @@ s_field* s_game_can_mv(s_game *game, const s_field *field_src, const int num) {
 	return field_dst;
 }
 
+/******************************************************************************
+ * The function returns a string representation of the owner of a field.
+ *****************************************************************************/
+
+char* s_field_owner_str(const s_field *field) {
+
+	switch (field->owner) {
+
+	case OWNER_BLACK:
+		return "BLACK";
+
+	case OWNER_WHITE:
+		return "WHITE";
+
+	case OWNER_NONE:
+		return "EMPTY";
+
+	default:
+		log_exit("Unknown owner: %d", field->owner)
+		;
+	}
+}
+
+/******************************************************************************
+ * The function returns a string representation of the type of a field.
+ *****************************************************************************/
+
+char* s_field_type_str(const s_field *field) {
+
+	switch (field->id.type) {
+
+	case E_FIELD_POINTS:
+		return "POINT";
+
+	case E_FIELD_BAR:
+		return "BAR";
+
+	case E_FIELD_BEAR_OFF:
+		return "BEAR-OFF";
+
+	case E_FIELD_NONE:
+		return "NONE";
+
+	default:
+		log_exit("Unknown type: %d", field->id.type)
+		;
+	}
+}

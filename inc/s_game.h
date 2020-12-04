@@ -94,4 +94,8 @@ s_field* s_game_can_mv(s_game *game, const s_field *field_src, const int num);
 
 void s_game_mv(s_field *field_src, s_field *field_dst);
 
+char* s_field_type_str(const s_field *field);
+
+char* s_field_owner_str(const s_field *field);
+
 #endif /* INC_S_GAME_H_ */
