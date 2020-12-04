@@ -29,59 +29,67 @@
 #include "s_field_id.h"
 
 /******************************************************************************
- * The struct contains the number of checkers on a point and the owner of the
- * checkers (black / white) or none if there are no checkers on the point.
+ * The struct defines a field on a the game board. A field has an id, which is
+ * the type of the field (point, bar, bear off) and an index. Each field can
+ * have checkers. The owner and the number are part of the file.
  *****************************************************************************/
 
 typedef struct {
 
+	//
+	// The id of the checker (type and index)
+	//
 	s_field_id id;
 
+	//
+	// If the field holds checker, this is the owner.
+	//
 	e_owner owner;
 
+	//
+	// If the field holds checker, this is the number.
+	//
 	int num;
 
 } s_field;
 
 /******************************************************************************
- * The struct contains the positions of each checker on the board..
+ * The struct contains the fields of the game board.
  *****************************************************************************/
 
 typedef struct {
 
 	//
-	// The number of checkers that are on a point for black and white.
+	// The fields of type point.
 	//
 	s_field point[POINTS_NUM];
 
 	//
-	// The number of checkers that are in the bear off area for black and
-	// white. We use e_owner as an index.
+	// The fields of type bear off.
 	//
 	s_field bear_off[NUM_PLAYER];
 
 	//
-	// The number of checkers that have to reenter for black and white. We use
-	// e_owner as an index.
+	// The fields of type bar / reenter.
 	//
 	s_field reenter[NUM_PLAYER];
 
-} s_bg_board;
+} s_game;
 
 /******************************************************************************
  * Function declarations.
  *****************************************************************************/
 
-void bg_board_init(s_bg_board *bg_board);
+void s_game_init(s_game *game);
 
-void bg_board_new_game(s_bg_board *bg_board);
+void s_game_new_game(s_game *game);
 
-void bg_board_print(const s_bg_board *bg_board);
+void s_game_print(const s_game *game);
 
-s_field* s_bg_board_get(s_bg_board *bg_board, const s_field_id id);
+s_field* s_game_get(s_game *game, const s_field_id id);
 
-s_field* s_bg_board_can_mv(s_bg_board *bg_board, const s_field *field_src, const int num);
+s_field* s_game_can_mv(s_game *game, const s_field *field_src, const int num);
 
-void s_bg_board_mv(s_field *field_src, s_field *field_dst);
+void s_game_mv(s_field *field_src, s_field *field_dst);
 
 #endif /* INC_BG_BOARD_H_ */
