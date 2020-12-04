@@ -29,7 +29,7 @@
 
 #include "lib_s_point.h"
 #include "s_area.h"
-#include "s_field.h"
+#include "s_field_id.h"
 
 /******************************************************************************
  * Definitions of the various areas of the board. An area has a position and a
@@ -78,8 +78,8 @@ const s_board_areas* s_pos_init();
 
 const s_pos* s_pos_get_points();
 
-s_pos s_pos_get_checker(const s_field field);
+s_pos s_pos_get_checker(const s_field_id field_id);
 
-void s_pos_mouse_target(const s_point mouse, s_field *field);
+void s_pos_mouse_target(const s_point mouse, s_field_id *field_id);
 
 #endif /* INC_S_POS_H_ */
