@@ -34,6 +34,7 @@
 #include "nc_board.h"
 #include "nc_board.h"
 #include "s_board.h"
+#include "s_game.h"
 
 // todo: comment, file, ...
 
@@ -159,11 +160,11 @@ void s_board_points_add_checkers_pos(const s_board *board, s_pos pos, const e_ow
  *
  *****************************************************************************/
 
-void s_board_add_checkers(const s_field field, const e_owner owner, const int num) {
+void s_board_add_checkers(const s_field *field) {
 
-	const s_pos pos_tmp = s_pos_get_checker(field);
+	const s_pos pos_tmp = s_pos_get_checker(field->id);
 
-	s_board_points_add_checkers_pos(&_board, pos_tmp, owner, num, E_UNCOMP);
+	s_board_points_add_checkers_pos(&_board, pos_tmp, field->owner, field->num, E_UNCOMP);
 }
 
 /******************************************************************************
@@ -301,26 +302,35 @@ static void travler_move(const s_board *board, const s_pos *checker_from, const 
 }
 
 /******************************************************************************
- *
+ * The function is called with the s_field_id from a mouse event.
  *****************************************************************************/
 
-void nc_board_test() {
-	log_debug_str("start");
+void nc_board_process(s_game *game, const s_field_id id) {
 
-	s_pos pos_from, pos_to;
+	//
+	// Identify the source field
+	//
+	s_field *field_src = s_game_get(game, id);
 
-	pos_from = s_pos_get_checker((s_field ) { E_FIELD_POINTS, 11 });
-	pos_to = s_pos_get_checker((s_field ) { E_FIELD_POINTS, 10 });
+	s_field *field_dst = s_game_can_mv(game, field_src, 1);
+	if (field_dst == NULL) {
+		log_debug("Ignoring event on: %d %d", field_src->id.type, field_src->id.idx);
+		return;
+	}
 
-	travler_move(&_board, &pos_from, 5, &pos_to, 0, OWNER_WHITE);
+	//
+	// Get the positions on the board.
+	//
+	const s_pos pos_from = s_pos_get_checker(field_src->id);
+	const s_pos pos_to = s_pos_get_checker(field_dst->id);
 
-	pos_from = s_pos_get_checker((s_field ) { E_FIELD_POINTS, 0 });
-	pos_to = s_pos_get_checker((s_field ) { E_FIELD_BEAR_OFF, OWNER_WHITE });
+	//
+	// Move the checker on the board (animation).
+	//
+	travler_move(&_board, &pos_from, field_src->num, &pos_to, field_dst->num, field_src->owner);
 
-	travler_move(&_board, &pos_from, 2, &pos_to, 0, OWNER_WHITE);
-
-	pos_from = s_pos_get_checker((s_field ) { E_FIELD_POINTS, 0 });
-	pos_to = s_pos_get_checker((s_field ) { E_FIELD_BAR, OWNER_WHITE });
-
-	travler_move(&_board, &pos_from, 1, &pos_to, 0, OWNER_WHITE);
+	//
+	// Move the checker on the game.
+	//
+	s_game_mv(field_src, field_dst);
 }
