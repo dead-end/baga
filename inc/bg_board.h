@@ -26,6 +26,7 @@
 #define INC_BG_BOARD_H_
 
 #include "bg_defs.h"
+#include "s_field_id.h"
 
 /******************************************************************************
  * The struct contains the number of checkers on a point and the owner of the
@@ -34,13 +35,13 @@
 
 typedef struct {
 
+	s_field_id id;
+
 	e_owner owner;
 
 	int num;
 
-} s_bg_point;
-
-#define s_bg_point_set(p, o,n) (p)->owner = (o); (p)->num = (n)
+} s_field;
 
 /******************************************************************************
  * The struct contains the positions of each checker on the board..
@@ -51,19 +52,19 @@ typedef struct {
 	//
 	// The number of checkers that are on a point for black and white.
 	//
-	s_bg_point bg_point[POINTS_NUM];
+	s_field point[POINTS_NUM];
 
 	//
 	// The number of checkers that are in the bear off area for black and
 	// white. We use e_owner as an index.
 	//
-	int bear_off[NUM_PLAYER];
+	s_field bear_off[NUM_PLAYER];
 
 	//
 	// The number of checkers that have to reenter for black and white. We use
 	// e_owner as an index.
 	//
-	int reenter[NUM_PLAYER];
+	s_field reenter[NUM_PLAYER];
 
 } s_bg_board;
 
@@ -75,9 +76,12 @@ void bg_board_init(s_bg_board *bg_board);
 
 void bg_board_new_game(s_bg_board *bg_board);
 
-// TODO: wrong
-void nc_board_test();
+void bg_board_print(const s_bg_board *bg_board);
 
-void bg_board_print(s_bg_board *bg_board);
+s_field* s_bg_board_get(s_bg_board *bg_board, const s_field_id id);
+
+s_field* s_bg_board_can_mv(s_bg_board *bg_board, const s_field *field_src, const int num);
+
+void s_bg_board_mv(s_field *field_src, s_field *field_dst);
 
 #endif /* INC_BG_BOARD_H_ */
