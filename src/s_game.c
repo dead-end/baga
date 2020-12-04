@@ -115,14 +115,11 @@ void s_game_new_game(s_game *game) {
 
 void s_game_print(const s_game *game) {
 
-	s_field_id field = { .type = E_FIELD_POINTS };
-
 	for (int i = 0; i < POINTS_NUM; i++) {
 
 		if (game->point[i].num != 0) {
 
-			field.idx = i;
-			s_board_add_checkers(field, game->point[i].owner, game->point[i].num);
+			s_board_add_checkers(&game->point[i]);
 		}
 	}
 }
