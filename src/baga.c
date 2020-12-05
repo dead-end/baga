@@ -31,6 +31,7 @@
 #include "nc_board.h"
 #include "s_pos.h"
 #include "s_game.h"
+#include "layout.h"
 
 static const char *headers[] = {
 
@@ -57,6 +58,8 @@ NULL };
  *****************************************************************************/
 
 static void exit_callback() {
+
+	layout_free();
 
 	nc_board_free();
 
@@ -127,6 +130,7 @@ void show_menu() {
  *****************************************************************************/
 
 int main() {
+	s_point m_event;
 	s_game_cfg game_cfg;
 
 	MEVENT event;
@@ -140,12 +144,25 @@ int main() {
 
 	const s_board_areas *board_areas = s_pos_init();
 
+	layout_init(board_areas->board_dim, (s_point ) { .row = 4, .col = 7 * 4 + 3 * 4 });
+
+	//
+	// Write the whole windows.
+	//
+	wrefresh(stdscr);
+
 	//
 	// Initialize the ncurses board function
 	//
-	nc_board_init(&game_cfg, board_areas);
+	nc_board_init(layout_win_board(), &game_cfg, board_areas);
 
 	show_menu();
+
+	//
+	// Show dice window
+	// TODO: do more than a colored window
+	//
+	wrefresh(layout_win_dice());
 
 	//
 	// Initialize the game board function
@@ -203,10 +220,14 @@ int main() {
 				}
 
 				if (event.bstate & BUTTON1_PRESSED) {
-					s_pos_mouse_target((s_point ) { event.y, event.x }, &field_id);
 
-					if (field_id.type != E_FIELD_NONE) {
-						nc_board_process(&game, field_id);
+					if (lc_event_stdscr_to_win(layout_win_board(), event.y, event.x, &m_event)) {
+
+						s_pos_mouse_target(m_event, &field_id);
+
+						if (field_id.type != E_FIELD_NONE) {
+							nc_board_process(&game, field_id);
+						}
 					}
 
 					continue;
