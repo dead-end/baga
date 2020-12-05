@@ -32,7 +32,6 @@
 #include "s_point_layout.h"
 #include "direction.h"
 #include "nc_board.h"
-#include "nc_board.h"
 #include "s_board.h"
 #include "s_game.h"
 
@@ -83,11 +82,11 @@ static void nc_board_init_bg(const s_game_cfg *game_cfg, s_tarr *board_bg, const
  * The function allocates the resources for the board.
  *****************************************************************************/
 
-static void nc_board_alloc(const s_game_cfg *game_cfg, const s_point board_dim) {
+static void nc_board_alloc(WINDOW *win, const s_game_cfg *game_cfg, const s_point board_dim) {
 
 	log_debug_str("Allocating resources!");
 
-	s_board_init(&_board, board_dim);
+	s_board_init(win, &_board, board_dim);
 
 	s_tmpl_checker_create(game_cfg);
 }
@@ -109,9 +108,9 @@ void nc_board_free() {
  * The function initializes the board.
  *****************************************************************************/
 
-void nc_board_init(const s_game_cfg *game_cfg, const s_board_areas *board_areas) {
+void nc_board_init(WINDOW *win, const s_game_cfg *game_cfg, const s_board_areas *board_areas) {
 
-	nc_board_alloc(game_cfg, board_areas->board_dim);
+	nc_board_alloc(win, game_cfg, board_areas->board_dim);
 
 	nc_board_init_bg(game_cfg, _board.bg, board_areas);
 
