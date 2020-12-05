@@ -61,7 +61,7 @@ typedef struct {
  * Definition of functions and macros.
  *****************************************************************************/
 
-void s_board_init(s_board *board, const s_point dim);
+void s_board_init(WINDOW *win, s_board *board, const s_point dim);
 
 void s_board_free(s_board *board);
 
