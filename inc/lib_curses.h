@@ -65,4 +65,6 @@ int lc_menu_cur_item_idx(MENU *menu);
 
 void lc_menu_set_cur_item_idx(MENU *menu, const int idx);
 
+bool lc_event_stdscr_to_win(WINDOW *win, const int e_row, const int e_col, s_point *rel);
+
 #endif /* INC_LIB_CURSES_H_ */

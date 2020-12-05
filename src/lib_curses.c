@@ -327,3 +327,26 @@ void lc_menu_set_cur_item_idx(MENU *menu, const int idx) {
 		log_exit("Unable to set the item index: %d", idx);
 	}
 }
+
+/******************************************************************************
+ * The function maps the event coordinates from the stdscr to a given window.
+ * The function returns false, if the event is not inside the window.
+ *****************************************************************************/
+
+bool lc_event_stdscr_to_win(WINDOW *win, const int e_row, const int e_col, s_point *rel) {
+
+	s_point_set_ptr(rel, e_row, e_col);
+
+	//
+	// Transform from stdscr to win, if the event is inside the window.
+	//
+	if (!wmouse_trafo(win, &rel->row, &rel->col, false)) {
+		log_debug("Event: %d/%d not inside the window", e_row, e_col);
+		return false;
+	}
+
+	log_debug("before: %d/%d after: %d/%d", e_row, e_col, rel->row, rel->col);
+
+	return true;
+}
+
