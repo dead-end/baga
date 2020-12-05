@@ -33,7 +33,7 @@
  * The function initializes the s_board struct.
  *****************************************************************************/
 
-void s_board_init(s_board *board, const s_point dim) {
+void s_board_init(WINDOW *win, s_board *board, const s_point dim) {
 
 	log_debug_str("Allocating resource!");
 
@@ -41,7 +41,7 @@ void s_board_init(s_board *board, const s_point dim) {
 
 	board->fg = s_tarr_new(dim.row, dim.col);
 
-	board->win = stdscr;
+	board->win = win;
 }
 
 /******************************************************************************
