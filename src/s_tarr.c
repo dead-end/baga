@@ -400,7 +400,7 @@ void s_tarr_print_area(WINDOW *win, const s_tarr *ta_fg, const s_tarr *ta_bg, co
 			// Set the color pair with the t_char
 			//
 			cp = cp_color_pair_get(tchar->fg, tchar->bg);
-			attrset(COLOR_PAIR(cp));
+			wattrset(win, COLOR_PAIR(cp));
 
 			mvwprintw(win, row, col, "%lc", tchar->chr);
 		}
