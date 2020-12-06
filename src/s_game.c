@@ -216,6 +216,11 @@ s_field* s_game_can_mv(s_game *game, s_status *status, const s_field *field_src)
 
 	log_debug("idx_dst: %d %d", idx_dst, field_src->id.idx);
 
+	// TODO: ERROR
+	if (idx_dst < 0 || idx_dst >= POINTS_NUM) {
+		log_exit_str("out of range!!");
+	}
+
 	s_field *field_dst = &game->point[idx_dst];
 
 	if (field_dst->owner != OWNER_NONE && field_dst->owner != field_src->owner && field_dst->num > 1) {
