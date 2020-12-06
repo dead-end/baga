@@ -415,8 +415,8 @@ void s_tarr_print(WINDOW *win, const s_tarr *tarr, const s_point pos) {
 	const s_tchar *tchar;
 	short cp;
 
-	for (int row = pos.row; row < tarr->dim.row; row++) {
-		for (int col = pos.col; col < tarr->dim.col; col++) {
+	for (int row = 0; row < tarr->dim.row; row++) {
+		for (int col = 0; col < tarr->dim.col; col++) {
 
 			//
 			// Get the element
