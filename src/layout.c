@@ -47,7 +47,7 @@ static WINDOW *_win_dice = NULL;
 /******************************************************************************
  *
  *****************************************************************************/
-
+// TODO:
 void layout_init(const s_point dim_board, const s_point dim_dice) {
 
 	const s_point total = { .row = dim_board.row + dim_dice.row + W_BORDER_ROW, .col = lu_max(dim_board.col, dim_dice.col) };
@@ -69,9 +69,6 @@ void layout_init(const s_point dim_board, const s_point dim_dice) {
 	}
 
 	log_debug("win dice: %d/%d", dim_dice.row, dim_dice.col);
-
-	init_pair(1, COLOR_BLUE, COLOR_RED);
-	wbkgd(_win_dice, COLOR_PAIR(1));
 }
 
 /******************************************************************************
