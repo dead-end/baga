@@ -77,7 +77,7 @@ void s_game_init(s_game *game) {
  * The function resets the s_game struct and sets the checker for the new game.
  *****************************************************************************/
 
-void s_game_new_game(s_game *game) {
+void s_game_new_game(s_game *game, s_status *status) {
 
 	//
 	// Set all to 0
@@ -87,8 +87,8 @@ void s_game_new_game(s_game *game) {
 	//
 	// Index 0
 	//
-	s_game_set(game->point[idx_white(0)], 2, OWNER_WHITE);
-	s_game_set(game->point[idx_black(0)], 2, OWNER_BLACK);
+	s_game_set(game->point[idx_white(23)], 2, OWNER_WHITE);
+	s_game_set(game->point[idx_black(23)], 2, OWNER_BLACK);
 
 	//
 	// Index 5
@@ -105,8 +105,14 @@ void s_game_new_game(s_game *game) {
 	//
 	// Index 11
 	//
-	s_game_set(game->point[idx_white(11)], 5, OWNER_WHITE);
-	s_game_set(game->point[idx_black(11)], 5, OWNER_BLACK);
+	s_game_set(game->point[idx_white(12)], 5, OWNER_WHITE);
+	s_game_set(game->point[idx_black(12)], 5, OWNER_BLACK);
+
+	//
+	// Reset the status for a new game.
+	//
+	// TODO: correct here?
+	s_status_start(status, OWNER_BLACK);
 }
 
 /******************************************************************************
@@ -183,7 +189,7 @@ void s_game_mv(s_field *field_src, s_field *field_dst) {
 
 // TODO: the function is not complete.
 // - ensure that it is the turn of the owner of the checker.
-s_field* s_game_can_mv(s_game *game, const s_field *field_src, const int num) {
+s_field* s_game_can_mv(s_game *game, s_status *status, const s_field *field_src) {
 	int idx_src;
 
 	//
@@ -196,7 +202,7 @@ s_field* s_game_can_mv(s_game *game, const s_field *field_src, const int num) {
 	//
 	// If there is no checker on the field, there is nothing to do.
 	//
-	if (field_src->num == 0) {
+	if (field_src->num == 0 || field_src->owner != status->turn) {
 		return NULL;
 	}
 
@@ -206,7 +212,7 @@ s_field* s_game_can_mv(s_game *game, const s_field *field_src, const int num) {
 		idx_src = field_src->id.idx;
 	}
 
-	int idx_dst = (field_src->owner == OWNER_WHITE) ? idx_src + num : idx_src - num;
+	int idx_dst = (field_src->owner == OWNER_WHITE) ? idx_src + s_status_get_dice(status) : idx_src - s_status_get_dice(status);
 
 	log_debug("idx_dst: %d %d", idx_dst, field_src->id.idx);
 
@@ -225,7 +231,7 @@ s_field* s_game_can_mv(s_game *game, const s_field *field_src, const int num) {
 /******************************************************************************
  * The function returns a string representation of the owner of a field.
  *****************************************************************************/
-
+// TODO: correct here?
 char* s_field_owner_str(const s_field *field) {
 
 	switch (field->owner) {
@@ -248,7 +254,7 @@ char* s_field_owner_str(const s_field *field) {
 /******************************************************************************
  * The function returns a string representation of the type of a field.
  *****************************************************************************/
-
+// TODO: correct here?
 char* s_field_type_str(const s_field *field) {
 
 	switch (field->id.type) {
