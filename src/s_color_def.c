@@ -179,3 +179,27 @@ void s_color_def_gradient(short *colors, const int num, const char *str_start, c
 		colors[i] = col_color_create(result.r, result.g, result.b);
 	}
 }
+
+/******************************************************************************
+ * The function creates a color from a hex string.
+ *****************************************************************************/
+
+short s_color_def_hex_create(const char *hex) {
+
+	s_color_def color_def;
+
+    //
+    // Decode the hex string to 0-255
+    //
+	s_color_def_hex_str(&color_def, hex);
+
+    //
+    // Scale the value to 0-1000
+    //
+	s_color_def_hex_dec(&color_def);
+
+    //
+    // Create the color.
+    //
+	return col_color_create(color_def.r, color_def.g, color_def.b);
+}

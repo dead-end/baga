@@ -58,4 +58,6 @@ void s_color_def_hex_dec(s_color_def *color_def);
 
 void s_color_def_gradient_do(const int num, const int i, const s_color_def *start, const s_color_def *end, s_color_def *result);
 
+short s_color_def_hex_create(const char *hex);
+
 #endif /* INC_S_COLOR_DEF_H_ */
