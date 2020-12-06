@@ -32,6 +32,7 @@
 #include "s_pos.h"
 #include "s_game.h"
 #include "layout.h"
+#include "dice.h"
 
 static const char *headers[] = {
 
@@ -60,6 +61,8 @@ NULL };
 static void exit_callback() {
 
 	layout_free();
+
+	dice_free();
 
 	nc_board_free();
 
@@ -130,6 +133,7 @@ void show_menu() {
  *****************************************************************************/
 
 int main() {
+	s_status status;
 	s_point m_event;
 	s_game_cfg game_cfg;
 
@@ -142,9 +146,13 @@ int main() {
 
 	s_game_cfg_init(&game_cfg);
 
+	s_status_init();
+
 	const s_board_areas *board_areas = s_pos_init();
 
 	layout_init(board_areas->board_dim, (s_point ) { .row = 4, .col = 7 * 4 + 3 * 4 });
+
+	dice_init(layout_win_dice());
 
 	//
 	// Write the whole windows.
@@ -162,21 +170,23 @@ int main() {
 	// Show dice window
 	// TODO: do more than a colored window
 	//
-	wrefresh(layout_win_dice());
+//	wrefresh(layout_win_dice());
 
 	//
 	// Initialize the game board function
 	//
 	s_game game;
 
-	s_game_new_game(&game);
+	s_game_new_game(&game, &status);
 
+	//
+	// Print
+	//
 	s_game_print(&game);
 
-	//
-	// Print the initialized board
-	//
 	nc_board_print();
+
+	dice_print(&status);
 
 	log_debug_str("Ending baga...");
 
@@ -226,7 +236,7 @@ int main() {
 						s_pos_mouse_target(m_event, &field_id);
 
 						if (field_id.type != E_FIELD_NONE) {
-							nc_board_process(&game, field_id);
+							nc_board_process(&game, &status, field_id);
 						}
 					}
 
