@@ -31,6 +31,7 @@
 #include "s_game.h"
 #include "s_point_layout.h"
 #include "s_game_cfg.h"
+#include "s_status.h"
 
 /******************************************************************************
  * Function definitions that are only used for unit tests.
@@ -45,6 +46,6 @@ void nc_board_print();
 // TODO: there is a cross dependency s_game <=> nc_board
 void s_board_add_checkers(const s_field *field);
 
-void nc_board_process(s_game *game, const s_field_id field);
+void nc_board_process(s_game *game, s_status *status, const s_field_id field);
 
 #endif /* INC_NC_BOARD_H_ */
