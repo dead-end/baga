@@ -406,3 +406,39 @@ void s_tarr_print_area(WINDOW *win, const s_tarr *ta_fg, const s_tarr *ta_bg, co
 		}
 	}
 }
+
+/******************************************************************************
+ * The function simply print the s_tarr to a window at a given position.
+ *****************************************************************************/
+
+void s_tarr_print(WINDOW *win, const s_tarr *tarr, const s_point pos) {
+	const s_tchar *tchar;
+	short cp;
+
+	//
+	// Compute the end values for the row and column.
+	//
+	const int row_end = pos.row + tarr->dim.row;
+	const int col_end = pos.col + tarr->dim.col;
+
+	for (int row = pos.row; row < row_end; row++) {
+		for (int col = pos.col; col < col_end; col++) {
+
+			//
+			// Get the element
+			//
+			tchar = &s_tarr_get(tarr, row, col);
+
+			//
+			// Set the color
+			//
+			cp = cp_color_pair_get(tchar->fg, tchar->bg);
+			wattrset(win, COLOR_PAIR(cp));
+
+			//
+			// Print the result
+			//
+			mvwprintw(win, row, col, "%lc", tchar->chr);
+		}
+	}
+}

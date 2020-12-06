@@ -70,6 +70,8 @@ s_point s_tarr_ul_pos_get(const s_tarr *tarr, s_point cur_pos, const bool revers
 
 void s_tarr_print_area(WINDOW *win, const s_tarr *ta_fg, const s_tarr *ta_bg, const s_point pos, const s_point dim);
 
+void s_tarr_print(WINDOW *win, const s_tarr *tarr, const s_point pos);
+
 /******************************************************************************
  * The macro to access the elements of the array.
  *****************************************************************************/
