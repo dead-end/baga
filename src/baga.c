@@ -144,6 +144,7 @@ int main() {
 
 	init();
 
+	// TODO: sort init functions
 	s_game_cfg_init(&game_cfg);
 
 	s_status_init();
@@ -155,14 +156,14 @@ int main() {
 	dice_init(layout_win_dice());
 
 	//
-	// Write the whole windows.
-	//
-	wrefresh(stdscr);
-
-	//
 	// Initialize the ncurses board function
 	//
 	nc_board_init(layout_win_board(), &game_cfg, board_areas);
+
+	//
+	// Write the whole windows.
+	//
+	wrefresh(stdscr);
 
 	show_menu();
 
