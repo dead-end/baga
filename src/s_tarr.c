@@ -415,14 +415,8 @@ void s_tarr_print(WINDOW *win, const s_tarr *tarr, const s_point pos) {
 	const s_tchar *tchar;
 	short cp;
 
-	//
-	// Compute the end values for the row and column.
-	//
-	const int row_end = pos.row + tarr->dim.row;
-	const int col_end = pos.col + tarr->dim.col;
-
-	for (int row = pos.row; row < row_end; row++) {
-		for (int col = pos.col; col < col_end; col++) {
+	for (int row = pos.row; row < tarr->dim.row; row++) {
+		for (int col = pos.col; col < tarr->dim.col; col++) {
 
 			//
 			// Get the element
@@ -438,7 +432,7 @@ void s_tarr_print(WINDOW *win, const s_tarr *tarr, const s_point pos) {
 			//
 			// Print the result
 			//
-			mvwprintw(win, row, col, "%lc", tchar->chr);
+			mvwprintw(win, pos.row + row, pos.col + col, "%lc", tchar->chr);
 		}
 	}
 }
