@@ -27,6 +27,7 @@
 
 #include "bg_defs.h"
 #include "s_field_id.h"
+#include "s_status.h"
 
 /******************************************************************************
  * The struct defines a field on a the game board. A field has an id, which is
@@ -84,13 +85,13 @@ typedef struct {
 
 void s_game_init(s_game *game);
 
-void s_game_new_game(s_game *game);
+void s_game_new_game(s_game *game, s_status *status);
 
 void s_game_print(const s_game *game);
 
 s_field* s_game_get(s_game *game, const s_field_id id);
 
-s_field* s_game_can_mv(s_game *game, const s_field *field_src, const int num);
+s_field* s_game_can_mv(s_game *game, s_status *status, const s_field *field_src);
 
 void s_game_mv(s_field *field_src, s_field *field_dst);
 
