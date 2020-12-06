@@ -60,6 +60,7 @@ void s_game_cfg_init(s_game_cfg *game_cfg) {
 	//
 	// Color: checker
 	//
+	// TODO: use black / white for the development
 	game_cfg->clr_checker_black_start = "#8a8a5c";
 
 	game_cfg->clr_checker_black_end = "#0f0f0a";
