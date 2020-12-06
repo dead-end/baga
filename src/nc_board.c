@@ -303,15 +303,15 @@ static void travler_move(const s_board *board, const s_pos *checker_from, const 
 /******************************************************************************
  * The function is called with the s_field_id from a mouse event.
  *****************************************************************************/
-
-void nc_board_process(s_game *game, const s_field_id id) {
+// TODO: working state
+void nc_board_process(s_game *game, s_status *status, const s_field_id id) {
 
 	//
 	// Identify the source field
 	//
 	s_field *field_src = s_game_get(game, id);
 
-	s_field *field_dst = s_game_can_mv(game, field_src, 1);
+	s_field *field_dst = s_game_can_mv(game, status, field_src);
 	if (field_dst == NULL) {
 		log_debug("field - type: %s owner: %s index: %d num: %d", s_field_type_str(field_src), s_field_owner_str(field_src), field_src->id.idx, field_src->num);
 		return;
@@ -332,4 +332,7 @@ void nc_board_process(s_game *game, const s_field_id id) {
 	// Move the checker on the game.
 	//
 	s_game_mv(field_src, field_dst);
+
+	//TODO: correct here ?? cross dependency s_status <=> nc_board.
+	s_status_mv_done(status);
 }
