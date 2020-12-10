@@ -32,6 +32,7 @@
 #include "lib_logging.h"
 #include "s_tarr.h"
 #include "s_status.h"
+#include "dice.h"
 
 /******************************************************************************
  *
@@ -177,7 +178,7 @@ static short _colors[NUM_PLAYER][D_STATUS_NUM];
  *
  *****************************************************************************/
 
-void dice_init(WINDOW *win) {
+void dice_init(const s_game_cfg *game_cfg, WINDOW *win) {
 
 	// TODO: DEBUG
 	if (win == NULL) {
@@ -187,11 +188,11 @@ void dice_init(WINDOW *win) {
 	_win = win;
 	_tmpl = s_tarr_new(D_ROWS, D_COLS);
 
-	_colors[OWNER_BLACK][D_STAT_ACTIVE] = s_color_def_hex_create("#0f0f0f");
-	_colors[OWNER_BLACK][D_STAT_INACTIVE] = s_color_def_hex_create("#1f1f1f");
+	_colors[OWNER_BLACK][D_STAT_ACTIVE] = s_color_def_hex_create(game_cfg->clr_dice_black_active);
+	_colors[OWNER_BLACK][D_STAT_INACTIVE] = s_color_def_hex_create(game_cfg->clr_dice_black_inactive);
 
-	_colors[OWNER_WHITE][D_STAT_ACTIVE] = s_color_def_hex_create("#e0e0e0");
-	_colors[OWNER_WHITE][D_STAT_INACTIVE] = s_color_def_hex_create("#b0b0b0");
+	_colors[OWNER_WHITE][D_STAT_ACTIVE] = s_color_def_hex_create(game_cfg->clr_dice_white_active);
+	_colors[OWNER_WHITE][D_STAT_INACTIVE] = s_color_def_hex_create(game_cfg->clr_dice_white_inactive);
 }
 
 /******************************************************************************
