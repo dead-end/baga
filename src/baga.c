@@ -151,7 +151,7 @@ int main() {
 
 	const s_board_areas *board_areas = s_pos_init();
 
-	layout_init(board_areas->board_dim, (s_point ) { .row = 4, .col = 7 * 4 + 3 * 4 });
+	layout_init(board_areas->board_dim, (s_point ) { .row = D_ROWS, .col = D_COLS * 4 + D_PAD * 3 });
 
 	dice_init(&game_cfg, layout_win_dice());
 
