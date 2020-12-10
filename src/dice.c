@@ -55,23 +55,12 @@
 #define LO L'\u2580'
 
 /******************************************************************************
- *
- *****************************************************************************/
-
-// TODO: get size for layout
-#define D_ROWS 4
-
-#define D_COLS 7
-
-#define PADDING 2
-
-/******************************************************************************
  * The elements have fixed positions inside the window.
  *****************************************************************************/
 
 static const s_point _pos_dice_1 = { .row = 0, .col = 0 };
 
-static const s_point _pos_dice_2 = { .row = 0, .col = D_COLS + PADDING };
+static const s_point _pos_dice_2 = { .row = 0, .col = D_COLS + D_PAD };
 
 /******************************************************************************
  *
@@ -180,10 +169,15 @@ static short _colors[NUM_PLAYER][D_STATUS_NUM];
 
 void dice_init(const s_game_cfg *game_cfg, WINDOW *win) {
 
-	// TODO: DEBUG
+#ifdef DEBUG
+
+	//
+	// Ensure that we initialized all in the correct order.
+	//
 	if (win == NULL) {
 		log_exit_str("No window!");
 	}
+#endif
 
 	_win = win;
 	_tmpl = s_tarr_new(D_ROWS, D_COLS);
@@ -223,18 +217,16 @@ static s_tarr* dice_get_tmpl(const int num, const short fg, const short bg) {
 	return _tmpl;
 }
 
-// TODO: better solution
+/******************************************************************************
+ *
+ *****************************************************************************/
+
 static void get_color(const s_status *status, const bool active, short *fg, short *bg) {
 
 	const int idx = active ? D_STAT_ACTIVE : D_STAT_INACTIVE;
 
-	if (status->turn == OWNER_BLACK) {
-		*fg = _colors[OWNER_BLACK][idx];
-		*bg = _colors[OWNER_WHITE][idx];
-	} else {
-		*fg = _colors[OWNER_WHITE][idx];
-		*bg = _colors[OWNER_BLACK][idx];
-	}
+	*fg = _colors[status->turn][idx];
+	*bg = _colors[e_owner_other(status->turn)][idx];
 }
 
 /******************************************************************************
