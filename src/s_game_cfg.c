@@ -35,37 +35,37 @@ void s_game_cfg_init(s_game_cfg *game_cfg) {
 	//
 	// Color: board border and bear off reversed
 	//
-	game_cfg->clr_board_start = "#22222f";
+	game_cfg->clr_board_start = "#391313";
 
-	game_cfg->clr_board_end = "#55555f";
+	game_cfg->clr_board_end = "#602020";
 
 	//
 	// Color: inner / outer board
 	//
-	game_cfg->clr_outer_inner_start = "#88888f";
+	game_cfg->clr_outer_inner_start = "#ffe0b3";
 
-	game_cfg->clr_outer_inner_end = "#cccccf";
+	game_cfg->clr_outer_inner_end = "#ffb84d";
 
 	//
 	// Color: points
 	//
-	game_cfg->clr_points_black_start = "#ffffff";
+	game_cfg->clr_points_black_start = "#4d2600";
 
-	game_cfg->clr_points_black_end = "#cccccc";
+	game_cfg->clr_points_black_end = "#663300";
 
-	game_cfg->clr_points_white_start = "#555555";
+	game_cfg->clr_points_white_start = "#cc6600";
 
-	game_cfg->clr_points_white_end = "#222222";
+	game_cfg->clr_points_white_end = "#ff8c1a";
 
 	//
 	// Color: checker
 	//
-	// TODO: use black / white for the development
-	game_cfg->clr_checker_black_start = "#8a8a5c";
+	game_cfg->clr_checker_black_start = "#1a1a1a";
 
-	game_cfg->clr_checker_black_end = "#0f0f0a";
+	game_cfg->clr_checker_black_end = "#666666";
 
-	game_cfg->clr_checker_white_start = "#ac3939";
+	game_cfg->clr_checker_white_start = "#f2f2f2";
 
-	game_cfg->clr_checker_white_end = "#130606";
+	game_cfg->clr_checker_white_end = "#737373";
+
 }
