@@ -29,12 +29,13 @@
 
 #include "bg_defs.h"
 #include "s_status.h"
+#include "s_game_cfg.h"
 
 /******************************************************************************
  * The definitions of the functions.
  *****************************************************************************/
 
-void dice_init(WINDOW *win);
+void dice_init(const s_game_cfg *game_cfg, WINDOW *win);
 
 void dice_free();
 
