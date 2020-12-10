@@ -67,6 +67,17 @@ typedef struct s_game_cfg {
 
 	char *clr_checker_white_end;
 
+	//
+	// Color: dices
+	//
+	char *clr_dice_black_active;
+
+	char *clr_dice_black_inactive;
+
+	char *clr_dice_white_active;
+
+	char *clr_dice_white_inactive;
+
 } s_game_cfg;
 
 /******************************************************************************

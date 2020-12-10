@@ -68,4 +68,15 @@ void s_game_cfg_init(s_game_cfg *game_cfg) {
 
 	game_cfg->clr_checker_white_end = "#737373";
 
+	//
+	// Color: dices
+	//
+	game_cfg->clr_dice_black_active = "#0f0f0f";
+
+	game_cfg->clr_dice_black_inactive = "#1f1f1f";
+
+	game_cfg->clr_dice_white_active = "#e0e0e0";
+
+	game_cfg->clr_dice_white_inactive = "#b0b0b0";
+
 }
