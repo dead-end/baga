@@ -153,7 +153,7 @@ int main() {
 
 	layout_init(board_areas->board_dim, (s_point ) { .row = 4, .col = 7 * 4 + 3 * 4 });
 
-	dice_init(layout_win_dice());
+	dice_init(&game_cfg, layout_win_dice());
 
 	//
 	// Initialize the ncurses board function
