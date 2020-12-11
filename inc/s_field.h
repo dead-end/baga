@@ -25,8 +25,11 @@
 #ifndef INC_S_FIELD_H_
 #define INC_S_FIELD_H_
 
+#include <stdbool.h>
+
 #include "bg_defs.h"
 #include "s_field_id.h"
+#include "s_status.h"
 
 /******************************************************************************
  * The struct defines a field on a the game board. A field has an id, which is
@@ -54,11 +57,29 @@ typedef struct {
 } s_field;
 
 /******************************************************************************
+ * Two macros to set fields.
+ *****************************************************************************/
+
+#define s_field_set_full(f,t,i,n,o) \
+		(f).id.type = (t); \
+		(f).id.idx = (i); \
+		(f).num = (n); \
+		(f).owner = (o)
+
+#define s_field_set(f,n,o) \
+		(f).num = (n); \
+		(f).owner = (o)
+
+/******************************************************************************
  * Function declarations.
  *****************************************************************************/
 
 char* s_field_type_str(const s_field *field);
 
 char* s_field_owner_str(const s_field *field);
+
+bool s_field_is_valid_src(const s_field *field, const s_status *status);
+
+void s_field_mv(s_field *field_src, s_field *field_dst);
 
 #endif /* INC_S_FIELD_H_ */
