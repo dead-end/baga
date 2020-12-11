@@ -29,6 +29,9 @@
 #include "s_status.h"
 #include "dice.h"
 
+/******************************************************************************
+ *
+ *****************************************************************************/
 // TODO: better name
 #define next() rand() % 6 + 1
 
@@ -49,20 +52,34 @@ void s_status_init() {
 
 static void s_status_dice(s_status *status) {
 
-	status->dice_1 = next();
-	status->dice_2 = next();
+	status->dices[0].value = next();
+	status->dices[1].value = next();
 
-	//
-	// Swap the values if necessary.
-	//
-	if (status->dice_1 < status->dice_2) {
+	status->dices[0].num_set = 0;
+	status->dices[1].num_set = 0;
 
-		const int tmp = status->dice_1;
-		status->dice_1 = status->dice_2;
-		status->dice_2 = tmp;
+	if (status->dices[0].value == status->dices[1].value) {
+		status->dices[0].num = 2;
+		status->dices[1].num = 2;
+
+	} else {
+		status->dices[0].num = 1;
+		status->dices[1].num = 1;
 	}
 
-	status->active = 0;
+	//
+	// Set status
+	//
+	if (status->dices[0].value >= status->dices[1].value) {
+		status->dices[0].status = E_DICE_ACTIVE;
+		status->dices[1].status = E_DICE_INACTIVE;
+	} else {
+		status->dices[0].status = E_DICE_INACTIVE;
+		status->dices[1].status = E_DICE_ACTIVE;
+	}
+
+	log_debug("dice-1 value %d num: %d set: %d", status->dices[0].value, status->dices[0].num, status->dices[0].num_set);
+	log_debug("dice-2 value %d num: %d set: %d", status->dices[1].value, status->dices[1].num, status->dices[1].num_set);
 }
 
 /******************************************************************************
@@ -72,6 +89,8 @@ static void s_status_dice(s_status *status) {
 
 void s_status_start(s_status *status, const e_owner owner) {
 	status->turn = owner;
+
+	status->up_2_down = OWNER_BLACK;
 
 	s_status_dice(status);
 }
@@ -86,28 +105,55 @@ void s_status_next_turn(s_status *status) {
 	s_status_dice(status);
 }
 
+/******************************************************************************
+ *
+ *****************************************************************************/
 // TODO:
 int s_status_get_dice(s_status *status) {
 
-	if (status->active == 0) {
-		return status->dice_1;
+	if (status->dices[0].status == E_DICE_ACTIVE) {
+		return status->dices[0].value;
 	}
 
-	if (status->active == 1) {
-		return status->dice_2;
+	if (status->dices[1].status == E_DICE_ACTIVE) {
+		return status->dices[1].value;
 	}
 
 	log_exit_str("Active!");
 }
 
+/******************************************************************************
+ *
+ *****************************************************************************/
 // TODO:
 void s_status_mv_done(s_status *status) {
 
-	if (status->active == 1) {
-		s_status_next_turn(status);
+	if (status->dices[0].status == E_DICE_ACTIVE) {
 
-	} else {
-		status->active++;
+		status->dices[0].num_set++;
+		if (status->dices[0].num_set == status->dices[0].num) {
+			status->dices[0].status = E_DICE_SET;
+
+			if (status->dices[1].status == E_DICE_INACTIVE) {
+				status->dices[1].status = E_DICE_ACTIVE;
+			} else {
+				s_status_next_turn(status);
+			}
+		}
+
+	} else if (status->dices[1].status == E_DICE_ACTIVE) {
+
+		status->dices[1].num_set++;
+		if (status->dices[1].num_set == status->dices[1].num) {
+			status->dices[1].status = E_DICE_SET;
+
+			if (status->dices[0].status == E_DICE_INACTIVE) {
+				status->dices[0].status = E_DICE_ACTIVE;
+			} else {
+				s_status_next_turn(status);
+			}
+		}
+
 	}
 
 	dice_print(status);

@@ -31,17 +31,64 @@
  *
  *****************************************************************************/
 
+typedef enum {
+
+	//
+	// The dice can be set and is selected to be set.
+	//
+	E_DICE_ACTIVE = 0,
+
+	//
+	// The dice can be set and is not selected to be set.
+	//
+	E_DICE_INACTIVE = 1,
+
+	//
+	// The dice has been set.
+	//
+	E_DICE_SET = 2,
+
+	//
+	// The dice is not possible to be set.
+	//
+	E_DICE_NOT_POS = 3
+
+} e_dice_status;
+
+/******************************************************************************
+ *
+ *****************************************************************************/
+
+typedef struct {
+
+	e_dice_status status;
+
+	int value;
+
+	//
+	// The values are 1 or 2 if the dices have the same value.
+	//
+	// TODO: maybe bool
+	int num;
+
+	//
+	//
+	//
+	int num_set;
+
+} s_dice;
+
+/******************************************************************************
+ *
+ *****************************************************************************/
+
 typedef struct {
 
 	e_owner turn;
 
-	// TODO s_dice { dice, num (1/2), status (active, not possible, set, ...)
-	// TODO: array instead if two separate
-	int dice_1;
+	s_dice dices[2];
 
-	int dice_2;
-
-	int active;
+	e_owner up_2_down;
 
 } s_status;
 
