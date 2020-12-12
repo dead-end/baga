@@ -91,14 +91,17 @@ typedef struct s_game_cfg {
 	// TODO: this is not final.
 	char *clr_ctrl_confirm_active;
 
+	// TODO: currently not used => hover
 	char *clr_ctrl_confirm_inactive;
 
 	char *clr_ctrl_undo_active;
 
+	// TODO: currently not used => hover
 	char *clr_ctrl_undo_inactive;
 
 	char *clr_ctrl_bg_active;
 
+	// TODO: currently not used
 	char *clr_ctrl_bg_inactive;
 
 } s_game_cfg;
