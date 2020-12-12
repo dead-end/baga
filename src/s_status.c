@@ -159,4 +159,9 @@ void s_status_mv_done(s_status *status) {
 		}
 
 	}
+
+	//
+	// TODO: is this correct? I added this drunk :o)
+	//
+	dice_print(status);
 }
