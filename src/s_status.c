@@ -30,15 +30,15 @@
 #include "dice.h"
 
 /******************************************************************************
- *
+ * The macro is rolling the dice.
  *****************************************************************************/
-// TODO: better name
-#define next() rand() % 6 + 1
+
+#define rolling_dice() rand() % 6 + 1
 
 /******************************************************************************
- *
+ * The function initializes the status struct.
  *****************************************************************************/
-// TODO:
+
 void s_status_init(s_status *status, const s_game_cfg *game_cfg) {
 	time_t t;
 
@@ -54,8 +54,8 @@ void s_status_init(s_status *status, const s_game_cfg *game_cfg) {
 
 static void s_status_dice(s_status *status) {
 
-	status->dices[0].value = next();
-	status->dices[1].value = next();
+	status->dices[0].value = rolling_dice();
+	status->dices[1].value = rolling_dice();
 
 	status->dices[0].num_set = 0;
 	status->dices[1].num_set = 0;
@@ -159,6 +159,4 @@ void s_status_mv_done(s_status *status) {
 		}
 
 	}
-
-	dice_print(status);
 }
