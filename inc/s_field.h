@@ -71,6 +71,18 @@ typedef struct {
 		(f).owner = (o)
 
 /******************************************************************************
+ * The macro is called with the s_status and owner and an index. The index is
+ * is relative from start to end for the owner. It computes the absolute index.
+ *
+ * Example:
+ *
+ * white: from top -> bottom => relative: 0 absolute 0
+ * black: from bottom -> top => relative: 0 absolute 23
+ *****************************************************************************/
+
+#define s_field_rel_idx(s,o,i) (((s)->up_2_down == (o)) ? (i) : lu_reverse_idx(POINTS_NUM,i))
+
+/******************************************************************************
  * Function declarations.
  *****************************************************************************/
 
