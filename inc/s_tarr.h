@@ -72,6 +72,8 @@ void s_tarr_print_area(WINDOW *win, const s_tarr *ta_fg, const s_tarr *ta_bg, co
 
 void s_tarr_print(WINDOW *win, const s_tarr *tarr, const s_point pos);
 
+void s_tarr_print_empty(WINDOW *win, const s_point dim, const s_point pos);
+
 /******************************************************************************
  * The macro to access the elements of the array.
  *****************************************************************************/

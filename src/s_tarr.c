@@ -438,3 +438,18 @@ void s_tarr_print(WINDOW *win, const s_tarr *tarr, const s_point pos) {
 		}
 	}
 }
+
+/******************************************************************************
+ *
+ *****************************************************************************/
+
+void s_tarr_print_empty(WINDOW *win, const s_point dim, const s_point pos) {
+	wattrset(win, COLOR_PAIR(0));
+
+	for (int row = 0; row < dim.row; row++) {
+		for (int col = 0; col < dim.col; col++) {
+
+			mvwaddch(win, pos.row + row, pos.col + col, ' ');
+		}
+	}
+}
