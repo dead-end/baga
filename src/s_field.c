@@ -29,9 +29,9 @@
  * The function returns a string representation of the owner of a field.
  *****************************************************************************/
 
-char* s_field_owner_str(const s_field *field) {
+char* s_field_owner_str(const e_owner owner) {
 
-	switch (field->owner) {
+	switch (owner) {
 
 	case OWNER_BLACK:
 		return "BLACK";
@@ -43,7 +43,7 @@ char* s_field_owner_str(const s_field *field) {
 		return "EMPTY";
 
 	default:
-		log_exit("Unknown owner: %d", field->owner)
+		log_exit("Unknown owner: %d", owner)
 		;
 	}
 }
@@ -52,9 +52,9 @@ char* s_field_owner_str(const s_field *field) {
  * The function returns a string representation of the type of a field.
  *****************************************************************************/
 
-char* s_field_type_str(const s_field *field) {
+char* s_field_type_str(const e_field_type type) {
 
-	switch (field->id.type) {
+	switch (type) {
 
 	case E_FIELD_POINTS:
 		return "POINT";
@@ -69,7 +69,7 @@ char* s_field_type_str(const s_field *field) {
 		return "NONE";
 
 	default:
-		log_exit("Unknown type: %d", field->id.type)
+		log_exit("Unknown type: %d", type)
 		;
 	}
 }
@@ -82,7 +82,10 @@ char* s_field_type_str(const s_field *field) {
 #ifdef DEBUG
 
 static void s_field_log(const s_field *field, const char *msg) {
-	log_debug("idx: %d type: %s num: %d owner: %s - %s", field->id.idx, s_field_type_str(field), field->num, s_field_owner_str(field), msg);
+
+	log_debug("[idx: %d type: %s num: %d owner: %s] - %s",
+
+	field->id.idx, s_field_type_str(field->id.type), field->num, s_field_owner_str(field->owner), msg);
 }
 
 #endif
@@ -145,4 +148,68 @@ void s_field_mv(s_field *field_src, s_field *field_dst) {
 	s_field_log(field_dst, "dst - after");
 #endif
 
+}
+
+/******************************************************************************
+ * The function returns the index of the source field. If the source field is a
+ * point the index does not change. But if the source is the bar, we need a
+ * source index to add our dice to.
+ *****************************************************************************/
+
+static int s_field_get_src_idx(const s_field *field_src, const s_status *status) {
+
+#ifdef DEBUG
+
+	//
+	// Ensure that the source field type is the expected.
+	//
+	if (field_src->id.type != E_FIELD_BAR && field_src->id.type != E_FIELD_POINTS) {
+		log_exit("invalid type: %s", s_field_type_str(field_src->id.type));
+	}
+#endif
+
+	if (field_src->id.type == E_FIELD_BAR) {
+		return (status->up_2_down == field_src->owner) ? -1 : POINTS_NUM;
+	}
+
+	return field_src->id.idx;
+}
+
+/******************************************************************************
+ * The function is called with a source field and the status and it computes
+ * the index of the destination field.
+ *****************************************************************************/
+// TODO: missing: bear-off phase
+s_field_id s_field_get_dst_id(const s_field *field_src, const s_status *status) {
+	s_field_id id_dst;
+
+	//
+	// Get the value from the active dice.
+	//
+	const int dice = s_status_get_dice(status);
+
+	//
+	// Get the source index of the field with respect to bars.
+	//
+	const int idx_src = s_field_get_src_idx(field_src, status);
+
+	//
+	// Compute the destination index.
+	//
+	id_dst.idx = (status->up_2_down == field_src->owner) ? idx_src + dice : idx_src - dice;
+	id_dst.type = E_FIELD_POINTS;
+
+	log_debug("field index src: %d dst: %d dice: %d", idx_src, id_dst.idx, dice);
+
+#ifdef DEBUG
+
+	//
+	// TODO: only possible if last phase of the game => to bear off
+	//
+	if (id_dst.idx < 0 || id_dst.idx >= POINTS_NUM) {
+		log_exit("out of range dst: %d src: %d", id_dst.idx, idx_src);
+	}
+#endif
+
+	return id_dst;
 }

@@ -74,12 +74,14 @@ typedef struct {
  * Function declarations.
  *****************************************************************************/
 
-char* s_field_type_str(const s_field *field);
+char* s_field_type_str(const e_field_type type);
 
-char* s_field_owner_str(const s_field *field);
+char* s_field_owner_str(const e_owner owner);
 
 bool s_field_is_valid_src(const s_field *field, const s_status *status);
 
 void s_field_mv(s_field *field_src, s_field *field_dst);
+
+s_field_id s_field_get_dst_id(const s_field *field_src, const s_status *status);
 
 #endif /* INC_S_FIELD_H_ */
