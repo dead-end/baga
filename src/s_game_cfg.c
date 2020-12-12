@@ -87,13 +87,13 @@ void s_game_cfg_init(s_game_cfg *game_cfg) {
 	//
 	// Color: controls
 	//
-	game_cfg->clr_ctrl_ok_active = "#00ff00";
+	game_cfg->clr_ctrl_confirm_active = "#00ff00";
 
-	game_cfg->clr_ctrl_ok_inactive = "#b3ffb3";
+	game_cfg->clr_ctrl_confirm_inactive = "#b3ffb3";
 
-	game_cfg->clr_ctrl_redo_active = "#ff0000";
+	game_cfg->clr_ctrl_undo_active = "#ff0000";
 
-	game_cfg->clr_ctrl_redo_inactive = "#ffb3b3";
+	game_cfg->clr_ctrl_undo_inactive = "#ffb3b3";
 
 	game_cfg->clr_ctrl_bg_active = "#6b6b47";
 

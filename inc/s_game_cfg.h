@@ -89,13 +89,13 @@ typedef struct s_game_cfg {
 	// Color: dices
 	//
 	// TODO: this is not final.
-	char *clr_ctrl_ok_active;
+	char *clr_ctrl_confirm_active;
 
-	char *clr_ctrl_ok_inactive;
+	char *clr_ctrl_confirm_inactive;
 
-	char *clr_ctrl_redo_active;
+	char *clr_ctrl_undo_active;
 
-	char *clr_ctrl_redo_inactive;
+	char *clr_ctrl_undo_inactive;
 
 	char *clr_ctrl_bg_active;
 
