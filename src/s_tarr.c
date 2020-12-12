@@ -440,7 +440,8 @@ void s_tarr_print(WINDOW *win, const s_tarr *tarr, const s_point pos) {
 }
 
 /******************************************************************************
- *
+ * The function writes blank with default colors / color pair to the given
+ * window. It can be used to delete a s_tarr.
  *****************************************************************************/
 
 void s_tarr_print_empty(WINDOW *win, const s_point dim, const s_point pos) {
