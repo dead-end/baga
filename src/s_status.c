@@ -39,10 +39,12 @@
  *
  *****************************************************************************/
 // TODO:
-void s_status_init() {
+void s_status_init(s_status *status, const s_game_cfg *game_cfg) {
 	time_t t;
 
 	srand((unsigned) time(&t));
+
+	status->up_2_down = game_cfg->up_2_down;
 }
 
 /******************************************************************************
@@ -87,10 +89,12 @@ static void s_status_dice(s_status *status) {
  * turn.
  *****************************************************************************/
 
-void s_status_start(s_status *status, const e_owner owner) {
-	status->turn = owner;
+void s_status_start(s_status *status) {
 
-	status->up_2_down = OWNER_BLACK;
+	//
+	// The player that plays from top to bottom starts.
+	//
+	status->turn = status->up_2_down;
 
 	s_status_dice(status);
 }
@@ -109,7 +113,7 @@ void s_status_next_turn(s_status *status) {
  *
  *****************************************************************************/
 // TODO:
-int s_status_get_dice(s_status *status) {
+int s_status_get_dice(const s_status *status) {
 
 	if (status->dices[0].status == E_DICE_ACTIVE) {
 		return status->dices[0].value;

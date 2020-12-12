@@ -26,6 +26,7 @@
 #define INC_S_STATUS_H_
 
 #include "bg_defs.h"
+#include "s_game_cfg.h"
 
 /******************************************************************************
  *
@@ -96,13 +97,13 @@ typedef struct {
  * The function declarations.
  *****************************************************************************/
 
-void s_status_init();
+void s_status_init(s_status *status, const s_game_cfg *game_cfg);
 
-void s_status_start(s_status *status, const e_owner owner);
+void s_status_start(s_status *status);
 
 void s_status_next_turn(s_status *status);
 
-int s_status_get_dice(s_status *status);
+int s_status_get_dice(const s_status *status);
 
 void s_status_mv_done(s_status *status);
 
