@@ -28,29 +28,6 @@
 #include "nc_board.h"
 
 /******************************************************************************
- * The definition of the index for black and white. White is playing from upper
- * right to lower right and black is playing in reverse direction.
- *****************************************************************************/
-
-#define idx_white(i) (i)
-
-#define idx_black(i) lu_reverse_idx(POINTS_NUM,i)
-
-/******************************************************************************
- * Two macros to set fields.
- *****************************************************************************/
-
-#define s_game_set_full(p,t,i,n,o) \
-	(p).id.type = (t); \
-	(p).id.idx = (i); \
-	(p).num = (n); \
-	(p).owner = (o)
-
-#define s_game_set(p,n,o) \
-	(p).num = (n); \
-	(p).owner = (o)
-
-/******************************************************************************
  * The function initializes the s_game struct. No checker are placed.
  *****************************************************************************/
 
@@ -61,16 +38,16 @@ void s_game_init(s_game *game) {
 	//
 	for (int i = 0; i < POINTS_NUM; i++) {
 
-		s_game_set_full(game->point[i], E_FIELD_POINTS, i, 0, OWNER_NONE);
+		s_field_set_full(game->point[i], E_FIELD_POINTS, i, 0, OWNER_NONE);
 	}
 
-	s_game_set_full(game->bear_off[OWNER_BLACK], E_FIELD_BEAR_OFF, OWNER_BLACK, 0, OWNER_BLACK);
+	s_field_set_full(game->bear_off[OWNER_BLACK], E_FIELD_BEAR_OFF, OWNER_BLACK, 0, OWNER_BLACK);
 
-	s_game_set_full(game->bear_off[OWNER_BLACK], E_FIELD_BEAR_OFF, OWNER_WHITE, 0, OWNER_WHITE);
+	s_field_set_full(game->bear_off[OWNER_WHITE], E_FIELD_BEAR_OFF, OWNER_WHITE, 0, OWNER_WHITE);
 
-	s_game_set_full(game->reenter[OWNER_BLACK], E_FIELD_BAR, OWNER_BLACK, 0, OWNER_BLACK);
+	s_field_set_full(game->reenter[OWNER_BLACK], E_FIELD_BAR, OWNER_BLACK, 0, OWNER_BLACK);
 
-	s_game_set_full(game->reenter[OWNER_BLACK], E_FIELD_BAR, OWNER_WHITE, 0, OWNER_WHITE);
+	s_field_set_full(game->reenter[OWNER_WHITE], E_FIELD_BAR, OWNER_WHITE, 0, OWNER_WHITE);
 }
 
 /******************************************************************************
@@ -87,32 +64,32 @@ void s_game_new_game(s_game *game, s_status *status) {
 	//
 	// Index 0
 	//
-	s_game_set(game->point[idx_white(23)], 2, OWNER_WHITE);
-	s_game_set(game->point[idx_black(23)], 2, OWNER_BLACK);
-
-	//
-	// Index 5
-	//
-	s_game_set(game->point[idx_white(5)], 5, OWNER_WHITE);
-	s_game_set(game->point[idx_black(5)], 5, OWNER_BLACK);
-
-	//
-	// Index 7
-	//
-	s_game_set(game->point[idx_white(7)], 3, OWNER_WHITE);
-	s_game_set(game->point[idx_black(7)], 3, OWNER_BLACK);
+	s_field_set(game->point[s_field_rel_idx(status, OWNER_WHITE, 0)], 2, OWNER_WHITE);
+	s_field_set(game->point[s_field_rel_idx(status, OWNER_BLACK, 0)], 2, OWNER_BLACK);
 
 	//
 	// Index 11
 	//
-	s_game_set(game->point[idx_white(12)], 5, OWNER_WHITE);
-	s_game_set(game->point[idx_black(12)], 5, OWNER_BLACK);
+	s_field_set(game->point[s_field_rel_idx(status, OWNER_WHITE, 11)], 5, OWNER_WHITE);
+	s_field_set(game->point[s_field_rel_idx(status, OWNER_BLACK, 11)], 5, OWNER_BLACK);
+
+	//
+	// Index 16
+	//
+	s_field_set(game->point[s_field_rel_idx(status, OWNER_WHITE, 16)], 3, OWNER_WHITE);
+	s_field_set(game->point[s_field_rel_idx(status, OWNER_BLACK, 16)], 3, OWNER_BLACK);
+
+	//
+	// Index 11
+	//
+	s_field_set(game->point[s_field_rel_idx(status, OWNER_WHITE, 18)], 5, OWNER_WHITE);
+	s_field_set(game->point[s_field_rel_idx(status, OWNER_BLACK, 18)], 5, OWNER_BLACK);
 
 	//
 	// Reset the status for a new game.
 	//
 	// TODO: correct here?
-	s_status_start(status, OWNER_BLACK);
+	s_status_start(status);
 }
 
 /******************************************************************************
@@ -154,31 +131,6 @@ s_field* s_game_get(s_game *game, const s_field_id id) {
 }
 
 /******************************************************************************
- * The function moves a checker from a source to a destination field.
- *****************************************************************************/
-
-void s_game_mv(s_field *field_src, s_field *field_dst) {
-
-	//
-	// If there is not a checker on the destination we have to set the new
-	// owner.
-	//
-	if (field_dst->id.type == E_FIELD_POINTS && field_dst->num == 0) {
-		field_dst->owner = field_src->owner;
-	}
-
-	field_dst->num++;
-	field_src->num--;
-
-	//
-	// If no checker is left on the source field, we delete the owner.
-	//
-	if (field_src->id.type == E_FIELD_POINTS && field_src->num == 0) {
-		field_src->owner = OWNER_NONE;
-	}
-}
-
-/******************************************************************************
  * The function is called with a source field and the result from a dice. The
  * source field is identified by a mouse event, so everything is possible.
  *
@@ -190,39 +142,17 @@ void s_game_mv(s_field *field_src, s_field *field_dst) {
 // TODO: the function is not complete.
 // - ensure that it is the turn of the owner of the checker.
 s_field* s_game_can_mv(s_game *game, s_status *status, const s_field *field_src) {
-	int idx_src;
 
-	//
-	// If a checker reached the bear off area, it cannot moved again.
-	//
-	if (field_src->id.type == E_FIELD_BEAR_OFF) {
+	if (!s_field_is_valid_src(field_src, status)) {
 		return NULL;
 	}
 
+	const s_field_id id_dst = s_field_get_dst_id(field_src, status);
+	s_field *field_dst = s_game_get(game, id_dst);
+
 	//
-	// If there is no checker on the field, there is nothing to do.
+	// num > 1 => hit
 	//
-	if (field_src->num == 0 || field_src->owner != status->turn) {
-		return NULL;
-	}
-
-	if (field_src->id.type == E_FIELD_BAR) {
-		idx_src = (field_src->owner == OWNER_WHITE) ? -1 : 16;
-	} else {
-		idx_src = field_src->id.idx;
-	}
-
-	int idx_dst = (field_src->owner == OWNER_WHITE) ? idx_src + s_status_get_dice(status) : idx_src - s_status_get_dice(status);
-
-	log_debug("idx_dst: %d %d", idx_dst, field_src->id.idx);
-
-	// TODO: ERROR
-	if (idx_dst < 0 || idx_dst >= POINTS_NUM) {
-		log_exit_str("out of range!!");
-	}
-
-	s_field *field_dst = &game->point[idx_dst];
-
 	if (field_dst->owner != OWNER_NONE && field_dst->owner != field_src->owner && field_dst->num > 1) {
 		log_debug_str("diff owner!");
 		return NULL;
@@ -231,53 +161,4 @@ s_field* s_game_can_mv(s_game *game, s_status *status, const s_field *field_src)
 	log_debug("Owner: %d, idx: %d", field_src->owner, field_src->num);
 
 	return field_dst;
-}
-
-/******************************************************************************
- * The function returns a string representation of the owner of a field.
- *****************************************************************************/
-// TODO: correct here?
-char* s_field_owner_str(const s_field *field) {
-
-	switch (field->owner) {
-
-	case OWNER_BLACK:
-		return "BLACK";
-
-	case OWNER_WHITE:
-		return "WHITE";
-
-	case OWNER_NONE:
-		return "EMPTY";
-
-	default:
-		log_exit("Unknown owner: %d", field->owner)
-		;
-	}
-}
-
-/******************************************************************************
- * The function returns a string representation of the type of a field.
- *****************************************************************************/
-// TODO: correct here?
-char* s_field_type_str(const s_field *field) {
-
-	switch (field->id.type) {
-
-	case E_FIELD_POINTS:
-		return "POINT";
-
-	case E_FIELD_BAR:
-		return "BAR";
-
-	case E_FIELD_BEAR_OFF:
-		return "BEAR-OFF";
-
-	case E_FIELD_NONE:
-		return "NONE";
-
-	default:
-		log_exit("Unknown type: %d", field->id.type)
-		;
-	}
 }
