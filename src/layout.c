@@ -54,8 +54,9 @@ void layout_init(const s_point dim_board, const s_point dim_dice) {
 
 	const s_point pos = { .row = lu_center(getmaxy(stdscr), total.row), .col = lu_center(getmaxx(stdscr), total.col) };
 
+	// TODO: ensure position is not negative
 	if ((_win_game = newwin(total.row, total.col, pos.row, pos.col)) == NULL) {
-		log_exit_str("Unable to create win!");
+		log_exit("Unable to create win dim: %d/%d pos: %d/%d", total.row, total.col, pos.row, pos.col);
 	}
 
 	if ((_win_board = derwin(_win_game, dim_board.row, dim_board.col, 0, 0)) == NULL) {
