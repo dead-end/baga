@@ -239,6 +239,9 @@ int main() {
 						if (field_id.type != E_FIELD_NONE) {
 							nc_board_process(&game, &status, field_id);
 						}
+
+					} else if (lc_event_stdscr_to_win(layout_win_dice(), event.y, event.x, &m_event)) {
+						dice_process_event(&status, m_event);
 					}
 
 					continue;
