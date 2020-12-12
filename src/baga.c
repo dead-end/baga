@@ -147,7 +147,7 @@ int main() {
 	// TODO: sort init functions
 	s_game_cfg_init(&game_cfg);
 
-	s_status_init();
+	s_status_init(&status, &game_cfg);
 
 	const s_board_areas *board_areas = s_pos_init();
 
