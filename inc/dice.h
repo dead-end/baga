@@ -30,6 +30,7 @@
 #include "bg_defs.h"
 #include "s_status.h"
 #include "s_game_cfg.h"
+#include "lib_s_point.h"
 
 /******************************************************************************
  * Sizes for the dices
@@ -50,5 +51,7 @@ void dice_init(const s_game_cfg *game_cfg, WINDOW *win);
 void dice_free();
 
 void dice_print(const s_status *status);
+
+void dice_process_event(s_status *status, const s_point event);
 
 #endif /* INC_DICE_H_ */
