@@ -25,11 +25,18 @@
 #ifndef INC_S_GAME_CFG_H_
 #define INC_S_GAME_CFG_H_
 
+#include "bg_defs.h"
+
 /******************************************************************************
  * The definition of various configurations of the game.
  *****************************************************************************/
 
 typedef struct s_game_cfg {
+
+	//
+	// Define whether black or white is playing from top to bottom.
+	//
+	e_owner up_2_down;
 
 	//
 	// Color: board border and bear off reversed
@@ -77,6 +84,22 @@ typedef struct s_game_cfg {
 	char *clr_dice_white_active;
 
 	char *clr_dice_white_inactive;
+
+	//
+	// Color: dices
+	//
+	// TODO: this is not final.
+	char *clr_ctrl_ok_active;
+
+	char *clr_ctrl_ok_inactive;
+
+	char *clr_ctrl_redo_active;
+
+	char *clr_ctrl_redo_inactive;
+
+	char *clr_ctrl_bg_active;
+
+	char *clr_ctrl_bg_inactive;
 
 } s_game_cfg;
 

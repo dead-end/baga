@@ -33,6 +33,11 @@
 void s_game_cfg_init(s_game_cfg *game_cfg) {
 
 	//
+	// Define whether black or white is playing from top to bottom.
+	//
+	game_cfg->up_2_down = OWNER_BLACK;
+
+	//
 	// Color: board border and bear off reversed
 	//
 	game_cfg->clr_board_start = "#391313";
@@ -79,4 +84,18 @@ void s_game_cfg_init(s_game_cfg *game_cfg) {
 
 	game_cfg->clr_dice_white_inactive = "#b0b0b0";
 
+	//
+	// Color: controls
+	//
+	game_cfg->clr_ctrl_ok_active = "#00ff00";
+
+	game_cfg->clr_ctrl_ok_inactive = "#b3ffb3";
+
+	game_cfg->clr_ctrl_redo_active = "#ff0000";
+
+	game_cfg->clr_ctrl_redo_inactive = "#ffb3b3";
+
+	game_cfg->clr_ctrl_bg_active = "#6b6b47";
+
+	game_cfg->clr_ctrl_bg_inactive = "#3d3d29";
 }
