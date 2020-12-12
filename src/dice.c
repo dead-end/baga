@@ -366,7 +366,8 @@ void dice_print(const s_status *status) {
 /******************************************************************************
  *
  *****************************************************************************/
-
+// TODO: move to s_point_is_inside
+// TODO: refactor s_area_is_insie => macro
 static bool is_inside(const s_point dim, const s_point pos, const s_point point) {
 
 	//
@@ -436,7 +437,6 @@ void dice_process_event(s_status *status, const s_point event) {
 	}
 
 	else if (is_inside(_tmp_dim, _pos_undo, event)) {
-
 		log_debug_str("on undo");
 	}
 
