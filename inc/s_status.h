@@ -94,6 +94,26 @@ typedef struct {
 } s_status;
 
 /******************************************************************************
+ * The macro checks if a dice has the expected value.
+ *****************************************************************************/
+
+#define s_status_dice_has_status(stat,i,s)  ((stat)->dices[i].status == (s))
+
+/******************************************************************************
+ * The macro checks if a dice can be undone. The status E_DICE_SET cannot be
+ * used, because if both dices have the same value. The num_set parameter is
+ * set every time a checker moves, so this is appropriate.
+ *****************************************************************************/
+
+#define s_status_dice_can_undo(stat, i) ((stat)->dices[i].num_set > 0)
+
+/******************************************************************************
+ * The macro checks if a dice is not active.
+ *****************************************************************************/
+
+#define s_status_dice_is_done(stat, i) ((stat)->dices[i].status != E_DICE_ACTIVE)
+
+/******************************************************************************
  * The function declarations.
  *****************************************************************************/
 
