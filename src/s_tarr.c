@@ -72,10 +72,12 @@ s_tarr* s_tarr_new(const int row, const int col) {
 void s_tarr_free(s_tarr **tarr) {
 
 	//
-	// Ensure that there is something to free
+	// Ensure that there is something to free. If an error occurs at startup,
+	// this is possible and not an error.
 	//
 	if (*tarr == NULL) {
-		log_exit_str("s_tarr already freed!");
+		log_debug_str("s_tarr already freed!");
+		return;
 	}
 
 	//
