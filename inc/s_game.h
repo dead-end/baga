@@ -27,32 +27,8 @@
 
 #include "bg_defs.h"
 #include "s_field_id.h"
+#include "s_field.h"
 #include "s_status.h"
-
-/******************************************************************************
- * The struct defines a field on a the game board. A field has an id, which is
- * the type of the field (point, bar, bear off) and an index. Each field can
- * have checkers. The owner and the number are part of the file.
- *****************************************************************************/
-
-typedef struct {
-
-	//
-	// The id of the checker (type and index)
-	//
-	s_field_id id;
-
-	//
-	// If the field holds checker, this is the owner.
-	//
-	e_owner owner;
-
-	//
-	// If the field holds checker, this is the number.
-	//
-	int num;
-
-} s_field;
 
 /******************************************************************************
  * The struct contains the fields of the game board.
@@ -92,11 +68,5 @@ void s_game_print(const s_game *game);
 s_field* s_game_get(s_game *game, const s_field_id id);
 
 s_field* s_game_can_mv(s_game *game, s_status *status, const s_field *field_src);
-
-void s_game_mv(s_field *field_src, s_field *field_dst);
-
-char* s_field_type_str(const s_field *field);
-
-char* s_field_owner_str(const s_field *field);
 
 #endif /* INC_S_GAME_H_ */
