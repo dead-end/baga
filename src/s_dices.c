@@ -25,6 +25,7 @@
 #include <time.h>
 
 #include "lib_logging.h"
+#include "bg_defs.h"
 #include "s_dices.h"
 
 /******************************************************************************
@@ -146,4 +147,49 @@ int s_dices_get_value(const s_dices *dices) {
 	}
 
 	log_exit_str("No active dice found!");
+}
+
+/******************************************************************************
+ * The function sets the E_DICE_ACTIVE dice to E_DICE_SET. It is assumed that
+ * there is a E_DICE_ACTIVE dice. If the other dice is E_DICE_INACTIVE, it is
+ * switched to E_DICE_ACTIVE.
+ *
+ * The function returns true if both dices are set (next turn).
+ *****************************************************************************/
+
+bool s_dices_set(s_dices *dices) {
+	s_dice *dice;
+
+	for (int dice_idx = 0; dice_idx < 2; dice_idx++) {
+
+		dice = &dices->dice[dice_idx];
+
+		if (dice->status == E_DICE_ACTIVE) {
+
+			dice->num_set++;
+			if (dice->num_set == dice->num) {
+				dice->status = E_DICE_SET;
+
+				s_dice *dice_other = &dices->dice[e_owner_other(dice_idx)];
+
+				//
+				// Switch the other dice to active.
+				//
+				if (dice_other->status == E_DICE_INACTIVE) {
+					dice_other->status = E_DICE_ACTIVE;
+				}
+
+				//
+				// If the other dice cannot be activated, we are done.
+				//
+				else {
+					return true;
+				}
+			}
+
+			return false;
+		}
+	}
+
+	log_exit_str("No active dice to set!");
 }

@@ -25,6 +25,8 @@
 #ifndef INC_S_DICES_H_
 #define INC_S_DICES_H_
 
+#include <stdbool.h>
+
 /******************************************************************************
  * The enum contains the status of a dice.
  *****************************************************************************/
@@ -129,5 +131,7 @@ int s_dices_get_value(const s_dices *dices);
 const char* s_dice_status_str(const e_dice_status dice_status);
 
 void s_dices_debug(const s_dices *dices);
+
+bool s_dices_set(s_dices *dices);
 
 #endif /* INC_S_DICES_H_ */
