@@ -71,7 +71,7 @@ s_point_layout _point_layout[CHECKER_NUM + 1][2] = {
 		{ { .total = 9, .num_half = 8, .label_idx = 8 }, { .total = 9, .num_half = 7, .label_idx = 7 } },
 
 		//
-		// Total: 10 - 16 none is displayed fully.
+		// Total: 10 - 15 none is displayed fully.
 		//
 		{ { .total = 10, .num_half = 8, .label_idx = 8 }, { .total = 10, .num_half = 7, .label_idx = 7 } },
 
@@ -83,9 +83,7 @@ s_point_layout _point_layout[CHECKER_NUM + 1][2] = {
 
 		{ { .total = 14, .num_half = 8, .label_idx = 8 }, { .total = 14, .num_half = 7, .label_idx = 7 } },
 
-		{ { .total = 15, .num_half = 8, .label_idx = 8 }, { .total = 15, .num_half = 7, .label_idx = 7 } },
-
-		{ { .total = 16, .num_half = 8, .label_idx = 8 }, { .total = 16, .num_half = 7, .label_idx = 7 } }
+		{ { .total = 15, .num_half = 8, .label_idx = 8 }, { .total = 15, .num_half = 7, .label_idx = 7 } }
 
 };
 
