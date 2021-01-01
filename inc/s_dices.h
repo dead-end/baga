@@ -22,8 +22,8 @@
  * SOFTWARE.
  */
 
-#ifndef INC_S_DICE_H_
-#define INC_S_DICE_H_
+#ifndef INC_S_DICES_H_
+#define INC_S_DICES_H_
 
 /******************************************************************************
  * The enum contains the status of a dice.
@@ -70,7 +70,7 @@ typedef struct {
 	int value;
 
 	//
-	// The values are 1 or 2 if the dices have the same value.
+	// If both dices have the same value, num is 2 otherwise 1.
 	//
 	int num;
 
@@ -82,11 +82,52 @@ typedef struct {
 } s_dice;
 
 /******************************************************************************
+ * The structure represents the two dices. Currently they are implemented as an
+ * array. Maybe the status can be combined in the future.
+ *
+ * Use macros or functions to access the internal data.
+ *****************************************************************************/
+
+typedef struct {
+
+	s_dice dice[2];
+
+} s_dices;
+
+/******************************************************************************
+ * The macro checks if a dice has the expected value.
+ *****************************************************************************/
+
+#define s_dices_has_status(d,i,s)  ((d).dice[i].status == (s))
+
+/******************************************************************************
+ * The macro checks if a dice is not active.
+ *
+ * TODO: is the name correct?
+ *****************************************************************************/
+
+#define s_dices_is_done(s) ((s).dice[0].status != E_DICE_ACTIVE && (s).dice[1].status != E_DICE_ACTIVE)
+
+/******************************************************************************
+ * The macro checks if a dice can be undone. The status E_DICE_SET cannot be
+ * used, because if both dices have the same value. The num_set parameter is
+ * set every time a checker moves, so this is appropriate.
+ *****************************************************************************/
+
+#define s_dices_can_undo(s) ((s).dice[0].num_set > 0 || (s).dice[1].num_set > 0)
+
+/******************************************************************************
  * The function declarations.
  *****************************************************************************/
 
+void s_dices_init();
+
+void s_dices_toss(s_dices *dices);
+
+int s_dices_get_value(const s_dices *dices);
+
 const char* s_dice_status_str(const e_dice_status dice_status);
 
-void s_dice_debug(const s_dice dice[]);
+void s_dices_debug(const s_dices *dices);
 
-#endif /* INC_S_DICE_H_ */
+#endif /* INC_S_DICES_H_ */

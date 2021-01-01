@@ -22,8 +22,26 @@
  * SOFTWARE.
  */
 
+#include <time.h>
+
 #include "lib_logging.h"
-#include "s_dice.h"
+#include "s_dices.h"
+
+/******************************************************************************
+ * The macro is rolling the dice.
+ *****************************************************************************/
+
+#define rolling_dice() rand() % 6 + 1
+
+/******************************************************************************
+ * The function initializes the random numbers.
+ *****************************************************************************/
+
+void s_dices_init() {
+	time_t t;
+
+	srand((unsigned) time(&t));
+}
 
 /******************************************************************************
  * The function returns a string representation of the dice status.
@@ -52,18 +70,80 @@ const char* s_dice_status_str(const e_dice_status dice_status) {
 }
 
 /******************************************************************************
- * The function is called with an array of dices and prints debug informations.
- * If DEBUG is not set, there is a warning about unused parameter, so we define
- * the function only in DEBUG mode.
+ * The function prints debug informations. If DEBUG is not set, there is a
+ * warning about unused parameter, so we define the function only in DEBUG
+ * mode.
  *****************************************************************************/
 
 #ifdef DEBUG
 
-void s_dice_debug(const s_dice dice[]) {
+void s_dices_debug(const s_dices *dices) {
 
 	for (int i = 0; i < 2; i++) {
-		log_debug("dice: %d num: %d set: %d value: %d %s", i, dice[i].num, dice[i].num_set, dice[i].value, s_dice_status_str(dice[i].status));
+		log_debug("dice: %d num: %d set: %d value: %d %s",
+
+		i, dices->dice[i].num, dices->dice[i].num_set, dices->dice[i].value, s_dice_status_str(dices->dice[i].status));
 	}
 }
 
 #endif
+
+/******************************************************************************
+ * The function sets new values for the dices. They are sorted to ensure that
+ * the first dice has the higher value.
+ *****************************************************************************/
+
+void s_dices_toss(s_dices *dices) {
+
+	dices->dice[0].value = rolling_dice();
+	dices->dice[1].value = rolling_dice();
+
+	//
+	// Ensure that the first dice has the higher value.
+	//
+	if (dices->dice[0].value < dices->dice[1].value) {
+		const int value = dices->dice[1].value;
+		dices->dice[1].value = dices->dice[0].value;
+		dices->dice[0].value = value;
+	}
+
+	dices->dice[0].num_set = 0;
+	dices->dice[1].num_set = 0;
+
+	dices->dice[0].status = E_DICE_ACTIVE;
+	dices->dice[1].status = E_DICE_INACTIVE;
+
+	//
+	// Set the number depending on the double value.
+	//
+	if (dices->dice[0].value == dices->dice[1].value) {
+		dices->dice[0].num = 2;
+		dices->dice[1].num = 2;
+
+	} else {
+		dices->dice[0].num = 1;
+		dices->dice[1].num = 1;
+	}
+
+#ifdef DEBUG
+	s_dices_debug(dices);
+#endif
+
+}
+
+/******************************************************************************
+ * The function returns the current value of the dices.
+ *****************************************************************************/
+
+int s_dices_get_value(const s_dices *dices) {
+
+	if (dices->dice[0].status == E_DICE_ACTIVE) {
+		return dices->dice[0].value;
+	}
+
+	if (dices->dice[1].status == E_DICE_ACTIVE) {
+		return dices->dice[1].value;
+	}
+
+	log_exit_str("No active dice found!");
+}
