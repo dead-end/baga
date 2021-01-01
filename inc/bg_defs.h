@@ -33,7 +33,7 @@
 //
 // The number of checker for each player.
 //
-#define CHECKER_NUM 16
+#define CHECKER_NUM 15
 
 //
 // The number of points (triangles) of the backgammon game.

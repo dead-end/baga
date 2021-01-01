@@ -57,32 +57,32 @@ static void test_s_point_layout_not_visible() {
 	//
 	// 16 - uncompressed => first 9 are visible
 	//
-	result = s_point_layout_not_visible(s_point_layout_get(16, E_UNCOMP), 0);
-	ut_check_bool(result, false, "not_visible-16-0-c");
+	result = s_point_layout_not_visible(s_point_layout_get(CHECKER_NUM, E_UNCOMP), 0);
+	ut_check_bool(result, false, "not_visible-15-0-c");
 
-	result = s_point_layout_not_visible(s_point_layout_get(16, E_UNCOMP), 8);
-	ut_check_bool(result, false, "not_visible-16-8-c");
+	result = s_point_layout_not_visible(s_point_layout_get(CHECKER_NUM, E_UNCOMP), 8);
+	ut_check_bool(result, false, "not_visible-15-8-c");
 
-	result = s_point_layout_not_visible(s_point_layout_get(16, E_UNCOMP), 9);
-	ut_check_bool(result, true, "not_visible-16-9-c");
+	result = s_point_layout_not_visible(s_point_layout_get(CHECKER_NUM, E_UNCOMP), 9);
+	ut_check_bool(result, true, "not_visible-15-9-c");
 
-	result = s_point_layout_not_visible(s_point_layout_get(16, E_UNCOMP), 15);
-	ut_check_bool(result, true, "not_visible-16-15-c");
+	result = s_point_layout_not_visible(s_point_layout_get(CHECKER_NUM, E_UNCOMP), CHECKER_NUM - 1);
+	ut_check_bool(result, true, "not_visible-15-14-c");
 
 	//
 	// 16 - compressed => first 8 are visible
 	//
-	result = s_point_layout_not_visible(s_point_layout_get(16, E_COMP), 0);
-	ut_check_bool(result, false, "not_visible-16-0-u");
+	result = s_point_layout_not_visible(s_point_layout_get(CHECKER_NUM, E_COMP), 0);
+	ut_check_bool(result, false, "not_visible-15-0-u");
 
-	result = s_point_layout_not_visible(s_point_layout_get(16, E_COMP), 7);
-	ut_check_bool(result, false, "not_visible-16-7-u");
+	result = s_point_layout_not_visible(s_point_layout_get(CHECKER_NUM, E_COMP), 7);
+	ut_check_bool(result, false, "not_visible-15-7-u");
 
-	result = s_point_layout_not_visible(s_point_layout_get(16, E_COMP), 8);
-	ut_check_bool(result, true, "not_visible-16-8-u");
+	result = s_point_layout_not_visible(s_point_layout_get(CHECKER_NUM, E_COMP), 8);
+	ut_check_bool(result, true, "not_visible-15-8-u");
 
-	result = s_point_layout_not_visible(s_point_layout_get(16, E_COMP), 15);
-	ut_check_bool(result, true, "not_visible-16-15-u");
+	result = s_point_layout_not_visible(s_point_layout_get(CHECKER_NUM, E_COMP), CHECKER_NUM - 1);
+	ut_check_bool(result, true, "not_visible-15-14-u");
 }
 
 /******************************************************************************
@@ -131,26 +131,26 @@ static void test_s_point_layout_has_label() {
 	//
 	// 16 - uncompressed => 9 label
 	//
-	result = s_point_layout_has_label(s_point_layout_get(16, E_UNCOMP), 7);
-	ut_check_bool(result, false, "has_label-16-7-u");
+	result = s_point_layout_has_label(s_point_layout_get(CHECKER_NUM, E_UNCOMP), 7);
+	ut_check_bool(result, false, "has_label-15-7-u");
 
-	result = s_point_layout_has_label(s_point_layout_get(16, E_UNCOMP), 8);
-	ut_check_bool(result, true, "has_label-16-8-u");
+	result = s_point_layout_has_label(s_point_layout_get(CHECKER_NUM, E_UNCOMP), 8);
+	ut_check_bool(result, true, "has_label-15-8-u");
 
-	result = s_point_layout_has_label(s_point_layout_get(16, E_UNCOMP), 9);
-	ut_check_bool(result, false, "has_label-16-9-u");
+	result = s_point_layout_has_label(s_point_layout_get(CHECKER_NUM, E_UNCOMP), 9);
+	ut_check_bool(result, false, "has_label-15-9-u");
 
 	//
 	// 16 - compressed => 8 label
 	//
-	result = s_point_layout_has_label(s_point_layout_get(16, E_COMP), 6);
-	ut_check_bool(result, false, "has_label-16-6-c");
+	result = s_point_layout_has_label(s_point_layout_get(CHECKER_NUM, E_COMP), 6);
+	ut_check_bool(result, false, "has_label-15-6-c");
 
-	result = s_point_layout_has_label(s_point_layout_get(16, E_COMP), 7);
-	ut_check_bool(result, true, "has_label-16-7-c");
+	result = s_point_layout_has_label(s_point_layout_get(CHECKER_NUM, E_COMP), 7);
+	ut_check_bool(result, true, "has_label-15-7-c");
 
-	result = s_point_layout_has_label(s_point_layout_get(16, E_COMP), 8);
-	ut_check_bool(result, false, "has_label-16-8-c");
+	result = s_point_layout_has_label(s_point_layout_get(CHECKER_NUM, E_COMP), 8);
+	ut_check_bool(result, false, "has_label-15-8-c");
 }
 
 /******************************************************************************
@@ -236,20 +236,20 @@ static void test_s_point_layout_color_idx() {
 	//
 	// 16 total uncompressed => 9 are visible
 	//
-	idx = s_point_layout_color_idx(s_point_layout_get(16, E_UNCOMP), 0);
-	ut_check_int(idx, 9, "color_idx-16-0-u");
+	idx = s_point_layout_color_idx(s_point_layout_get(CHECKER_NUM, E_UNCOMP), 0);
+	ut_check_int(idx, 9, "color_idx-15-0-u");
 
-	idx = s_point_layout_color_idx(s_point_layout_get(16, E_UNCOMP), 8);
-	ut_check_int(idx, 1, "color_idx-16-8-u");
+	idx = s_point_layout_color_idx(s_point_layout_get(CHECKER_NUM, E_UNCOMP), 8);
+	ut_check_int(idx, 1, "color_idx-15-8-u");
 
 	//
 	// 16 total compressed => 8 are visible
 	//
-	idx = s_point_layout_color_idx(s_point_layout_get(16, E_COMP), 0);
-	ut_check_int(idx, 8, "color_idx-16-0-c");
+	idx = s_point_layout_color_idx(s_point_layout_get(CHECKER_NUM, E_COMP), 0);
+	ut_check_int(idx, 8, "color_idx-15-0-c");
 
-	idx = s_point_layout_color_idx(s_point_layout_get(16, E_COMP), 7);
-	ut_check_int(idx, 1, "color_idx-16-7-c");
+	idx = s_point_layout_color_idx(s_point_layout_get(CHECKER_NUM, E_COMP), 7);
+	ut_check_int(idx, 1, "color_idx-15-7-c");
 
 }
 
