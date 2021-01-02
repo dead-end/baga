@@ -97,6 +97,8 @@ static void s_field_log(const s_field *field, const char *msg) {
 
 bool s_field_is_valid_src(const s_field *field, const s_status *status) {
 
+	log_debug("Phase: %s", e_player_phase_str(status->player_phase[status->turn]));
+
 	//
 	// If a checker reached the bear off area, it cannot moved again.
 	//
@@ -109,6 +111,11 @@ bool s_field_is_valid_src(const s_field *field, const s_status *status) {
 	//
 	if (field->num == 0 || field->owner != status->turn) {
 		return false;
+	}
+
+	if (status->player_phase[status->turn] == E_PHASE_BAR) {
+		log_debug_str("E_PHASE_BAR => source has to be the bar.");
+		return field->id.type == E_FIELD_BAR;
 	}
 
 	return true;
@@ -156,7 +163,7 @@ void s_field_mv(s_field *field_src, s_field *field_dst) {
  * source index to add our dice to.
  *****************************************************************************/
 
-static int s_field_get_src_idx(const s_field *field_src, const s_status *status) {
+int s_field_get_src_idx(const s_field *field_src, const s_status *status) {
 
 #ifdef DEBUG
 
@@ -173,43 +180,4 @@ static int s_field_get_src_idx(const s_field *field_src, const s_status *status)
 	}
 
 	return field_src->id.idx;
-}
-
-/******************************************************************************
- * The function is called with a source field and the status and it computes
- * the index of the destination field.
- *****************************************************************************/
-// TODO: missing: bear-off phase
-s_field_id s_field_get_dst_id(const s_field *field_src, const s_status *status) {
-	s_field_id id_dst;
-
-	//
-	// Get the value from the active dice.
-	//
-	const int dice = s_status_get_dice(status);
-
-	//
-	// Get the source index of the field with respect to bars.
-	//
-	const int idx_src = s_field_get_src_idx(field_src, status);
-
-	//
-	// Compute the destination index.
-	//
-	id_dst.idx = (status->up_2_down == field_src->owner) ? idx_src + dice : idx_src - dice;
-	id_dst.type = E_FIELD_POINTS;
-
-	log_debug("field index src: %d dst: %d dice: %d", idx_src, id_dst.idx, dice);
-
-#ifdef DEBUG
-
-	//
-	// TODO: only possible if last phase of the game => to bear off
-	//
-	if (id_dst.idx < 0 || id_dst.idx >= POINTS_NUM) {
-		log_exit("out of range dst: %d src: %d", id_dst.idx, idx_src);
-	}
-#endif
-
-	return id_dst;
 }
