@@ -261,7 +261,6 @@ static void travler_move(const s_board *board, const s_pos *checker_from, const 
 	s_board_trv_mv_line(board, tmpl, &tmpl_pos, (s_point ) { .row = TRAVEL_ROW, .col = checker_to->pos.col });
 
 	const s_point last_pos = s_point_layout_pos_full(checker_to, E_UNCOMP, lu_min(num_to + 1, CHECK_DIS_FULL + 1));
-
 	s_board_trv_mv_line(board, tmpl, &tmpl_pos, (s_point ) { .row = last_pos.row, .col = last_pos.col });
 
 	//
@@ -340,12 +339,17 @@ void nc_board_process(s_game *game, s_status *status, const s_field_id id) {
 		return;
 	}
 
-	if (field_dst->owner == e_owner_other(status->turn)) {
-		const s_field_id other = { .type = E_FIELD_BAR, .idx = e_owner_other(status->turn) };
-		traveler_mv(field_dst, s_game_get(game, other));
+	const e_owner owner_other = e_owner_other(status->turn);
+	if (field_dst->owner == owner_other) {
+		const s_field_id field_other = { .type = E_FIELD_BAR, .idx = owner_other };
+		traveler_mv(field_dst, s_game_get(game, field_other));
+		// TODO: decide where to set the phase. Maybe a macro
+		status->player_phase[owner_other] = E_PHASE_BAR;
 	}
 
 	traveler_mv(field_src, field_dst);
+
+	s_game_update_player_phase(game, status);
 
 	//TODO: correct here ?? cross dependency s_status <=> nc_board.
 	s_status_mv_done(status);
