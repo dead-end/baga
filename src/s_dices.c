@@ -25,8 +25,13 @@
 #include <time.h>
 
 #include "lib_logging.h"
-#include "bg_defs.h"
 #include "s_dices.h"
+
+/******************************************************************************
+ * Macro to select the index of the other dice.
+ *****************************************************************************/
+
+#define s_dice_other(i) ((i + 1) % 2)
 
 /******************************************************************************
  * The macro is rolling the dice.
@@ -170,7 +175,7 @@ bool s_dices_set(s_dices *dices) {
 			if (dice->num_set == dice->num) {
 				dice->status = E_DICE_SET;
 
-				s_dice *dice_other = &dices->dice[e_owner_other(dice_idx)];
+				s_dice *dice_other = &dices->dice[s_dice_other(dice_idx)];
 
 				//
 				// Switch the other dice to active.
@@ -192,4 +197,24 @@ bool s_dices_set(s_dices *dices) {
 	}
 
 	log_exit_str("No active dice to set!");
+}
+
+/******************************************************************************
+ * The function toogles the active dice. This requires that the target, defined
+ * by the index is inactive and the other dice is active. All other dice states
+ * are not valid for toogle.
+ *****************************************************************************/
+
+bool s_dice_toogle_active(s_dices *dices, const int idx) {
+
+	log_debug("Checking toogle: %d", idx);
+
+	if (dices->dice[idx].status == E_DICE_INACTIVE && dices->dice[s_dice_other(idx)].status == E_DICE_ACTIVE) {
+		dices->dice[idx].status = E_DICE_ACTIVE;
+		dices->dice[s_dice_other(idx)].status = E_DICE_INACTIVE;
+
+		return true;
+	}
+
+	return false;
 }

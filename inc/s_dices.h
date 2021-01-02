@@ -134,4 +134,6 @@ void s_dices_debug(const s_dices *dices);
 
 bool s_dices_set(s_dices *dices);
 
+bool s_dice_toogle_active(s_dices *dices, const int idx);
+
 #endif /* INC_S_DICES_H_ */
