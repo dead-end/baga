@@ -321,21 +321,21 @@ void dice_print(const s_status *status) {
 	//
 	// Dice: 0
 	//
-	get_color(status, s_status_dice_has_status(status, 0, E_DICE_ACTIVE), &fg, &bg);
-	tmpl = dice_get_tmpl(status->dices[0].value, fg, bg);
+	get_color(status, s_dices_has_status(status->dices, 0, E_DICE_ACTIVE), &fg, &bg);
+	tmpl = dice_get_tmpl(status->dices.dice[0].value, fg, bg);
 	s_tarr_print(_win, tmpl, _pos_dice_0);
 
 	//
 	// Dice: 1
 	//
-	get_color(status, s_status_dice_has_status(status, 1, E_DICE_ACTIVE), &fg, &bg);
-	tmpl = dice_get_tmpl(status->dices[1].value, fg, bg);
+	get_color(status, s_dices_has_status(status->dices, 1, E_DICE_ACTIVE), &fg, &bg);
+	tmpl = dice_get_tmpl(status->dices.dice[1].value, fg, bg);
 	s_tarr_print(_win, tmpl, _pos_dice_1);
 
 	//
 	// Control: undo
 	//
-	if (s_status_dice_can_undo(status, 0) || s_status_dice_can_undo(status, 1)) {
+	if (s_dices_can_undo(status->dices)) {
 		bg = _color_ctrl_undo[D_STAT_ACTIVE];
 		fg = _color_ctrl_bg[D_STAT_ACTIVE];
 
@@ -349,7 +349,7 @@ void dice_print(const s_status *status) {
 	//
 	// Control: confirm
 	//
-	if (s_status_dice_is_done(status, 0) && s_status_dice_is_done(status, 1)) {
+	if (s_dices_is_done(status->dices)) {
 		bg = _color_ctrl_confirm[D_STAT_ACTIVE];
 		fg = _color_ctrl_bg[D_STAT_ACTIVE];
 
@@ -364,64 +364,17 @@ void dice_print(const s_status *status) {
 }
 
 /******************************************************************************
- *
- *****************************************************************************/
-// TODO: move to s_point_is_inside
-// TODO: refactor s_area_is_insie => macro
-static bool is_inside(const s_point dim, const s_point pos, const s_point point) {
-
-	//
-	// Upper left corner
-	//
-	if (point.row < pos.row || point.col < pos.col) {
-		return false;
-
-	}
-
-	//
-	// lower right corner
-	//
-	if (point.row > (pos.row + dim.row - 1) || point.col > (pos.col + dim.col - 1)) {
-		return false;
-	}
-
-	return true;
-}
-
-/******************************************************************************
- * The function toogles the active dice. The requires that the target, defined
- * by the index is inactive and the other dice is active. All other dice states
- * are not valid for toogle.
- *****************************************************************************/
-
-#define dice_other(i) ((i + 1) % 2)
-
-static bool dice_toogle_active(s_status *status, const int idx) {
-
-	log_debug("Checking toogle: %d", idx);
-
-	if (status->dices[idx].status == E_DICE_INACTIVE && status->dices[dice_other(idx)].status == E_DICE_ACTIVE) {
-		status->dices[idx].status = E_DICE_ACTIVE;
-		status->dices[dice_other(idx)].status = E_DICE_INACTIVE;
-
-		return true;
-	}
-
-	return false;
-}
-
-/******************************************************************************
  * The function processes mouse events. The events are relative to the window.
  *****************************************************************************/
 
-void dice_process_event(s_status *status, const s_point event) {
+void dice_process_event(s_status *status, const s_point *event) {
 
 	//
 	// Target: dice action: toogle
 	//
-	if (is_inside(_tmp_dim, _pos_dice_0, event)) {
+	if (s_point_is_inside(&_pos_dice_0, &_tmp_dim, event)) {
 
-		if (dice_toogle_active(status, 0)) {
+		if (s_dice_toogle_active(&status->dices, 0)) {
 			dice_print(status);
 		}
 	}
@@ -429,22 +382,22 @@ void dice_process_event(s_status *status, const s_point event) {
 	//
 	// Target: dice action: toogle
 	//
-	else if (is_inside(_tmp_dim, _pos_dice_1, event)) {
+	else if (s_point_is_inside(&_pos_dice_1, &_tmp_dim, event)) {
 
-		if (dice_toogle_active(status, 1)) {
+		if (s_dice_toogle_active(&status->dices, 1)) {
 			dice_print(status);
 		}
 	}
 
-	else if (is_inside(_tmp_dim, _pos_undo, event)) {
+	else if (s_point_is_inside(&_pos_undo, &_tmp_dim, event)) {
 		log_debug_str("on undo");
 	}
 
-	else if (is_inside(_tmp_dim, _pos_confim, event)) {
+	else if (s_point_is_inside(&_pos_confim, &_tmp_dim, event)) {
 		log_debug_str("on confirm");
 	}
 
 	else {
-		log_debug("outside: %d/%d", event.row, event.col);
+		log_debug("outside: %d/%d", event->row, event->col);
 	}
 }
