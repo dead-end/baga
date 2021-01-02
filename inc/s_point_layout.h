@@ -28,7 +28,6 @@
 #include <stdbool.h>
 
 #include "bg_defs.h"
-#include "s_area.h"
 #include "s_pos.h"
 
 /******************************************************************************
