@@ -108,14 +108,17 @@ void s_board_trv_del(const s_board *board, const s_tarr *tmpl, const s_point tmp
 
 void s_board_trv_mv_line(const s_board *board, const s_tarr *tmpl, s_point *tmpl_pos, const s_point target) {
 
-#ifdef DEBUG
-
 	//
-	// Ensure that calling to this function is necessary.
+	// Ensure that calling to this function is necessary. If the traveler moves
+	// from the top to the bottom half, there may be no horizontal movement
+	// necessary,
 	//
 	if (s_point_same(tmpl_pos, &target)) {
-		log_exit_str("Already the same!");
+		log_debug_str("The traveler is already at the target position.");
+		return;
 	}
+
+#ifdef DEBUG
 
 	//
 	// Ensure that we do not go over the target. This means a simple distance
