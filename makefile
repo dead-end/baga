@@ -86,7 +86,6 @@ SRC_LIBS = \
 	$(SRC_DIR)/s_field.c  \
 	$(SRC_DIR)/dice.c  \
 	$(SRC_DIR)/s_dices.c  \
-	$(SRC_DIR)/s_area.c  \
 	$(SRC_DIR)/ut_s_area.c  \
 	$(SRC_DIR)/direction.c  \
 	$(SRC_DIR)/ut_direction.c  \
@@ -102,6 +101,7 @@ INC_ADD = \
 	$(INCLUDE_DIR)/lib_utils.h \
 	$(INCLUDE_DIR)/bg_defs.h   \
 	$(INCLUDE_DIR)/s_field_id.h   \
+	$(INCLUDE_DIR)/s_area.h  \
 
 OBJ_LIBS = $(subst $(SRC_DIR),$(BUILD_DIR),$(subst .c,.o,$(SRC_LIBS)))
 
