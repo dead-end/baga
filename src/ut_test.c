@@ -32,7 +32,6 @@
 #include "ut_s_color_def.h"
 #include "ut_direction.h"
 #include "ut_s_point_layout.h"
-#include "ut_s_area.h"
 #include "ut_s_tarr.h"
 #include "ut_lib_s_point.h"
 
@@ -58,8 +57,6 @@ int main() {
 	ut_direction_exec();
 
 	ut_s_point_layout_exec();
-
-	ut_s_area_exec();
 
 	ut_s_tarr_exec();
 
