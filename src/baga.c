@@ -147,6 +147,8 @@ int main() {
 	// TODO: sort init functions
 	s_game_cfg_init(&game_cfg);
 
+	s_dices_init();
+
 	s_status_init(&status, &game_cfg);
 
 	const s_board_areas *board_areas = s_pos_init();
@@ -241,7 +243,7 @@ int main() {
 						}
 
 					} else if (lc_event_stdscr_to_win(layout_win_dice(), event.y, event.x, &m_event)) {
-						dice_process_event(&status, m_event);
+						dice_process_event(&status, &m_event);
 					}
 
 					continue;
