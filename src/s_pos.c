@@ -56,22 +56,23 @@ static s_pos _pos_bear_off[NUM_PLAYER];
 /******************************************************************************
  * The function sets the positions of the checkers on the bear off areas.
  *****************************************************************************/
-
+// TODO: index is not up_2_down
 static void s_pos_set_bear_off(s_pos *pos_bear_off, const s_area *area_bear_off) {
 
-	pos_bear_off[0].pos.row = area_bear_off->pos.row;
+	pos_bear_off[0].pos.row = area_bear_off->pos.row + area_bear_off->dim.row - 1;
 	pos_bear_off[0].pos.col = area_bear_off->pos.col;
-	pos_bear_off[0].is_upper = true;
+	pos_bear_off[0].is_upper = false;
 
-	pos_bear_off[1].pos.row = area_bear_off->pos.row + area_bear_off->dim.row - 1;
+	pos_bear_off[1].pos.row = area_bear_off->pos.row;
 	pos_bear_off[1].pos.col = area_bear_off->pos.col;
-	pos_bear_off[1].is_upper = false;
+	pos_bear_off[1].is_upper = true;
+
 }
 
 /******************************************************************************
  * The function sets the positions of the checkers on the bar areas.
  *****************************************************************************/
-
+// TODO: index is not up_2_down
 static void s_pos_set_bar(s_pos *pos_bar, const s_area *area_bar) {
 
 	pos_bar[0].pos.row = area_bar->pos.row;
