@@ -84,6 +84,7 @@ SRC_LIBS = \
 	$(SRC_DIR)/layout.c  \
 	$(SRC_DIR)/s_status.c  \
 	$(SRC_DIR)/s_field.c  \
+	$(SRC_DIR)/ut_s_field.c  \
 	$(SRC_DIR)/dice.c  \
 	$(SRC_DIR)/s_dices.c  \
 	$(SRC_DIR)/direction.c  \

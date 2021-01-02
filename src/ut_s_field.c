@@ -1,7 +1,7 @@
 /*
  * MIT License
  *
- * Copyright (c) 2020 dead-end
+ * Copyright (c) 2021 dead-end
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -22,48 +22,38 @@
  * SOFTWARE.
  */
 
-#include <stdlib.h>
-#include <locale.h>
+#include "ut_utils.h"
 
-#include "lib_logging.h"
-
-#include "ut_lib_color_pair.h"
-#include "ut_lib_string.h"
-#include "ut_s_color_def.h"
-#include "ut_direction.h"
-#include "ut_s_point_layout.h"
-#include "ut_s_tarr.h"
-#include "ut_lib_s_point.h"
-#include "ut_s_field.h"
+#include "s_field.h"
 
 /******************************************************************************
- * The main function delegates the call to the individual unit test functions.
+ * The function checks the s_field_rel_idx() calls.
  *****************************************************************************/
 
-int main() {
+static void test_s_field_rel_idx() {
+	s_status status;
+	int idx_rel;
 
-	//
-	// Set the locale to support wchar_t
-	//
-	if (setlocale(LC_CTYPE, "") == NULL) {
-		log_exit_str("Unable to set the locale.");
-	}
+	status.up_2_down = OWNER_BLACK;
 
-	ut_lib_color_pair_exec();
+	idx_rel = s_field_rel_idx(&status, OWNER_BLACK, 0);
+	ut_check_int(idx_rel, 0, "black 0");
 
-	ut_lib_string_exec();
+	idx_rel = s_field_rel_idx(&status, OWNER_WHITE, 0);
+	ut_check_int(idx_rel, 23, "black 0");
 
-	ut_s_color_def_exec();
+	idx_rel = s_field_rel_idx(&status, OWNER_BLACK, 23);
+	ut_check_int(idx_rel, 23, "black 23");
 
-	ut_direction_exec();
+	idx_rel = s_field_rel_idx(&status, OWNER_WHITE, 23);
+	ut_check_int(idx_rel, 0, "black 23");
 
-	ut_s_point_layout_exec();
+}
+/******************************************************************************
+ * The function is the a wrapper, that triggers the internal unit tests.
+ *****************************************************************************/
 
-	ut_s_tarr_exec();
+void ut_s_field_exec() {
 
-	ut_lib_s_point_exec();
-
-	ut_s_field_exec();
-
-	return EXIT_SUCCESS;
+	test_s_field_rel_idx();
 }
