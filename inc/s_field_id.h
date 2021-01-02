@@ -55,6 +55,12 @@ typedef struct {
 
 } s_field_id;
 
+/******************************************************************************
+ * Macro definitions.
+ *****************************************************************************/
+
+#define s_field_id_set(f,t,i) (f).type = (t) ; (f).idx = (i)
+
 #define s_field_id_set_ptr(f,t,i) (f)->type = (t) ; (f)->idx = (i)
 
 #define s_field_id_set_none_ptr(f) s_field_id_set_ptr(f, E_FIELD_NONE, -1)
