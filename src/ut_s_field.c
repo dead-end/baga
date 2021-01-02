@@ -47,6 +47,28 @@ static void test_s_field_idx_rel() {
 
 	idx_rel = s_field_idx_rel(&status, OWNER_WHITE, 23);
 	ut_check_int(idx_rel, 0, "white 23");
+
+	//
+	// rel(rel) = abs WHITE
+	//
+	idx_rel = s_field_idx_rel(&status, OWNER_WHITE, 0);
+	idx_rel = s_field_idx_rel(&status, OWNER_WHITE, idx_rel);
+	ut_check_int(idx_rel, 0, "white 0 - id");
+
+	idx_rel = s_field_idx_rel(&status, OWNER_WHITE, 23);
+	idx_rel = s_field_idx_rel(&status, OWNER_WHITE, idx_rel);
+	ut_check_int(idx_rel, 23, "white 23 - id");
+
+	//
+	// rel(rel) = abs BLACK
+	//
+	idx_rel = s_field_idx_rel(&status, OWNER_BLACK, 0);
+	idx_rel = s_field_idx_rel(&status, OWNER_BLACK, idx_rel);
+	ut_check_int(idx_rel, 0, "white 0 - id");
+
+	idx_rel = s_field_idx_rel(&status, OWNER_BLACK, 23);
+	idx_rel = s_field_idx_rel(&status, OWNER_BLACK, idx_rel);
+	ut_check_int(idx_rel, 23, "white 23 - id");
 }
 
 /******************************************************************************
