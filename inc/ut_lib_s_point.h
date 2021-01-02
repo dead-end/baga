@@ -1,7 +1,7 @@
 /*
  * MIT License
  *
- * Copyright (c) 2020 dead-end
+ * Copyright (c) 2021 dead-end
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -21,49 +21,9 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  */
+#ifndef INC_UT_LIB_S_POINT_H_
+#define INC_UT_LIB_S_POINT_H_
 
-#include <stdlib.h>
-#include <locale.h>
+void ut_lib_s_point_exec();
 
-#include "lib_logging.h"
-
-#include "ut_lib_color_pair.h"
-#include "ut_lib_string.h"
-#include "ut_s_color_def.h"
-#include "ut_direction.h"
-#include "ut_s_point_layout.h"
-#include "ut_s_area.h"
-#include "ut_s_tarr.h"
-#include "ut_lib_s_point.h"
-
-/******************************************************************************
- * The main function delegates the call to the individual unit test functions.
- *****************************************************************************/
-
-int main() {
-
-	//
-	// Set the locale to support wchar_t
-	//
-	if (setlocale(LC_CTYPE, "") == NULL) {
-		log_exit_str("Unable to set the locale.");
-	}
-
-	ut_lib_color_pair_exec();
-
-	ut_lib_string_exec();
-
-	ut_s_color_def_exec();
-
-	ut_direction_exec();
-
-	ut_s_point_layout_exec();
-
-	ut_s_area_exec();
-
-	ut_s_tarr_exec();
-
-	ut_lib_s_point_exec();
-
-	return EXIT_SUCCESS;
-}
+#endif /* INC_UT_LIB_S_POINT_H_ */

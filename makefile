@@ -68,6 +68,7 @@ SRC_LIBS = \
 	$(SRC_DIR)/lib_color_pair.c \
 	$(SRC_DIR)/lib_string.c     \
 	$(SRC_DIR)/lib_s_point.c     \
+	$(SRC_DIR)/ut_lib_s_point.c     \
 	$(SRC_DIR)/lib_curses.c     \
 	$(SRC_DIR)/lib_popup.c     \
 	$(SRC_DIR)/s_color_def.c \
