@@ -30,7 +30,7 @@
  * The function checks the direction_get() calls.
  *****************************************************************************/
 
-void test_direction_get() {
+static void test_direction_get() {
 
 	s_point result;
 
