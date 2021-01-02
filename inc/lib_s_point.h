@@ -25,6 +25,8 @@
 #ifndef INC_LIB_S_POINT_H_
 #define INC_LIB_S_POINT_H_
 
+#include <stdbool.h>
+
 /******************************************************************************
  * The s_point struct represents an element that has a row and a column. This
  * can be a pixel (terminal character), an array dimension, a block size...
@@ -57,5 +59,7 @@ typedef struct s_point {
 int s_point_dist(const s_point from, const s_point to);
 
 int s_point_smaller_dist(const s_point from, const s_point to, const int dist_cur);
+
+bool s_point_is_inside(const s_point *pos, const s_point *dim, const s_point *point);
 
 #endif /* INC_LIB_S_POINT_H_ */

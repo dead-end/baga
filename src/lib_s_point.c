@@ -42,9 +42,10 @@ int s_point_dist(const s_point from, const s_point to) {
  * The function ensures that the next distance of two (moving) points is
  * smaller than the last. It is used to ensure that a point is moving to a
  * target.
+ *
+ * (unit tested)
  *****************************************************************************/
 
-// TODO: unit test
 int s_point_smaller_dist(const s_point from, const s_point to, const int dist_cur) {
 
 	int dist_next = s_point_dist(from, to);
@@ -54,4 +55,31 @@ int s_point_smaller_dist(const s_point from, const s_point to, const int dist_cu
 	}
 
 	return dist_next;
+}
+
+/******************************************************************************
+ * The function checks if a point is inside an area, which is defined by a
+ * position and a dimension.
+ *
+ * (unit tested)
+ *****************************************************************************/
+
+bool s_point_is_inside(const s_point *pos, const s_point *dim, const s_point *point) {
+
+	//
+	// Upper left corner
+	//
+	if (point->row < pos->row || point->col < pos->col) {
+		return false;
+
+	}
+
+	//
+	// lower right corner
+	//
+	if (point->row > (pos->row + dim->row - 1) || point->col > (pos->col + dim->col - 1)) {
+		return false;
+	}
+
+	return true;
 }
