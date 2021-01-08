@@ -315,7 +315,7 @@ void s_pos_mouse_target(const s_point mouse, s_field_id *field_id) {
 	//
 	else if (s_area_is_inside(&_board_areas.bar_inner, &mouse)) {
 		field_id->type = E_FIELD_BAR;
-		field_id->idx = s_pos_is_point_upper(_board_areas.bar_inner, mouse) ? OWNER_BLACK : OWNER_WHITE;
+		field_id->idx = s_pos_is_point_upper(_board_areas.bar_inner, mouse) ? OWNER_TOP : OWNER_BOT;
 	}
 
 	//
@@ -323,7 +323,7 @@ void s_pos_mouse_target(const s_point mouse, s_field_id *field_id) {
 	//
 	else if (s_area_is_inside(&_board_areas.bear_off, &mouse)) {
 		field_id->type = E_FIELD_BEAR_OFF;
-		field_id->idx = s_pos_is_point_upper(_board_areas.bear_off, mouse) ? OWNER_BLACK : OWNER_WHITE;
+		field_id->idx = s_pos_is_point_upper(_board_areas.bear_off, mouse) ? OWNER_TOP : OWNER_BOT;
 	}
 
 	//
