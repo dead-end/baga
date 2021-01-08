@@ -28,6 +28,7 @@
 #include <stdbool.h>
 
 #include "bg_defs.h"
+#include "lib_utils.h"
 #include "s_field_id.h"
 #include "s_status.h"
 
@@ -80,7 +81,17 @@ typedef struct {
  * black: from bottom -> top => relative: 0 absolute 23
  *****************************************************************************/
 
-#define s_field_rel_idx(s,o,i) (((s)->up_2_down == (o)) ? (i) : lu_reverse_idx(POINTS_NUM,i))
+#define s_field_idx_rel(s,o,i) (((s)->up_2_down == (o)) ? (i) : lu_reverse_idx(POINTS_NUM,i))
+
+#define s_field_idx_add_abs(s,o,i,a) (((s)->up_2_down == (o)) ? ((i) + (a)) : ((i) - (a)))
+
+/******************************************************************************
+ * TODO: mixing rel and abs values???
+ *****************************************************************************/
+
+#define s_field_idx_is_out(s,o,i) (s_field_idx_rel(s,o,i) > POINTS_NUM - 1)
+
+#define s_field_idx_is_ex_out(s,o,i) (s_field_idx_rel(s,o,i) == POINTS_NUM)
 
 /******************************************************************************
  * Function declarations.
@@ -94,6 +105,6 @@ bool s_field_is_valid_src(const s_field *field, const s_status *status);
 
 void s_field_mv(s_field *field_src, s_field *field_dst);
 
-s_field_id s_field_get_dst_id(const s_field *field_src, const s_status *status);
+int s_field_get_src_idx(const s_field *field_src, const s_status *status);
 
 #endif /* INC_S_FIELD_H_ */
