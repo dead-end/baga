@@ -34,7 +34,9 @@
 
 void s_status_init(s_status *status, const s_game_cfg *game_cfg) {
 
-	status->up_2_down = game_cfg->up_2_down;
+	status->owner_top_color = game_cfg->owner_top_color;
+
+	status->owner_start = game_cfg->owner_start;
 }
 
 /******************************************************************************
@@ -45,9 +47,9 @@ void s_status_init(s_status *status, const s_game_cfg *game_cfg) {
 void s_status_start(s_status *status) {
 
 	//
-	// The player that plays from top to bottom starts.
+	// Set the player that starts: OWNER_TOP / OWNER_BOT
 	//
-	status->turn = status->up_2_down;
+	status->turn = status->owner_start;
 
 	s_dices_toss(&status->dices);
 

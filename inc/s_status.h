@@ -72,6 +72,15 @@ typedef struct {
 
 	s_dices dices;
 
+	//
+	// Define whether BLACK or WHITE is playing from top to bottom.
+	//
+	// TODO: use for logging
+	e_player_color owner_top_color;
+
+	//
+	// Define the player that starts: TOP or BOTTOM
+	//
 	e_owner owner_start;
 
 } s_status;
