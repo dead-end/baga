@@ -163,6 +163,7 @@ void s_tmpl_point_create(const s_game_cfg *game_cfg) {
 	//
 	// Black points
 	//
+	// TODO: up_2_down == BLACK
 	s_color_def_gradient(colors, POINTS_ROW, game_cfg->clr_points_black_start, game_cfg->clr_points_black_end);
 
 	_tmpls[OWNER_BLACK][ORIENT_TOP] = s_tarr_new(POINTS_ROW, POINTS_COL);
@@ -176,6 +177,7 @@ void s_tmpl_point_create(const s_game_cfg *game_cfg) {
 	//
 	// White points
 	//
+	// TODO: up_2_down == BLACK
 	s_color_def_gradient(colors, POINTS_ROW, game_cfg->clr_points_white_start, game_cfg->clr_points_white_end);
 
 	_tmpls[OWNER_WHITE][ORIENT_TOP] = s_tarr_new(POINTS_ROW, POINTS_COL);

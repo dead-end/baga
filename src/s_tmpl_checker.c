@@ -98,6 +98,7 @@ void s_tmpl_checker_create(const s_game_cfg *game_cfg) {
 	//
 	// Create color
 	//
+	// TODO: up_2_down == BLACK
 	s_color_def_gradient(_colors[OWNER_BLACK], _COLOR_NUM, game_cfg->clr_checker_black_start, game_cfg->clr_checker_black_end);
 
 	s_color_def_gradient(_colors[OWNER_WHITE], _COLOR_NUM, game_cfg->clr_checker_white_start, game_cfg->clr_checker_white_end);

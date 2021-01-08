@@ -233,6 +233,7 @@ void dice_init(const s_game_cfg *game_cfg, WINDOW *win) {
 	_win = win;
 	_tmpl = s_tarr_new(D_ROWS, D_COLS);
 
+	// TODO: up_2_down == BLACK
 	_color_dices[OWNER_BLACK][D_STAT_ACTIVE] = s_color_def_hex_create(game_cfg->clr_dice_black_active);
 	_color_dices[OWNER_BLACK][D_STAT_INACTIVE] = s_color_def_hex_create(game_cfg->clr_dice_black_inactive);
 
