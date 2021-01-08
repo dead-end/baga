@@ -81,13 +81,27 @@
 #define NUM_PLAYER 2
 
 /******************************************************************************
- * The enum defines an owner of a checker which can be black or white or none
- * if there is no checker. The owner can be used as an index for some arrays.
+ * The enum defines an owner of a checker. The owner can be the player from top
+ * to bottom or from bottom to top or none at all. The owner can be used as an
+ * index for some arrays.
  *****************************************************************************/
 
 typedef enum {
 
-	OWNER_BLACK = 0, OWNER_WHITE = 1, OWNER_NONE = -1
+	//
+	// Player from top to bottom
+	//
+	OWNER_TOP = 0,
+
+	//
+	// Player from bottom to top
+	//
+	OWNER_BOT = 1,
+
+	//
+	// Not used
+	//
+	OWNER_NONE = -1
 
 } e_owner;
 
