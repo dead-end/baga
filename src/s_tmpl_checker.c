@@ -96,12 +96,16 @@ static void s_tmpl_checker_set_label(s_tarr *tmpl, const int total, const bool r
 void s_tmpl_checker_create(const s_game_cfg *game_cfg) {
 
 	//
-	// Create color
+	// Create color: black
 	//
-	// TODO: up_2_down == BLACK
-	s_color_def_gradient(_colors[OWNER_BLACK], _COLOR_NUM, game_cfg->clr_checker_black_start, game_cfg->clr_checker_black_end);
+	const int owner_black = e_player_color_2_owner(game_cfg->owner_top_color, PLAYER_COLOR_BLACK);
+	s_color_def_gradient(_colors[owner_black], _COLOR_NUM, game_cfg->clr_checker_black_start, game_cfg->clr_checker_black_end);
 
-	s_color_def_gradient(_colors[OWNER_WHITE], _COLOR_NUM, game_cfg->clr_checker_white_start, game_cfg->clr_checker_white_end);
+	//
+	// Create color: white
+	//
+	const int owner_white = e_player_color_2_owner(game_cfg->owner_top_color, PLAYER_COLOR_WHITE);
+	s_color_def_gradient(_colors[owner_white], _COLOR_NUM, game_cfg->clr_checker_white_start, game_cfg->clr_checker_white_end);
 
 	//
 	// Create templates
