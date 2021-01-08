@@ -26,58 +26,39 @@
 #define INC_S_STATUS_H_
 
 #include "bg_defs.h"
+#include "s_dices.h"
 #include "s_game_cfg.h"
 
 /******************************************************************************
- *
+ * The enum defines the possible phases of a player.
  *****************************************************************************/
 
 typedef enum {
 
 	//
-	// The dice can be set and is selected to be set.
+	// None of the other two phases.
 	//
-	E_DICE_ACTIVE = 0,
+	E_PHASE_NORMAL = 0,
 
 	//
-	// The dice can be set and is not selected to be set.
+	// At least one of the checkers is on the bar.
 	//
-	E_DICE_INACTIVE = 1,
+	E_PHASE_BAR = 1,
 
 	//
-	// The dice has been set.
+	// All checkers are in that player's home board.
 	//
-	E_DICE_SET = 2,
-
-	//
-	// The dice is not possible to be set.
-	//
-	E_DICE_NOT_POS = 3
-
-} e_dice_status;
-
-/******************************************************************************
- *
- *****************************************************************************/
-
-typedef struct {
-
-	e_dice_status status;
-
-	int value;
+	E_PHASE_BEAR_OFF = 2,
 
 	//
-	// The values are 1 or 2 if the dices have the same value.
+	// All checkers are in the bear off.
 	//
-	// TODO: maybe bool
-	int num;
+	E_PHASE_WIN = 3,
 
-	//
-	//
-	//
-	int num_set;
+} e_player_phase;
 
-} s_dice;
+// TODO: new place
+const char* e_player_phase_str(const e_player_phase player_phase);
 
 /******************************************************************************
  *
@@ -87,31 +68,13 @@ typedef struct {
 
 	e_owner turn;
 
-	s_dice dices[2];
+	e_player_phase player_phase[2];
+
+	s_dices dices;
 
 	e_owner up_2_down;
 
 } s_status;
-
-/******************************************************************************
- * The macro checks if a dice has the expected value.
- *****************************************************************************/
-
-#define s_status_dice_has_status(stat,i,s)  ((stat)->dices[i].status == (s))
-
-/******************************************************************************
- * The macro checks if a dice can be undone. The status E_DICE_SET cannot be
- * used, because if both dices have the same value. The num_set parameter is
- * set every time a checker moves, so this is appropriate.
- *****************************************************************************/
-
-#define s_status_dice_can_undo(stat, i) ((stat)->dices[i].num_set > 0)
-
-/******************************************************************************
- * The macro checks if a dice is not active.
- *****************************************************************************/
-
-#define s_status_dice_is_done(stat, i) ((stat)->dices[i].status != E_DICE_ACTIVE)
 
 /******************************************************************************
  * The function declarations.
@@ -122,8 +85,6 @@ void s_status_init(s_status *status, const s_game_cfg *game_cfg);
 void s_status_start(s_status *status);
 
 void s_status_next_turn(s_status *status);
-
-int s_status_get_dice(const s_status *status);
 
 void s_status_mv_done(s_status *status);
 

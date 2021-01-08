@@ -23,65 +23,18 @@
  */
 
 #include <stdlib.h>
-#include <time.h>
 
 #include "lib_logging.h"
 #include "s_status.h"
 #include "dice.h"
 
 /******************************************************************************
- * The macro is rolling the dice.
- *****************************************************************************/
-
-#define rolling_dice() rand() % 6 + 1
-
-/******************************************************************************
  * The function initializes the status struct.
  *****************************************************************************/
 
 void s_status_init(s_status *status, const s_game_cfg *game_cfg) {
-	time_t t;
-
-	srand((unsigned) time(&t));
 
 	status->up_2_down = game_cfg->up_2_down;
-}
-
-/******************************************************************************
- * The function sets new values for the dices. They are sorted to ensure that
- * the first dice has the higher value.
- *****************************************************************************/
-
-static void s_status_dice(s_status *status) {
-
-	status->dices[0].value = rolling_dice();
-	status->dices[1].value = rolling_dice();
-
-	status->dices[0].num_set = 0;
-	status->dices[1].num_set = 0;
-
-	if (status->dices[0].value == status->dices[1].value) {
-		status->dices[0].num = 2;
-		status->dices[1].num = 2;
-
-	} else {
-		status->dices[0].num = 1;
-		status->dices[1].num = 1;
-	}
-
-	//
-	// Set status
-	//
-	if (status->dices[0].value >= status->dices[1].value) {
-		status->dices[0].status = E_DICE_ACTIVE;
-		status->dices[1].status = E_DICE_INACTIVE;
-	} else {
-		status->dices[0].status = E_DICE_INACTIVE;
-		status->dices[1].status = E_DICE_ACTIVE;
-	}
-
-	log_debug("dice-1 value %d num: %d set: %d", status->dices[0].value, status->dices[0].num, status->dices[0].num_set);
-	log_debug("dice-2 value %d num: %d set: %d", status->dices[1].value, status->dices[1].num, status->dices[1].num_set);
 }
 
 /******************************************************************************
@@ -96,7 +49,10 @@ void s_status_start(s_status *status) {
 	//
 	status->turn = status->up_2_down;
 
-	s_status_dice(status);
+	s_dices_toss(&status->dices);
+
+	status->player_phase[0] = E_PHASE_NORMAL;
+	status->player_phase[1] = E_PHASE_NORMAL;
 }
 
 /******************************************************************************
@@ -106,24 +62,7 @@ void s_status_start(s_status *status) {
 void s_status_next_turn(s_status *status) {
 	status->turn = e_owner_other(status->turn);
 
-	s_status_dice(status);
-}
-
-/******************************************************************************
- *
- *****************************************************************************/
-// TODO:
-int s_status_get_dice(const s_status *status) {
-
-	if (status->dices[0].status == E_DICE_ACTIVE) {
-		return status->dices[0].value;
-	}
-
-	if (status->dices[1].status == E_DICE_ACTIVE) {
-		return status->dices[1].value;
-	}
-
-	log_exit_str("Active!");
+	s_dices_toss(&status->dices);
 }
 
 /******************************************************************************
@@ -132,36 +71,42 @@ int s_status_get_dice(const s_status *status) {
 // TODO:
 void s_status_mv_done(s_status *status) {
 
-	if (status->dices[0].status == E_DICE_ACTIVE) {
-
-		status->dices[0].num_set++;
-		if (status->dices[0].num_set == status->dices[0].num) {
-			status->dices[0].status = E_DICE_SET;
-
-			if (status->dices[1].status == E_DICE_INACTIVE) {
-				status->dices[1].status = E_DICE_ACTIVE;
-			} else {
-				s_status_next_turn(status);
-			}
-		}
-
-	} else if (status->dices[1].status == E_DICE_ACTIVE) {
-
-		status->dices[1].num_set++;
-		if (status->dices[1].num_set == status->dices[1].num) {
-			status->dices[1].status = E_DICE_SET;
-
-			if (status->dices[0].status == E_DICE_INACTIVE) {
-				status->dices[0].status = E_DICE_ACTIVE;
-			} else {
-				s_status_next_turn(status);
-			}
-		}
-
+	if (s_dices_set(&status->dices)) {
+		s_status_next_turn(status);
 	}
+
+	s_dices_debug(&status->dices);
 
 	//
 	// TODO: is this correct? I added this drunk :o)
 	//
 	dice_print(status);
 }
+
+/******************************************************************************
+ * The function returns a string representation of the game phase. It is used
+ * for debugging.
+ *****************************************************************************/
+
+const char* e_player_phase_str(const e_player_phase player_phase) {
+
+	switch (player_phase) {
+
+	case E_PHASE_NORMAL:
+		return "E_PHASE_NORMAL";
+
+	case E_PHASE_BAR:
+		return "E_PHASE_BAR";
+
+	case E_PHASE_BEAR_OFF:
+		return "E_PHASE_BEAR_OFF";
+
+	case E_PHASE_WIN:
+		return "E_PHASE_WIN";
+
+	default:
+		log_exit("Unknown phase: %d", player_phase)
+		;
+	}
+}
+
