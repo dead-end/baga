@@ -28,16 +28,16 @@
 /******************************************************************************
  * The function returns a string representation of the owner of a field.
  *****************************************************************************/
-
+// TODO: status as a parameter => "BLACK" possible
 char* s_field_owner_str(const e_owner owner) {
 
 	switch (owner) {
 
-	case OWNER_BLACK:
-		return "BLACK";
+	case OWNER_TOP:
+		return "TOP_2_BOTTOM";
 
-	case OWNER_WHITE:
-		return "WHITE";
+	case OWNER_BOT:
+		return "BOTTOM_2_TOP";
 
 	case OWNER_NONE:
 		return "EMPTY";
@@ -163,7 +163,7 @@ void s_field_mv(s_field *field_src, s_field *field_dst) {
  * source index to add our dice to.
  *****************************************************************************/
 
-int s_field_get_src_idx(const s_field *field_src, const s_status *status) {
+int s_field_get_src_idx(const s_field *field_src) {
 
 #ifdef DEBUG
 
@@ -176,7 +176,7 @@ int s_field_get_src_idx(const s_field *field_src, const s_status *status) {
 #endif
 
 	if (field_src->id.type == E_FIELD_BAR) {
-		return (status->up_2_down == field_src->owner) ? -1 : POINTS_NUM;
+		return (OWNER_TOP == field_src->owner) ? -1 : POINTS_NUM;
 	}
 
 	return field_src->id.idx;
