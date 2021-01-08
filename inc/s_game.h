@@ -69,4 +69,10 @@ s_field* s_game_get(s_game *game, const s_field_id id);
 
 s_field* s_game_can_mv(s_game *game, s_status *status, const s_field *field_src);
 
+// ------------------
+
+void s_game_update_player_phase(const s_game *game, s_status *status);
+
+int s_game_get_min_rel_idx(const s_game *game, const s_status *status);
+
 #endif /* INC_S_GAME_H_ */
