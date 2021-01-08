@@ -34,9 +34,14 @@
 typedef struct s_game_cfg {
 
 	//
-	// Define whether black or white is playing from top to bottom.
+	// Define whether BLACK or WHITE is playing from top to bottom.
 	//
-	e_owner up_2_down;
+	e_player_color owner_top_color;
+
+	//
+	// Define the player that starts: TOP or BOTTOM
+	//
+	e_owner owner_start;
 
 	//
 	// Color: board border and bear off reversed

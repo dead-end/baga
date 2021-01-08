@@ -33,9 +33,14 @@
 void s_game_cfg_init(s_game_cfg *game_cfg) {
 
 	//
-	// Define whether black or white is playing from top to bottom.
+	// Define whether BLACK or WHITE is playing from top to bottom.
 	//
-	game_cfg->up_2_down = OWNER_BLACK;
+	game_cfg->owner_top_color = PLAYER_COLOR_BLACK;
+
+	//
+	// Define the player that starts: TOP or BOTTOM
+	//
+	game_cfg->owner_start = OWNER_BOT;
 
 	//
 	// Color: board border and bear off reversed
