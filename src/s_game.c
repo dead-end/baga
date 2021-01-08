@@ -41,14 +41,13 @@ void s_game_init(s_game *game) {
 		s_field_set_full(game->point[i], E_FIELD_POINTS, i, 0, OWNER_NONE);
 	}
 
-	// TODO: up_2_down
-	s_field_set_full(game->bear_off[OWNER_BLACK], E_FIELD_BEAR_OFF, OWNER_BLACK, 0, OWNER_BLACK);
+	s_field_set_full(game->bear_off[OWNER_TOP], E_FIELD_BEAR_OFF, OWNER_TOP, 0, OWNER_TOP);
 
-	s_field_set_full(game->bear_off[OWNER_WHITE], E_FIELD_BEAR_OFF, OWNER_WHITE, 0, OWNER_WHITE);
+	s_field_set_full(game->bear_off[OWNER_BOT], E_FIELD_BEAR_OFF, OWNER_BOT, 0, OWNER_BOT);
 
-	s_field_set_full(game->reenter[OWNER_BLACK], E_FIELD_BAR, OWNER_BLACK, 0, OWNER_BLACK);
+	s_field_set_full(game->reenter[OWNER_TOP], E_FIELD_BAR, OWNER_TOP, 0, OWNER_TOP);
 
-	s_field_set_full(game->reenter[OWNER_WHITE], E_FIELD_BAR, OWNER_WHITE, 0, OWNER_WHITE);
+	s_field_set_full(game->reenter[OWNER_BOT], E_FIELD_BAR, OWNER_BOT, 0, OWNER_BOT);
 }
 
 /******************************************************************************
@@ -65,26 +64,26 @@ void s_game_new_game(s_game *game, s_status *status) {
 	//
 	// Index 0
 	//
-	s_field_set(game->point[s_field_idx_rel(status, OWNER_WHITE, 0)], 2, OWNER_WHITE);
-	s_field_set(game->point[s_field_idx_rel(status, OWNER_BLACK, 0)], 2, OWNER_BLACK);
+	s_field_set(game->point[s_field_idx_rel( OWNER_BOT, 0)], 2, OWNER_BOT);
+	s_field_set(game->point[s_field_idx_rel( OWNER_TOP, 0)], 2, OWNER_TOP);
 
 	//
 	// Index 11
 	//
-	s_field_set(game->point[s_field_idx_rel(status, OWNER_WHITE, 11)], 5, OWNER_WHITE);
-	s_field_set(game->point[s_field_idx_rel(status, OWNER_BLACK, 11)], 5, OWNER_BLACK);
+	s_field_set(game->point[s_field_idx_rel( OWNER_BOT, 11)], 5, OWNER_BOT);
+	s_field_set(game->point[s_field_idx_rel( OWNER_TOP, 11)], 5, OWNER_TOP);
 
 	//
 	// Index 16
 	//
-	s_field_set(game->point[s_field_idx_rel(status, OWNER_WHITE, 16)], 3, OWNER_WHITE);
-	s_field_set(game->point[s_field_idx_rel(status, OWNER_BLACK, 16)], 3, OWNER_BLACK);
+	s_field_set(game->point[s_field_idx_rel( OWNER_BOT, 16)], 3, OWNER_BOT);
+	s_field_set(game->point[s_field_idx_rel( OWNER_TOP, 16)], 3, OWNER_TOP);
 
 	//
 	// Index 11
 	//
-	s_field_set(game->point[s_field_idx_rel(status, OWNER_WHITE, 18)], 5, OWNER_WHITE);
-	s_field_set(game->point[s_field_idx_rel(status, OWNER_BLACK, 18)], 5, OWNER_BLACK);
+	s_field_set(game->point[s_field_idx_rel( OWNER_BOT, 18)], 5, OWNER_BOT);
+	s_field_set(game->point[s_field_idx_rel(OWNER_TOP, 18)], 5, OWNER_TOP);
 
 	//
 	// Reset the status for a new game.
@@ -142,7 +141,7 @@ int s_game_get_min_rel_idx(const s_game *game, const s_status *status) {
 
 	for (int idx_rel = 0; idx_rel < POINTS_NUM; idx_rel++) {
 
-		idx_abs = s_field_idx_rel(status, status->turn, idx_rel);
+		idx_abs = s_field_idx_rel(status->turn, idx_rel);
 
 		field = &game->point[idx_abs];
 
@@ -184,19 +183,19 @@ s_field_id s_field_get_dst_id(const s_game *game, const s_field *field_src, cons
 	//
 	// Get the source index of the field with respect to bars.
 	//
-	const int idx_src = s_field_get_src_idx(field_src, status);
+	const int idx_src = s_field_get_src_idx(field_src);
 
 	//
 	// Compute the destination index.
 	//
-	id_dst.idx = s_field_idx_add_abs(status, field_src->owner, idx_src, dice);
+	id_dst.idx = s_field_idx_add_abs(field_src->owner, idx_src, dice);
 	id_dst.type = E_FIELD_POINTS;
 
 	log_debug("field index src: %d dst: %d dice: %d", idx_src, id_dst.idx, dice);
 
-	if (s_field_idx_is_out(status, field_src->owner, id_dst.idx)) {
+	if (s_field_idx_is_out(field_src->owner, id_dst.idx)) {
 
-		if (status->player_phase[status->turn] == E_PHASE_BEAR_OFF && (s_field_idx_is_ex_out(status, field_src->owner, id_dst.idx) || s_game_is_min_out(game, status, dice))) {
+		if (status->player_phase[status->turn] == E_PHASE_BEAR_OFF && (s_field_idx_is_ex_out(field_src->owner, id_dst.idx) || s_game_is_min_out(game, status, dice))) {
 			s_field_id_set(id_dst, E_FIELD_BEAR_OFF, status->turn);
 
 		} else {
@@ -205,15 +204,15 @@ s_field_id s_field_get_dst_id(const s_game *game, const s_field *field_src, cons
 		}
 	}
 
-//#ifdef DEBUG
-//
-//	//
-//	// TODO: only possible if last phase of the game => to bear off
-//	//
-//	if (id_dst.idx < 0 || id_dst.idx >= POINTS_NUM) {
-//		log_exit("out of range dst: %d src: %d", id_dst.idx, idx_src);
-//	}
-//#endif
+	//#ifdef DEBUG
+	//
+	//	//
+	//	// TODO: only possible if last phase of the game => to bear off
+	//	//
+	//	if (id_dst.idx < 0 || id_dst.idx >= POINTS_NUM) {
+	//		log_exit("out of range dst: %d src: %d", id_dst.idx, idx_src);
+	//	}
+	//#endif
 
 	return id_dst;
 }
