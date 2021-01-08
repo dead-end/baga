@@ -109,4 +109,16 @@ typedef enum {
 
 #define e_owner_other(o) (((o) + 1) % 2)
 
+/******************************************************************************
+ * The enum defines the (logical) colors for the players.
+ *****************************************************************************/
+
+typedef enum {
+
+	PLAYER_COLOR_BLACK = 0,
+
+	PLAYER_COLOR_WHITE = 1,
+
+} e_player_color;
+
 #endif /* INC_BG_DEFS_H_ */
