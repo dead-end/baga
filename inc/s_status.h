@@ -72,7 +72,7 @@ typedef struct {
 
 	s_dices dices;
 
-	e_owner up_2_down;
+	e_owner owner_start;
 
 } s_status;
 
