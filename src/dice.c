@@ -234,18 +234,18 @@ void dice_init(const s_game_cfg *game_cfg, WINDOW *win) {
 	_tmpl = s_tarr_new(D_ROWS, D_COLS);
 
 	//
-	// Black
+	// Create color: black
 	//
-	const int black = e_player_color_2_owner(game_cfg->owner_top_color, PLAYER_COLOR_BLACK);
-	_color_dices[black][D_STAT_ACTIVE] = s_color_def_hex_create(game_cfg->clr_dice_black_active);
-	_color_dices[black][D_STAT_INACTIVE] = s_color_def_hex_create(game_cfg->clr_dice_black_inactive);
+	const int owner_black = e_player_color_2_owner(game_cfg->owner_top_color, PLAYER_COLOR_BLACK);
+	_color_dices[owner_black][D_STAT_ACTIVE] = s_color_def_hex_create(game_cfg->clr_dice_black_active);
+	_color_dices[owner_black][D_STAT_INACTIVE] = s_color_def_hex_create(game_cfg->clr_dice_black_inactive);
 
 	//
-	// White
+	// Create color: white
 	//
-	const int white = e_player_color_2_owner(game_cfg->owner_top_color, PLAYER_COLOR_WHITE);
-	_color_dices[white][D_STAT_ACTIVE] = s_color_def_hex_create(game_cfg->clr_dice_white_active);
-	_color_dices[white][D_STAT_INACTIVE] = s_color_def_hex_create(game_cfg->clr_dice_white_inactive);
+	const int owner_white = e_player_color_2_owner(game_cfg->owner_top_color, PLAYER_COLOR_WHITE);
+	_color_dices[owner_white][D_STAT_ACTIVE] = s_color_def_hex_create(game_cfg->clr_dice_white_active);
+	_color_dices[owner_white][D_STAT_INACTIVE] = s_color_def_hex_create(game_cfg->clr_dice_white_inactive);
 
 	_color_ctrl_confirm[D_STAT_ACTIVE] = s_color_def_hex_create(game_cfg->clr_ctrl_confirm_active);
 	_color_ctrl_confirm[D_STAT_INACTIVE] = s_color_def_hex_create(game_cfg->clr_ctrl_confirm_inactive);
