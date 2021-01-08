@@ -72,26 +72,26 @@ typedef struct {
 		(f).owner = (o)
 
 /******************************************************************************
- * The macro is called with the s_status and owner and an index. The index is
- * is relative from start to end for the owner. It computes the absolute index.
+ * The macro is called with the owner and an index. The index is is relative
+ * from start to end for the owner. It computes the absolute index.
  *
  * Example:
  *
- * white: from top -> bottom => relative: 0 absolute 0
- * black: from bottom -> top => relative: 0 absolute 23
+ * white: from top    -> bottom => relative: 0 absolute 0
+ * black: from bottom -> top    => relative: 0 absolute 23
  *****************************************************************************/
 
-#define s_field_idx_rel(s,o,i) (((s)->up_2_down == (o)) ? (i) : lu_reverse_idx(POINTS_NUM,i))
+#define s_field_idx_rel(o,i) ((OWNER_TOP == (o)) ? (i) : lu_reverse_idx(POINTS_NUM,i))
 
-#define s_field_idx_add_abs(s,o,i,a) (((s)->up_2_down == (o)) ? ((i) + (a)) : ((i) - (a)))
+#define s_field_idx_add_abs(o,i,a) ((OWNER_TOP == (o)) ? ((i) + (a)) : ((i) - (a)))
 
 /******************************************************************************
  * TODO: mixing rel and abs values???
  *****************************************************************************/
 
-#define s_field_idx_is_out(s,o,i) (s_field_idx_rel(s,o,i) > POINTS_NUM - 1)
+#define s_field_idx_is_out(o,i) (s_field_idx_rel(o,i) > POINTS_NUM - 1)
 
-#define s_field_idx_is_ex_out(s,o,i) (s_field_idx_rel(s,o,i) == POINTS_NUM)
+#define s_field_idx_is_ex_out(o,i) (s_field_idx_rel(o,i) == POINTS_NUM)
 
 /******************************************************************************
  * Function declarations.
@@ -105,6 +105,6 @@ bool s_field_is_valid_src(const s_field *field, const s_status *status);
 
 void s_field_mv(s_field *field_src, s_field *field_dst);
 
-int s_field_get_src_idx(const s_field *field_src, const s_status *status);
+int s_field_get_src_idx(const s_field *field_src);
 
 #endif /* INC_S_FIELD_H_ */
