@@ -121,4 +121,15 @@ typedef enum {
 
 } e_player_color;
 
+/******************************************************************************
+ * The macro returns the owner index for a given color. The requires the
+ * configuration which color is playing from top to bottom.
+ *
+ * Example:
+ *
+ * e_player_color_2_owner(game_cfg->owner_top_color, PLAYER_COLOR_BLACK)
+ *****************************************************************************/
+
+#define e_player_color_2_owner(tc,pc) ((tc) == (pc)) ? OWNER_TOP : OWNER_BOT
+
 #endif /* INC_BG_DEFS_H_ */
