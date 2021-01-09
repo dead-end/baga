@@ -70,7 +70,7 @@ void s_status_next_turn(s_status *status) {
 /******************************************************************************
  *
  *****************************************************************************/
-// TODO:
+// TODO: comment / maybe name with dice
 void s_status_mv_done(s_status *status) {
 
 	if (s_dices_set(&status->dices)) {
@@ -111,4 +111,3 @@ const char* e_player_phase_str(const e_player_phase player_phase) {
 		;
 	}
 }
-
