@@ -96,6 +96,8 @@ SRC_LIBS = \
 	$(SRC_DIR)/ut_lib_string.c     \
 	$(SRC_DIR)/ut_s_color_def.c    \
 	$(SRC_DIR)/e_owner.c    \
+	$(SRC_DIR)/rules.c  \
+	$(SRC_DIR)/ut_rules.c  \
 
 INC_ADD = \
 	$(INCLUDE_DIR)/lib_s_tchar.h \
