@@ -56,6 +56,16 @@ typedef struct {
 } s_game;
 
 /******************************************************************************
+ * Three macros that set checkers to points / bars / bear-offs.
+ *****************************************************************************/
+
+#define s_game_set_point_rel(g,o,i,n) s_field_set((g)->point[s_field_idx_rel(o, i)], n, o)
+
+#define s_game_set_bear_off(g,o,n) (g)->bear_off[o].num = (n)
+
+#define s_game_set_bar(g,o,n) (g)->reenter[o].num = (n)
+
+/******************************************************************************
  * Function declarations.
  *****************************************************************************/
 
@@ -68,11 +78,5 @@ void s_game_print(const s_game *game);
 s_field* s_game_get(s_game *game, const s_field_id id);
 
 s_field* s_game_can_mv(s_game *game, s_status *status, const s_field *field_src);
-
-// ------------------
-
-void s_game_update_player_phase(const s_game *game, s_status *status);
-
-int s_game_get_min_rel_idx(const s_game *game, const s_status *status);
 
 #endif /* INC_S_GAME_H_ */
