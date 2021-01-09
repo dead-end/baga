@@ -93,6 +93,8 @@ static const wchar_t _tchar_points[POINTS_ROW][POINTS_COL] = {
  * ooooooo   o
  *****************************************************************************/
 
+// TODO: maybe e_orient enum
+// TODO: maybe instead of E_OWNER_TOP in s_pos.c
 #define NUM_ORIENT 2
 
 #define ORIENT_TOP 0
