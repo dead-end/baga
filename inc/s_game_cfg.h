@@ -26,6 +26,7 @@
 #define INC_S_GAME_CFG_H_
 
 #include "bg_defs.h"
+#include "e_owner.h"
 
 /******************************************************************************
  * The definition of various configurations of the game.
