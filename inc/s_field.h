@@ -81,14 +81,14 @@ typedef struct {
  * black: from bottom -> top    => relative: 0 absolute 23
  *****************************************************************************/
 
-#define s_field_idx_rel(o,i) ((OWNER_TOP == (o)) ? (i) : lu_reverse_idx(POINTS_NUM,i))
+#define s_field_idx_rel(o,i) ((E_OWNER_TOP == (o)) ? (i) : lu_reverse_idx(POINTS_NUM,i))
 
 /******************************************************************************
  * The macro adds a value to an absolute index. This means adding or
  * subtracting depending on
  *****************************************************************************/
 
-#define s_field_idx_add_abs(o,i,a) ((OWNER_TOP == (o)) ? ((i) + (a)) : ((i) - (a)))
+#define s_field_idx_add_abs(o,i,a) ((E_OWNER_TOP == (o)) ? ((i) + (a)) : ((i) - (a)))
 
 /******************************************************************************
  * The macro checks if the index is above the max value. We assume that the
