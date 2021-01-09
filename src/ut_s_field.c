@@ -35,38 +35,38 @@
 static void test_s_field_idx_rel() {
 	int idx_rel;
 
-	idx_rel = s_field_idx_rel(OWNER_TOP, 0);
+	idx_rel = s_field_idx_rel(E_OWNER_TOP, 0);
 	ut_check_int(idx_rel, 0, "top 0");
 
-	idx_rel = s_field_idx_rel(OWNER_BOT, 0);
+	idx_rel = s_field_idx_rel(E_OWNER_BOT, 0);
 	ut_check_int(idx_rel, 23, "bottom 0");
 
-	idx_rel = s_field_idx_rel(OWNER_TOP, 23);
+	idx_rel = s_field_idx_rel(E_OWNER_TOP, 23);
 	ut_check_int(idx_rel, 23, "top 23");
 
-	idx_rel = s_field_idx_rel(OWNER_BOT, 23);
+	idx_rel = s_field_idx_rel(E_OWNER_BOT, 23);
 	ut_check_int(idx_rel, 0, "bottom 23");
 
 	//
 	// rel(rel) = abs BOTTOM
 	//
-	idx_rel = s_field_idx_rel(OWNER_BOT, 0);
-	idx_rel = s_field_idx_rel(OWNER_BOT, idx_rel);
+	idx_rel = s_field_idx_rel(E_OWNER_BOT, 0);
+	idx_rel = s_field_idx_rel(E_OWNER_BOT, idx_rel);
 	ut_check_int(idx_rel, 0, "bottom 0 - id");
 
-	idx_rel = s_field_idx_rel(OWNER_BOT, 23);
-	idx_rel = s_field_idx_rel(OWNER_BOT, idx_rel);
+	idx_rel = s_field_idx_rel(E_OWNER_BOT, 23);
+	idx_rel = s_field_idx_rel(E_OWNER_BOT, idx_rel);
 	ut_check_int(idx_rel, 23, "bottom 23 - id");
 
 	//
 	// rel(rel) = abs TOP
 	//
-	idx_rel = s_field_idx_rel(OWNER_TOP, 0);
-	idx_rel = s_field_idx_rel(OWNER_TOP, idx_rel);
+	idx_rel = s_field_idx_rel(E_OWNER_TOP, 0);
+	idx_rel = s_field_idx_rel(E_OWNER_TOP, idx_rel);
 	ut_check_int(idx_rel, 0, "top 0 - id");
 
-	idx_rel = s_field_idx_rel(OWNER_TOP, 23);
-	idx_rel = s_field_idx_rel(OWNER_TOP, idx_rel);
+	idx_rel = s_field_idx_rel(E_OWNER_TOP, 23);
+	idx_rel = s_field_idx_rel(E_OWNER_TOP, idx_rel);
 	ut_check_int(idx_rel, 23, "top 23 - id");
 }
 
@@ -78,22 +78,22 @@ static void test_s_field_idx_is_out() {
 
 	bool result;
 
-	result = s_field_idx_is_out(OWNER_TOP, 0);
+	result = s_field_idx_is_out(E_OWNER_TOP, 0);
 	ut_check_bool(result, false, "top 0");
 
-	result = s_field_idx_is_out(OWNER_TOP, 23);
+	result = s_field_idx_is_out(E_OWNER_TOP, 23);
 	ut_check_bool(result, false, "top 23");
 
-	result = s_field_idx_is_out(OWNER_TOP, 24);
+	result = s_field_idx_is_out(E_OWNER_TOP, 24);
 	ut_check_bool(result, true, "top 24");
 
-	result = s_field_idx_is_out(OWNER_BOT, 23);
+	result = s_field_idx_is_out(E_OWNER_BOT, 23);
 	ut_check_bool(result, false, "bottom 23");
 
-	result = s_field_idx_is_out(OWNER_BOT, 0);
+	result = s_field_idx_is_out(E_OWNER_BOT, 0);
 	ut_check_bool(result, false, "bottom 0");
 
-	result = s_field_idx_is_out(OWNER_BOT, -1);
+	result = s_field_idx_is_out(E_OWNER_BOT, -1);
 	ut_check_bool(result, true, "bottom -1");
 
 }
@@ -106,17 +106,17 @@ static void test_s_field_idx_add_abs() {
 	int idx1, idx2;
 	int idx;
 
-	idx = s_field_idx_add_abs(OWNER_TOP, 0, 5);
+	idx = s_field_idx_add_abs(E_OWNER_TOP, 0, 5);
 	ut_check_int(idx, 5, "top 0 - 5");
 
-	idx = s_field_idx_add_abs(OWNER_BOT, 23, 5);
+	idx = s_field_idx_add_abs(E_OWNER_BOT, 23, 5);
 	ut_check_int(idx, 18, "bottom 23 - 5");
 
 	//
 	// from rel => abs
 	//
-	idx = s_field_idx_rel(OWNER_BOT, 0);
-	idx = s_field_idx_add_abs(OWNER_BOT, idx, 5);
+	idx = s_field_idx_rel(E_OWNER_BOT, 0);
+	idx = s_field_idx_add_abs(E_OWNER_BOT, idx, 5);
 	ut_check_int(idx, 18, "bottom 0 - 5");
 
 	//
@@ -126,21 +126,21 @@ static void test_s_field_idx_add_abs() {
 	//   rel + 5
 	//   rel => abs
 	//
-	idx1 = s_field_idx_rel(OWNER_BOT, 23);
+	idx1 = s_field_idx_rel(E_OWNER_BOT, 23);
 	idx1 += 5;
-	idx1 = s_field_idx_rel(OWNER_BOT, idx1);
+	idx1 = s_field_idx_rel(E_OWNER_BOT, idx1);
 
-	idx2 = s_field_idx_add_abs(OWNER_BOT, 23, 5);
+	idx2 = s_field_idx_add_abs(E_OWNER_BOT, 23, 5);
 	ut_check_int(idx1, idx2, "bottom 0 - 5");
 
 	//
 	// Same with top
 	//
-	idx1 = s_field_idx_rel(OWNER_TOP, 23);
+	idx1 = s_field_idx_rel(E_OWNER_TOP, 23);
 	idx1 += 5;
-	idx1 = s_field_idx_rel(OWNER_TOP, idx1);
+	idx1 = s_field_idx_rel(E_OWNER_TOP, idx1);
 
-	idx2 = s_field_idx_add_abs(OWNER_TOP, 23, 5);
+	idx2 = s_field_idx_add_abs(E_OWNER_TOP, 23, 5);
 	ut_check_int(idx1, idx2, "bottom 0 - 5");
 }
 
