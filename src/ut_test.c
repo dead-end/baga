@@ -35,6 +35,7 @@
 #include "ut_s_tarr.h"
 #include "ut_lib_s_point.h"
 #include "ut_s_field.h"
+#include "ut_rules.h"
 
 /******************************************************************************
  * The main function delegates the call to the individual unit test functions.
@@ -64,6 +65,8 @@ int main() {
 	ut_lib_s_point_exec();
 
 	ut_s_field_exec();
+
+	ut_rules_exec();
 
 	return EXIT_SUCCESS;
 }
