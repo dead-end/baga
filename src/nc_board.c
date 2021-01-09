@@ -34,6 +34,7 @@
 #include "nc_board.h"
 #include "s_board.h"
 #include "s_game.h"
+#include "e_owner.h"
 
 // todo: comment, file, ...
 
@@ -335,7 +336,7 @@ void nc_board_process(s_game *game, s_status *status, const s_field_id id) {
 
 	s_field *field_dst = s_game_can_mv(game, status, field_src);
 	if (field_dst == NULL) {
-		log_debug("field - type: %s owner: %s index: %d num: %d", s_field_type_str(field_src->id.type), s_field_owner_str(field_src->owner), field_src->id.idx, field_src->num);
+		log_debug("field - type: %s owner: %s index: %d num: %d", s_field_type_str(field_src->id.type), e_owner_str(field_src->owner), field_src->id.idx, field_src->num);
 		return;
 	}
 
