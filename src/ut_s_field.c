@@ -28,47 +28,46 @@
 
 /******************************************************************************
  * The function checks the s_field_rel_idx() calls.
+ *
+ * After refactoring the macro is simple.
  *****************************************************************************/
 
 static void test_s_field_idx_rel() {
-	s_status status;
 	int idx_rel;
 
-	status.up_2_down = OWNER_BLACK;
+	idx_rel = s_field_idx_rel(OWNER_TOP, 0);
+	ut_check_int(idx_rel, 0, "top 0");
 
-	idx_rel = s_field_idx_rel(&status, OWNER_BLACK, 0);
-	ut_check_int(idx_rel, 0, "black 0");
+	idx_rel = s_field_idx_rel(OWNER_BOT, 0);
+	ut_check_int(idx_rel, 23, "bottom 0");
 
-	idx_rel = s_field_idx_rel(&status, OWNER_WHITE, 0);
-	ut_check_int(idx_rel, 23, "white 0");
+	idx_rel = s_field_idx_rel(OWNER_TOP, 23);
+	ut_check_int(idx_rel, 23, "top 23");
 
-	idx_rel = s_field_idx_rel(&status, OWNER_BLACK, 23);
-	ut_check_int(idx_rel, 23, "black 23");
-
-	idx_rel = s_field_idx_rel(&status, OWNER_WHITE, 23);
-	ut_check_int(idx_rel, 0, "white 23");
+	idx_rel = s_field_idx_rel(OWNER_BOT, 23);
+	ut_check_int(idx_rel, 0, "bottom 23");
 
 	//
-	// rel(rel) = abs WHITE
+	// rel(rel) = abs BOTTOM
 	//
-	idx_rel = s_field_idx_rel(&status, OWNER_WHITE, 0);
-	idx_rel = s_field_idx_rel(&status, OWNER_WHITE, idx_rel);
-	ut_check_int(idx_rel, 0, "white 0 - id");
+	idx_rel = s_field_idx_rel(OWNER_BOT, 0);
+	idx_rel = s_field_idx_rel(OWNER_BOT, idx_rel);
+	ut_check_int(idx_rel, 0, "bottom 0 - id");
 
-	idx_rel = s_field_idx_rel(&status, OWNER_WHITE, 23);
-	idx_rel = s_field_idx_rel(&status, OWNER_WHITE, idx_rel);
-	ut_check_int(idx_rel, 23, "white 23 - id");
+	idx_rel = s_field_idx_rel(OWNER_BOT, 23);
+	idx_rel = s_field_idx_rel(OWNER_BOT, idx_rel);
+	ut_check_int(idx_rel, 23, "bottom 23 - id");
 
 	//
-	// rel(rel) = abs BLACK
+	// rel(rel) = abs TOP
 	//
-	idx_rel = s_field_idx_rel(&status, OWNER_BLACK, 0);
-	idx_rel = s_field_idx_rel(&status, OWNER_BLACK, idx_rel);
-	ut_check_int(idx_rel, 0, "white 0 - id");
+	idx_rel = s_field_idx_rel(OWNER_TOP, 0);
+	idx_rel = s_field_idx_rel(OWNER_TOP, idx_rel);
+	ut_check_int(idx_rel, 0, "top 0 - id");
 
-	idx_rel = s_field_idx_rel(&status, OWNER_BLACK, 23);
-	idx_rel = s_field_idx_rel(&status, OWNER_BLACK, idx_rel);
-	ut_check_int(idx_rel, 23, "white 23 - id");
+	idx_rel = s_field_idx_rel(OWNER_TOP, 23);
+	idx_rel = s_field_idx_rel(OWNER_TOP, idx_rel);
+	ut_check_int(idx_rel, 23, "top 23 - id");
 }
 
 /******************************************************************************
@@ -76,28 +75,26 @@ static void test_s_field_idx_rel() {
  *****************************************************************************/
 
 static void test_s_field_idx_is_out() {
-	s_status status;
+
 	bool result;
 
-	status.up_2_down = OWNER_BLACK;
+	result = s_field_idx_is_out(OWNER_TOP, 0);
+	ut_check_bool(result, false, "top 0");
 
-	result = s_field_idx_is_out(&status, OWNER_BLACK, 0);
-	ut_check_bool(result, false, "black 0");
+	result = s_field_idx_is_out(OWNER_TOP, 23);
+	ut_check_bool(result, false, "top 23");
 
-	result = s_field_idx_is_out(&status, OWNER_BLACK, 23);
-	ut_check_bool(result, false, "black 23");
+	result = s_field_idx_is_out(OWNER_TOP, 24);
+	ut_check_bool(result, true, "top 24");
 
-	result = s_field_idx_is_out(&status, OWNER_BLACK, 24);
-	ut_check_bool(result, true, "black 24");
+	result = s_field_idx_is_out(OWNER_BOT, 23);
+	ut_check_bool(result, false, "bottom 23");
 
-	result = s_field_idx_is_out(&status, OWNER_WHITE, 23);
-	ut_check_bool(result, false, "white 23");
+	result = s_field_idx_is_out(OWNER_BOT, 0);
+	ut_check_bool(result, false, "bottom 0");
 
-	result = s_field_idx_is_out(&status, OWNER_WHITE, 0);
-	ut_check_bool(result, false, "white 0");
-
-	result = s_field_idx_is_out(&status, OWNER_WHITE, -1);
-	ut_check_bool(result, true, "white -1");
+	result = s_field_idx_is_out(OWNER_BOT, -1);
+	ut_check_bool(result, true, "bottom -1");
 
 }
 
@@ -106,23 +103,45 @@ static void test_s_field_idx_is_out() {
  *****************************************************************************/
 
 static void test_s_field_idx_add_abs() {
-	s_status status;
+	int idx1, idx2;
 	int idx;
 
-	status.up_2_down = OWNER_BLACK;
+	idx = s_field_idx_add_abs(OWNER_TOP, 0, 5);
+	ut_check_int(idx, 5, "top 0 - 5");
 
-	idx = s_field_idx_add_abs(&status, OWNER_BLACK, 0, 5);
-	ut_check_int(idx, 5, "black 0 - 5");
-
-	idx = s_field_idx_add_abs(&status, OWNER_WHITE, 23, 5);
-	ut_check_int(idx, 18, "white 23 - 5");
+	idx = s_field_idx_add_abs(OWNER_BOT, 23, 5);
+	ut_check_int(idx, 18, "bottom 23 - 5");
 
 	//
 	// from rel => abs
 	//
-	idx = s_field_idx_rel(&status, OWNER_WHITE, 0);
-	idx = s_field_idx_add_abs(&status, OWNER_WHITE, idx, 5);
-	ut_check_int(idx, 18, "white 0 - 5");
+	idx = s_field_idx_rel(OWNER_BOT, 0);
+	idx = s_field_idx_add_abs(OWNER_BOT, idx, 5);
+	ut_check_int(idx, 18, "bottom 0 - 5");
+
+	//
+	// Using the macro should be the same as:
+	//
+	//   abs => rel
+	//   rel + 5
+	//   rel => abs
+	//
+	idx1 = s_field_idx_rel(OWNER_BOT, 23);
+	idx1 += 5;
+	idx1 = s_field_idx_rel(OWNER_BOT, idx1);
+
+	idx2 = s_field_idx_add_abs(OWNER_BOT, 23, 5);
+	ut_check_int(idx1, idx2, "bottom 0 - 5");
+
+	//
+	// Same with top
+	//
+	idx1 = s_field_idx_rel(OWNER_TOP, 23);
+	idx1 += 5;
+	idx1 = s_field_idx_rel(OWNER_TOP, idx1);
+
+	idx2 = s_field_idx_add_abs(OWNER_TOP, 23, 5);
+	ut_check_int(idx1, idx2, "bottom 0 - 5");
 }
 
 /******************************************************************************
