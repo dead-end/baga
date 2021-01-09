@@ -26,6 +26,7 @@
 #include "lib_utils.h"
 #include "s_game.h"
 #include "nc_board.h"
+#include "rules.h"
 
 /******************************************************************************
  * The function initializes the s_game struct. No checker are placed.
@@ -134,34 +135,10 @@ s_field* s_game_get(s_game *game, const s_field_id id) {
  *
  *****************************************************************************/
 // TODO: unit tests
-// TODO: maybe rules file....
-int s_game_get_min_rel_idx(const s_game *game, const s_status *status) {
-	int idx_abs;
-	const s_field *field;
-
-	for (int idx_rel = 0; idx_rel < POINTS_NUM; idx_rel++) {
-
-		idx_abs = s_field_idx_rel(status->turn, idx_rel);
-
-		field = &game->point[idx_abs];
-
-		if (field->num > 0 && field->owner == status->turn) {
-			log_debug("rel: %d abs: %d", idx_abs, idx_rel);
-			return idx_rel;
-		}
-	}
-
-	log_exit_str("no rel index found!");
-}
-
-/******************************************************************************
- *
- *****************************************************************************/
-// TODO: unit tests
 // TODO: maybe a macro
 bool s_game_is_min_out(const s_game *game, const s_status *status, const int dice) {
 
-	const int idx_rel = s_game_get_min_rel_idx(game, status);
+	const int idx_rel = rules_min_rel_idx(game, status);
 
 	return idx_rel + dice > POINTS_NUM - 1;
 }
@@ -204,16 +181,6 @@ s_field_id s_field_get_dst_id(const s_game *game, const s_field *field_src, cons
 		}
 	}
 
-	//#ifdef DEBUG
-	//
-	//	//
-	//	// TODO: only possible if last phase of the game => to bear off
-	//	//
-	//	if (id_dst.idx < 0 || id_dst.idx >= POINTS_NUM) {
-	//		log_exit("out of range dst: %d src: %d", id_dst.idx, idx_src);
-	//	}
-	//#endif
-
 	return id_dst;
 }
 
@@ -254,43 +221,4 @@ s_field* s_game_can_mv(s_game *game, s_status *status, const s_field *field_src)
 	log_debug("Owner: %d, idx: %d", field_src->owner, field_src->num);
 
 	return field_dst;
-}
-
-/******************************************************************************
- *
- *****************************************************************************/
-
-// TODO: unit test
-void s_game_update_player_phase(const s_game *game, s_status *status) {
-
-	//
-	// Check: E_PHASE_NORMAL / E_PHASE_BEAR_OFF => E_PHASE_BAR
-	//
-	if (game->reenter[status->turn].num > 0) {
-		status->player_phase[status->turn] = E_PHASE_BAR;
-	}
-
-	//
-	// Check: E_PHASE_BEAR_OFF => E_PHASE_WIN
-	//
-	else if (game->bear_off[status->turn].num == CHECKER_NUM) {
-		status->player_phase[status->turn] = E_PHASE_WIN;
-
-	}
-
-	//
-	// Check: E_PHASE_NORMAL  => E_PHASE_BEAR_OFF
-	//
-	// If the phase is already E_PHASE_BEAR_OFF, this can only change by
-	// moving a checker to the bar. As we passes that test, the only possible
-	// change is from E_PHASE_NORMAL to E_PHASE_BEAR_OFF.
-	//
-	else if (status->player_phase[status->turn] != E_PHASE_BEAR_OFF) {
-
-		if (s_game_get_min_rel_idx(game, status) >= 3 * POINTS_QUARTER) {
-			status->player_phase[status->turn] = E_PHASE_BEAR_OFF;
-		}
-	}
-
-	log_debug("Phase: %s", e_player_phase_str(status->player_phase[status->turn]));
 }
