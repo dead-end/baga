@@ -28,7 +28,7 @@
 #include "bg_defs.h"
 #include "s_pos.h"
 
-// TODO: correct
+// TODO: correct? why do we need an owner here in pos
 #include "e_owner.h"
 
 /******************************************************************************
