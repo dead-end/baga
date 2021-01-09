@@ -40,7 +40,7 @@ void s_game_cfg_init(s_game_cfg *game_cfg) {
 	//
 	// Define the player that starts: TOP or BOTTOM
 	//
-	game_cfg->owner_start = OWNER_TOP;
+	game_cfg->owner_start = E_OWNER_TOP;
 
 	//
 	// Color: board border and bear off reversed
