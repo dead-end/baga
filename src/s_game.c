@@ -38,16 +38,16 @@ void s_game_init(s_game *game) {
 	//
 	for (int i = 0; i < POINTS_NUM; i++) {
 
-		s_field_set_full(game->point[i], E_FIELD_POINTS, i, 0, OWNER_NONE);
+		s_field_set_full(game->point[i], E_FIELD_POINTS, i, 0, E_OWNER_NONE);
 	}
 
-	s_field_set_full(game->bear_off[OWNER_TOP], E_FIELD_BEAR_OFF, OWNER_TOP, 0, OWNER_TOP);
+	s_field_set_full(game->bear_off[E_OWNER_TOP], E_FIELD_BEAR_OFF, E_OWNER_TOP, 0, E_OWNER_TOP);
 
-	s_field_set_full(game->bear_off[OWNER_BOT], E_FIELD_BEAR_OFF, OWNER_BOT, 0, OWNER_BOT);
+	s_field_set_full(game->bear_off[E_OWNER_BOT], E_FIELD_BEAR_OFF, E_OWNER_BOT, 0, E_OWNER_BOT);
 
-	s_field_set_full(game->reenter[OWNER_TOP], E_FIELD_BAR, OWNER_TOP, 0, OWNER_TOP);
+	s_field_set_full(game->reenter[E_OWNER_TOP], E_FIELD_BAR, E_OWNER_TOP, 0, E_OWNER_TOP);
 
-	s_field_set_full(game->reenter[OWNER_BOT], E_FIELD_BAR, OWNER_BOT, 0, OWNER_BOT);
+	s_field_set_full(game->reenter[E_OWNER_BOT], E_FIELD_BAR, E_OWNER_BOT, 0, E_OWNER_BOT);
 }
 
 /******************************************************************************
@@ -64,26 +64,26 @@ void s_game_new_game(s_game *game, s_status *status) {
 	//
 	// Index 0
 	//
-	s_field_set(game->point[s_field_idx_rel( OWNER_BOT, 0)], 2, OWNER_BOT);
-	s_field_set(game->point[s_field_idx_rel( OWNER_TOP, 0)], 2, OWNER_TOP);
+	s_field_set(game->point[s_field_idx_rel( E_OWNER_BOT, 0)], 2, E_OWNER_BOT);
+	s_field_set(game->point[s_field_idx_rel( E_OWNER_TOP, 0)], 2, E_OWNER_TOP);
 
 	//
 	// Index 11
 	//
-	s_field_set(game->point[s_field_idx_rel( OWNER_BOT, 11)], 5, OWNER_BOT);
-	s_field_set(game->point[s_field_idx_rel( OWNER_TOP, 11)], 5, OWNER_TOP);
+	s_field_set(game->point[s_field_idx_rel( E_OWNER_BOT, 11)], 5, E_OWNER_BOT);
+	s_field_set(game->point[s_field_idx_rel( E_OWNER_TOP, 11)], 5, E_OWNER_TOP);
 
 	//
 	// Index 16
 	//
-	s_field_set(game->point[s_field_idx_rel( OWNER_BOT, 16)], 3, OWNER_BOT);
-	s_field_set(game->point[s_field_idx_rel( OWNER_TOP, 16)], 3, OWNER_TOP);
+	s_field_set(game->point[s_field_idx_rel( E_OWNER_BOT, 16)], 3, E_OWNER_BOT);
+	s_field_set(game->point[s_field_idx_rel( E_OWNER_TOP, 16)], 3, E_OWNER_TOP);
 
 	//
 	// Index 11
 	//
-	s_field_set(game->point[s_field_idx_rel( OWNER_BOT, 18)], 5, OWNER_BOT);
-	s_field_set(game->point[s_field_idx_rel(OWNER_TOP, 18)], 5, OWNER_TOP);
+	s_field_set(game->point[s_field_idx_rel( E_OWNER_BOT, 18)], 5, E_OWNER_BOT);
+	s_field_set(game->point[s_field_idx_rel(E_OWNER_TOP, 18)], 5, E_OWNER_TOP);
 
 	//
 	// Reset the status for a new game.
@@ -246,7 +246,7 @@ s_field* s_game_can_mv(s_game *game, s_status *status, const s_field *field_src)
 	//
 	// num > 1 => hit
 	//
-	if (field_dst->owner != OWNER_NONE && field_dst->owner != field_src->owner && field_dst->num > 1) {
+	if (field_dst->owner != E_OWNER_NONE && field_dst->owner != field_src->owner && field_dst->num > 1) {
 		log_debug_str("diff owner!");
 		return NULL;
 	}
