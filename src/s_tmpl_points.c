@@ -165,26 +165,26 @@ void s_tmpl_point_create(const s_game_cfg *game_cfg) {
 	//
 	s_color_def_gradient(colors, POINTS_ROW, game_cfg->clr_points_black_start, game_cfg->clr_points_black_end);
 
-	_tmpls[OWNER_TOP][ORIENT_TOP] = s_tarr_new(POINTS_ROW, POINTS_COL);
+	_tmpls[E_OWNER_TOP][ORIENT_TOP] = s_tarr_new(POINTS_ROW, POINTS_COL);
 
-	s_tmpl_point_cp(_tmpls[OWNER_TOP][ORIENT_TOP], _tchar_points, colors, false);
+	s_tmpl_point_cp(_tmpls[E_OWNER_TOP][ORIENT_TOP], _tchar_points, colors, false);
 
-	_tmpls[OWNER_TOP][ORIENT_BOT] = s_tarr_new(POINTS_ROW, POINTS_COL);
+	_tmpls[E_OWNER_TOP][ORIENT_BOT] = s_tarr_new(POINTS_ROW, POINTS_COL);
 
-	s_tmpl_point_cp(_tmpls[OWNER_TOP][ORIENT_BOT], _tchar_points, colors, true);
+	s_tmpl_point_cp(_tmpls[E_OWNER_TOP][ORIENT_BOT], _tchar_points, colors, true);
 
 	//
 	// White points
 	//
 	s_color_def_gradient(colors, POINTS_ROW, game_cfg->clr_points_white_start, game_cfg->clr_points_white_end);
 
-	_tmpls[OWNER_BOT][ORIENT_TOP] = s_tarr_new(POINTS_ROW, POINTS_COL);
+	_tmpls[E_OWNER_BOT][ORIENT_TOP] = s_tarr_new(POINTS_ROW, POINTS_COL);
 
-	s_tmpl_point_cp(_tmpls[OWNER_BOT][ORIENT_TOP], _tchar_points, colors, false);
+	s_tmpl_point_cp(_tmpls[E_OWNER_BOT][ORIENT_TOP], _tchar_points, colors, false);
 
-	_tmpls[OWNER_BOT][ORIENT_BOT] = s_tarr_new(POINTS_ROW, POINTS_COL);
+	_tmpls[E_OWNER_BOT][ORIENT_BOT] = s_tarr_new(POINTS_ROW, POINTS_COL);
 
-	s_tmpl_point_cp(_tmpls[OWNER_BOT][ORIENT_BOT], _tchar_points, colors, true);
+	s_tmpl_point_cp(_tmpls[E_OWNER_BOT][ORIENT_BOT], _tchar_points, colors, true);
 
 }
 
@@ -194,13 +194,13 @@ void s_tmpl_point_create(const s_game_cfg *game_cfg) {
 
 void s_tmpl_point_free() {
 
-	s_tarr_free(&_tmpls[OWNER_TOP][ORIENT_TOP]);
+	s_tarr_free(&_tmpls[E_OWNER_TOP][ORIENT_TOP]);
 
-	s_tarr_free(&_tmpls[OWNER_TOP][ORIENT_BOT]);
+	s_tarr_free(&_tmpls[E_OWNER_TOP][ORIENT_BOT]);
 
-	s_tarr_free(&_tmpls[OWNER_BOT][ORIENT_TOP]);
+	s_tarr_free(&_tmpls[E_OWNER_BOT][ORIENT_TOP]);
 
-	s_tarr_free(&_tmpls[OWNER_BOT][ORIENT_BOT]);
+	s_tarr_free(&_tmpls[E_OWNER_BOT][ORIENT_BOT]);
 }
 
 /******************************************************************************
