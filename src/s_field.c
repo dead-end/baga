@@ -26,29 +26,6 @@
 #include "s_field.h"
 
 /******************************************************************************
- * The function returns a string representation of the owner of a field.
- *****************************************************************************/
-// TODO: status as a parameter => "BLACK" possible
-char* s_field_owner_str(const e_owner owner) {
-
-	switch (owner) {
-
-	case OWNER_TOP:
-		return "TOP_2_BOTTOM";
-
-	case OWNER_BOT:
-		return "BOTTOM_2_TOP";
-
-	case OWNER_NONE:
-		return "EMPTY";
-
-	default:
-		log_exit("Unknown owner: %d", owner)
-		;
-	}
-}
-
-/******************************************************************************
  * The function returns a string representation of the type of a field.
  *****************************************************************************/
 
@@ -85,7 +62,7 @@ static void s_field_log(const s_field *field, const char *msg) {
 
 	log_debug("[idx: %d type: %s num: %d owner: %s] - %s",
 
-	field->id.idx, s_field_type_str(field->id.type), field->num, s_field_owner_str(field->owner), msg);
+	field->id.idx, s_field_type_str(field->id.type), field->num, e_owner_str(field->owner), msg);
 }
 
 #endif
@@ -147,7 +124,7 @@ void s_field_mv(s_field *field_src, s_field *field_dst) {
 	// If no checker is left on the source field, we delete the owner.
 	//
 	if (field_src->id.type == E_FIELD_POINTS && field_src->num == 0) {
-		field_src->owner = OWNER_NONE;
+		field_src->owner = E_OWNER_NONE;
 	}
 
 #ifdef DEBUG
@@ -176,7 +153,7 @@ int s_field_get_src_idx(const s_field *field_src) {
 #endif
 
 	if (field_src->id.type == E_FIELD_BAR) {
-		return (OWNER_TOP == field_src->owner) ? -1 : POINTS_NUM;
+		return (E_OWNER_TOP == field_src->owner) ? -1 : POINTS_NUM;
 	}
 
 	return field_src->id.idx;
