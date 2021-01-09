@@ -25,6 +25,8 @@
 #ifndef INC_BG_DEFS_H_
 #define INC_BG_DEFS_H_
 
+#include "e_owner.h"
+
 /******************************************************************************
  * Definition of constants, which are widely used. It is not easy to define
  * where they should be defined without having circular dependencies.
@@ -101,6 +103,6 @@ typedef enum {
  * e_player_color_2_owner(game_cfg->owner_top_color, PLAYER_COLOR_BLACK)
  *****************************************************************************/
 
-#define e_player_color_2_owner(tc,pc) ((tc) == (pc)) ? OWNER_TOP : OWNER_BOT
+#define e_player_color_2_owner(tc,pc) ((tc) == (pc)) ? E_OWNER_TOP : E_OWNER_BOT
 
 #endif /* INC_BG_DEFS_H_ */
