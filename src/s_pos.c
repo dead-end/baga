@@ -28,6 +28,9 @@
 #include "bg_defs.h"
 #include "s_pos.h"
 
+// TODO: correct
+#include "e_owner.h"
+
 /******************************************************************************
  * Definitions of the various areas of the board. An area has a position and a
  * dimension. The main board has the following four areas:
@@ -315,7 +318,7 @@ void s_pos_mouse_target(const s_point mouse, s_field_id *field_id) {
 	//
 	else if (s_area_is_inside(&_board_areas.bar_inner, &mouse)) {
 		field_id->type = E_FIELD_BAR;
-		field_id->idx = s_pos_is_point_upper(_board_areas.bar_inner, mouse) ? OWNER_TOP : OWNER_BOT;
+		field_id->idx = s_pos_is_point_upper(_board_areas.bar_inner, mouse) ? E_OWNER_TOP : E_OWNER_BOT;
 	}
 
 	//
@@ -323,7 +326,7 @@ void s_pos_mouse_target(const s_point mouse, s_field_id *field_id) {
 	//
 	else if (s_area_is_inside(&_board_areas.bear_off, &mouse)) {
 		field_id->type = E_FIELD_BEAR_OFF;
-		field_id->idx = s_pos_is_point_upper(_board_areas.bear_off, mouse) ? OWNER_TOP : OWNER_BOT;
+		field_id->idx = s_pos_is_point_upper(_board_areas.bear_off, mouse) ? E_OWNER_TOP : E_OWNER_BOT;
 	}
 
 	//
