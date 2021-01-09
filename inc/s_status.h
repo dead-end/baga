@@ -28,6 +28,7 @@
 #include "bg_defs.h"
 #include "s_dices.h"
 #include "s_game_cfg.h"
+#include "e_owner.h"
 
 /******************************************************************************
  * The enum defines the possible phases of a player.
