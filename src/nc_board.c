@@ -35,6 +35,7 @@
 #include "s_board.h"
 #include "s_game.h"
 #include "e_owner.h"
+#include "rules.h"
 
 // todo: comment, file, ...
 
@@ -350,7 +351,7 @@ void nc_board_process(s_game *game, s_status *status, const s_field_id id) {
 
 	traveler_mv(field_src, field_dst);
 
-	s_game_update_player_phase(game, status);
+	rules_update_phase(game, status);
 
 	//TODO: correct here ?? cross dependency s_status <=> nc_board.
 	s_status_mv_done(status);
