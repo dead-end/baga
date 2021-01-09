@@ -83,13 +83,25 @@ typedef struct {
 
 #define s_field_idx_rel(o,i) ((OWNER_TOP == (o)) ? (i) : lu_reverse_idx(POINTS_NUM,i))
 
+/******************************************************************************
+ * The macro adds a value to an absolute index. This means adding or
+ * subtracting depending on
+ *****************************************************************************/
+
 #define s_field_idx_add_abs(o,i,a) ((OWNER_TOP == (o)) ? ((i) + (a)) : ((i) - (a)))
 
 /******************************************************************************
- * TODO: mixing rel and abs values???
+ * The macro checks if the index is above the max value. We assume that the
+ * value is absolute. We get the relative index and this index has to be over
+ * 23.
  *****************************************************************************/
 
 #define s_field_idx_is_out(o,i) (s_field_idx_rel(o,i) > POINTS_NUM - 1)
+
+/******************************************************************************
+ * The macro checks if the index is the max value. We assume that the value is
+ * absolute. We get the relative index and this index has to be 23.
+ *****************************************************************************/
 
 #define s_field_idx_is_ex_out(o,i) (s_field_idx_rel(o,i) == POINTS_NUM)
 
