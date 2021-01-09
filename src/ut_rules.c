@@ -29,6 +29,12 @@
 #include "rules.h"
 
 /******************************************************************************
+ * The macro initializes the game and the status.
+ *****************************************************************************/
+
+#define init_game_status(g,s,o) s_game_init(g); (s).turn = (o)
+
+/******************************************************************************
  * The function is a helper function for the test_rules_update_phase() test.
  *****************************************************************************/
 
@@ -46,12 +52,6 @@ static void check_rules_update_phase(const s_game *game, s_status *status, e_pla
 }
 
 /******************************************************************************
- * The macro is a helper for the test_rules_update_phase() test.
- *****************************************************************************/
-
-#define init_rules_update_phase(g,s,o) s_game_init(g); (s).turn = (o)
-
-/******************************************************************************
  * The function tests the rules_update_phase() function.
  *****************************************************************************/
 
@@ -62,23 +62,23 @@ static void test_rules_update_phase() {
 	//
 	// Check: win
 	//
-	init_rules_update_phase(&game, status, E_OWNER_TOP);
+	init_game_status(&game, status, E_OWNER_TOP);
 	s_game_set_bear_off(&game, status.turn, CHECKER_NUM);
 	check_rules_update_phase(&game, &status, E_PHASE_WIN, "win - top");
 
-	init_rules_update_phase(&game, status, E_OWNER_BOT);
+	init_game_status(&game, status, E_OWNER_BOT);
 	s_game_set_bear_off(&game, status.turn, CHECKER_NUM);
 	check_rules_update_phase(&game, &status, E_PHASE_WIN, "win - bottom");
 
 	//
 	// Check: bar
 	//
-	init_rules_update_phase(&game, status, E_OWNER_TOP);
+	init_game_status(&game, status, E_OWNER_TOP);
 	s_game_set_bear_off(&game, status.turn, CHECKER_NUM -1);
 	s_game_set_bar(&game, status.turn, 1);
 	check_rules_update_phase(&game, &status, E_PHASE_BAR, "bar - top");
 
-	init_rules_update_phase(&game, status, E_OWNER_BOT);
+	init_game_status(&game, status, E_OWNER_BOT);
 	s_game_set_bear_off(&game, status.turn, CHECKER_NUM -1);
 	s_game_set_bar(&game, status.turn, 1);
 	check_rules_update_phase(&game, &status, E_PHASE_BAR, "bar - bottom");
@@ -86,26 +86,68 @@ static void test_rules_update_phase() {
 	//
 	// Check: bear-off
 	//
-	init_rules_update_phase(&game, status, E_OWNER_TOP);
+	init_game_status(&game, status, E_OWNER_TOP);
 	s_game_set_point_rel(&game, status.turn, 20, CHECKER_NUM);
 	check_rules_update_phase(&game, &status, E_PHASE_BEAR_OFF, "bear-off - top");
 
-	init_rules_update_phase(&game, status, E_OWNER_BOT);
+	init_game_status(&game, status, E_OWNER_BOT);
 	s_game_set_point_rel(&game, status.turn, 20, CHECKER_NUM);
 	check_rules_update_phase(&game, &status, E_PHASE_BEAR_OFF, "bear-off - bottom");
 
 	//
 	// Check: normal
 	//
-	init_rules_update_phase(&game, status, E_OWNER_TOP);
+	init_game_status(&game, status, E_OWNER_TOP);
 	s_game_set_point_rel(&game, status.turn, 20, CHECKER_NUM - 1);
 	s_game_set_point_rel(&game, status.turn, 10, 1);
 	check_rules_update_phase(&game, &status, E_PHASE_NORMAL, "normal - top");
 
-	init_rules_update_phase(&game, status, E_OWNER_TOP);
+	init_game_status(&game, status, E_OWNER_TOP);
 	s_game_set_point_rel(&game, status.turn, 20, CHECKER_NUM - 1);
 	s_game_set_point_rel(&game, status.turn, 10, 1);
 	check_rules_update_phase(&game, &status, E_PHASE_NORMAL, "normal - bottom");
+}
+
+/******************************************************************************
+ * The function tests the rules_min_rel_idx() function.
+ *****************************************************************************/
+
+static void test_rules_min_rel_idx() {
+	s_game game;
+	s_status status;
+
+	//
+	// Check: 0
+	//
+	init_game_status(&game, status, E_OWNER_TOP);
+	s_game_set_point_rel(&game, status.turn, 0, 1);
+	ut_check_int(rules_min_rel_idx(&game, &status), 0, "top 0");
+
+	init_game_status(&game, status, E_OWNER_BOT);
+	s_game_set_point_rel(&game, status.turn, 0, 1);
+	ut_check_int(rules_min_rel_idx(&game, &status), 0, "bottom 0");
+
+	//
+	// Check: 10
+	//
+	init_game_status(&game, status, E_OWNER_TOP);
+	s_game_set_point_rel(&game, status.turn, 10, 1);
+	ut_check_int(rules_min_rel_idx(&game, &status), 10, "top 10");
+
+	init_game_status(&game, status, E_OWNER_BOT);
+	s_game_set_point_rel(&game, status.turn, 10, 1);
+	ut_check_int(rules_min_rel_idx(&game, &status), 10, "bottom 10");
+
+	//
+	// Check: 23
+	//
+	init_game_status(&game, status, E_OWNER_TOP);
+	s_game_set_point_rel(&game, status.turn, POINTS_NUM - 1, 1);
+	ut_check_int(rules_min_rel_idx(&game, &status), POINTS_NUM - 1, "top 23");
+
+	init_game_status(&game, status, E_OWNER_BOT);
+	s_game_set_point_rel(&game, status.turn, POINTS_NUM - 1, 1);
+	ut_check_int(rules_min_rel_idx(&game, &status), POINTS_NUM - 1, "bottom 23");
 }
 
 /******************************************************************************
@@ -115,4 +157,6 @@ static void test_rules_update_phase() {
 void ut_rules_exec() {
 
 	test_rules_update_phase();
+
+	test_rules_min_rel_idx();
 }
