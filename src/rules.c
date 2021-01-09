@@ -27,6 +27,35 @@
 #include "rules.h"
 
 /******************************************************************************
+ * The function computes the minimal relative index for the player that is in
+ * turn. The function assumes that at least one checker is on a point.
+ *
+ * (unit tested)
+ *****************************************************************************/
+
+int rules_min_rel_idx(const s_game *game, const s_status *status) {
+	int idx_abs;
+	const s_field *field;
+
+	for (int idx_rel = 0; idx_rel < POINTS_NUM; idx_rel++) {
+
+		idx_abs = s_field_idx_rel(status->turn, idx_rel);
+
+		field = &game->point[idx_abs];
+
+		//
+		// We stop as we find the first checker.
+		//
+		if (field->num > 0 && field->owner == status->turn) {
+			log_debug("Owner: %s relative: %d absolute: %d", e_owner_str(status->turn), idx_abs, idx_rel);
+			return idx_rel;
+		}
+	}
+
+	log_exit_str("No checker found on the points!");
+}
+
+/******************************************************************************
  * The function updates the player phase for that player that is in turn.
  *
  * (unit tested)
@@ -51,7 +80,7 @@ void rules_update_phase(const s_game *game, s_status *status) {
 	//
 	// Check: E_PHASE_NORMAL / E_PHASE_BAR  => E_PHASE_BEAR_OFF
 	//
-	else if (s_game_get_min_rel_idx(game, status) >= 3 * POINTS_QUARTER) {
+	else if (rules_min_rel_idx(game, status) >= 3 * POINTS_QUARTER) {
 		status->player_phase[status->turn] = E_PHASE_BEAR_OFF;
 	}
 

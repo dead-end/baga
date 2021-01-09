@@ -34,4 +34,6 @@
 
 void rules_update_phase(const s_game *game, s_status *status);
 
+int rules_min_rel_idx(const s_game *game, const s_status *status);
+
 #endif /* INC_RULES_H_ */
