@@ -35,7 +35,7 @@
 #include "dice.h"
 
 /******************************************************************************
- *
+ * Definition of the characters to build the templates.
  *****************************************************************************/
 
 //
@@ -66,132 +66,152 @@ static const s_point _pos_undo = { .row = 0, .col = 2 * (D_COLS + D_PAD) };
 static const s_point _pos_confim = { .row = 0, .col = 3 * (D_COLS + D_PAD) };
 
 /******************************************************************************
- *
+ * The constant dimension of the templates.
  *****************************************************************************/
 
 static const s_point _tmp_dim = { .row = D_ROWS, .col = D_COLS };
 
 /******************************************************************************
- *
+ * The definition of the characters for the dices.
  *****************************************************************************/
 
 static const wchar_t _tmpl_dices[6][D_ROWS][D_COLS] = {
 
 {
 
-{ UP, UP, UP, UP, UP, UP, UP },
+// Dice: 1
 
-{ FU, FU, FU, FU, FU, FU, FU },
+		{ UP, UP, UP, UP, UP, UP, UP },
 
-{ FU, FU, FU, UP, FU, FU, FU },
+		{ FU, FU, FU, FU, FU, FU, FU },
 
-{ FU, FU, FU, FU, FU, FU, FU },
+		{ FU, FU, FU, UP, FU, FU, FU },
 
-},
-
-{
-
-{ UP, UP, UP, UP, UP, UP, UP },
-
-{ FU, UP, FU, FU, FU, FU, FU },
-
-{ FU, FU, FU, FU, FU, FU, FU },
-
-{ FU, FU, FU, FU, FU, UP, FU },
+		{ FU, FU, FU, FU, FU, FU, FU },
 
 },
 
 {
 
-{ UP, UP, UP, UP, UP, UP, UP },
+// Dice: 2
 
-{ FU, FU, FU, FU, FU, UP, FU },
+		{ UP, UP, UP, UP, UP, UP, UP },
 
-{ FU, FU, FU, UP, FU, FU, FU },
+		{ FU, UP, FU, FU, FU, FU, FU },
 
-{ FU, UP, FU, FU, FU, FU, FU },
+		{ FU, FU, FU, FU, FU, FU, FU },
 
-},
-
-{
-
-{ UP, UP, UP, UP, UP, UP, UP },
-
-{ FU, UP, FU, FU, FU, UP, FU },
-
-{ FU, FU, FU, FU, FU, FU, FU },
-
-{ FU, UP, FU, FU, FU, UP, FU },
+		{ FU, FU, FU, FU, FU, UP, FU },
 
 },
 
 {
 
-{ UP, UP, UP, UP, UP, UP, UP },
+// Dice: 3
 
-{ FU, UP, FU, FU, FU, UP, FU },
+		{ UP, UP, UP, UP, UP, UP, UP },
 
-{ FU, FU, FU, UP, FU, FU, FU },
+		{ FU, FU, FU, FU, FU, UP, FU },
 
-{ FU, UP, FU, FU, FU, UP, FU },
+		{ FU, FU, FU, UP, FU, FU, FU },
+
+		{ FU, UP, FU, FU, FU, FU, FU },
 
 },
 
 {
 
-{ UP, UP, UP, UP, UP, UP, UP },
+// Dice: 4
 
-{ FU, UP, FU, FU, FU, UP, FU },
+		{ UP, UP, UP, UP, UP, UP, UP },
 
-{ FU, UP, FU, FU, FU, UP, FU },
+		{ FU, UP, FU, FU, FU, UP, FU },
 
-{ FU, UP, FU, FU, FU, UP, FU },
+		{ FU, FU, FU, FU, FU, FU, FU },
+
+		{ FU, UP, FU, FU, FU, UP, FU },
+
+},
+
+{
+
+// Dice: 5
+
+		{ UP, UP, UP, UP, UP, UP, UP },
+
+		{ FU, UP, FU, FU, FU, UP, FU },
+
+		{ FU, FU, FU, UP, FU, FU, FU },
+
+		{ FU, UP, FU, FU, FU, UP, FU },
+
+},
+
+{
+
+// Dice: 6
+
+		{ UP, UP, UP, UP, UP, UP, UP },
+
+		{ FU, UP, FU, FU, FU, UP, FU },
+
+		{ FU, UP, FU, FU, FU, UP, FU },
+
+		{ FU, UP, FU, FU, FU, UP, FU },
 
 }
 
 };
 
 /******************************************************************************
- *
+ * Definition of the characters of the undo button.
  *****************************************************************************/
 
 static const wchar_t _tmpl_undo[D_ROWS][D_COLS] =
 
 {
 
-{ UP, UP, UP, UP, UP, UP, UP },
+// Button: undo
 
-{ FU, UP, LO, FU, LO, UP, FU },
+		{ UP, UP, UP, UP, UP, UP, UP },
 
-{ FU, FU, LO, UP, LO, FU, FU },
+		{ FU, UP, LO, FU, LO, UP, FU },
 
-{ FU, UP, FU, FU, FU, UP, FU },
+		{ FU, FU, LO, UP, LO, FU, FU },
+
+		{ FU, UP, FU, FU, FU, UP, FU },
 
 };
 
 /******************************************************************************
- *
+ * Definition of the characters of the confirm button.
  *****************************************************************************/
 
 static const wchar_t _tmpl_confirm[D_ROWS][D_COLS] =
 
 {
 
-{ UP, UP, UP, UP, UP, UP, UP },
+// Button: confirm
 
-{ FU, FU, FU, FU, FU, LO, FU },
+		{ UP, UP, UP, UP, UP, UP, UP },
 
-{ FU, LO, FU, LO, UP, FU, FU },
+		{ FU, FU, FU, FU, FU, LO, FU },
 
-{ FU, FU, UP, FU, FU, FU, FU },
+		{ FU, LO, FU, LO, UP, FU, FU },
+
+		{ FU, FU, UP, FU, FU, FU, FU },
 
 };
 
 /******************************************************************************
- *
+ * The window for the dices and buttons.
  *****************************************************************************/
 
 static WINDOW *_win;
+
+/******************************************************************************
+ * The template that is used for the dices and the buttons.
+ *****************************************************************************/
 
 static s_tarr *_tmpl;
 
@@ -247,36 +267,47 @@ void dice_init(const s_game_cfg *game_cfg, WINDOW *win) {
 	_color_dices[owner_white][D_STAT_ACTIVE] = s_color_def_hex_create(game_cfg->clr_dice_white_active);
 	_color_dices[owner_white][D_STAT_INACTIVE] = s_color_def_hex_create(game_cfg->clr_dice_white_inactive);
 
-	_color_ctrl_confirm[D_STAT_ACTIVE] = s_color_def_hex_create(game_cfg->clr_ctrl_confirm_active);
-	_color_ctrl_confirm[D_STAT_INACTIVE] = s_color_def_hex_create(game_cfg->clr_ctrl_confirm_inactive);
-
+	//
+	// Create color: undo
+	//
 	_color_ctrl_undo[D_STAT_ACTIVE] = s_color_def_hex_create(game_cfg->clr_ctrl_undo_active);
 	_color_ctrl_undo[D_STAT_INACTIVE] = s_color_def_hex_create(game_cfg->clr_ctrl_undo_inactive);
 
+	//
+	// Create color: confirm
+	//
+	_color_ctrl_confirm[D_STAT_ACTIVE] = s_color_def_hex_create(game_cfg->clr_ctrl_confirm_active);
+	_color_ctrl_confirm[D_STAT_INACTIVE] = s_color_def_hex_create(game_cfg->clr_ctrl_confirm_inactive);
+
+	//
+	// Create color: background
+	//
 	_color_ctrl_bg[D_STAT_ACTIVE] = s_color_def_hex_create(game_cfg->clr_ctrl_bg_active);
 	_color_ctrl_bg[D_STAT_INACTIVE] = s_color_def_hex_create(game_cfg->clr_ctrl_bg_inactive);
 }
 
 /******************************************************************************
- *
+ * The function does the freeing of the resources.
  *****************************************************************************/
 
 void dice_free() {
+
 	s_tarr_free(&_tmpl);
 }
 
 /******************************************************************************
- *
+ * The function is called with template of character, the forground and the
+ * background colors.
  *****************************************************************************/
 
-static s_tarr* dice_get_tmpl(const int num, const short fg, const short bg) {
+static s_tarr* dice_update_tmpl(const wchar_t _tmpl_chr[D_ROWS][D_COLS], const short fg, const short bg) {
 	s_tchar *tchar;
 
 	for (int row = 0; row < D_ROWS; row++) {
 		for (int col = 0; col < D_COLS; col++) {
 
 			tchar = &s_tarr_get(_tmpl, row, col);
-			tchar->chr = _tmpl_dices[num - 1][row][col];
+			tchar->chr = _tmpl_chr[row][col];
 			tchar->fg = fg;
 			tchar->bg = (row == 0) ? 0 : bg;
 		}
@@ -286,30 +317,10 @@ static s_tarr* dice_get_tmpl(const int num, const short fg, const short bg) {
 }
 
 /******************************************************************************
- *
+ * The function sets the colors for the dices.
  *****************************************************************************/
 
-static s_tarr* ctl_get_tmpl(const wchar_t _tmpl_ctl[D_ROWS][D_COLS], const short fg, const short bg) {
-	s_tchar *tchar;
-
-	for (int row = 0; row < D_ROWS; row++) {
-		for (int col = 0; col < D_COLS; col++) {
-
-			tchar = &s_tarr_get(_tmpl, row, col);
-			tchar->chr = _tmpl_ctl[row][col];
-			tchar->fg = fg;
-			tchar->bg = (row == 0) ? 0 : bg;
-		}
-	}
-
-	return _tmpl;
-}
-
-/******************************************************************************
- *
- *****************************************************************************/
-
-static void get_color(const s_status *status, const bool active, short *fg, short *bg) {
+static void dice_get_color(const s_status *status, const bool active, short *fg, short *bg) {
 
 	const int idx = active ? D_STAT_ACTIVE : D_STAT_INACTIVE;
 
@@ -329,15 +340,15 @@ void dice_print(const s_status *status) {
 	//
 	// Dice: 0
 	//
-	get_color(status, s_dices_has_status(status->dices, 0, E_DICE_ACTIVE), &fg, &bg);
-	tmpl = dice_get_tmpl(status->dices.dice[0].value, fg, bg);
+	dice_get_color(status, s_dices_has_status(status->dices, 0, E_DICE_ACTIVE), &fg, &bg);
+	tmpl = dice_update_tmpl(_tmpl_dices[status->dices.dice[0].value - 1], fg, bg);
 	s_tarr_print(_win, tmpl, _pos_dice_0);
 
 	//
 	// Dice: 1
 	//
-	get_color(status, s_dices_has_status(status->dices, 1, E_DICE_ACTIVE), &fg, &bg);
-	tmpl = dice_get_tmpl(status->dices.dice[1].value, fg, bg);
+	dice_get_color(status, s_dices_has_status(status->dices, 1, E_DICE_ACTIVE), &fg, &bg);
+	tmpl = dice_update_tmpl(_tmpl_dices[status->dices.dice[1].value - 1], fg, bg);
 	s_tarr_print(_win, tmpl, _pos_dice_1);
 
 	//
@@ -346,8 +357,7 @@ void dice_print(const s_status *status) {
 	if (s_dices_can_undo(status->dices)) {
 		bg = _color_ctrl_undo[D_STAT_ACTIVE];
 		fg = _color_ctrl_bg[D_STAT_ACTIVE];
-
-		tmpl = ctl_get_tmpl(_tmpl_undo, fg, bg);
+		tmpl = dice_update_tmpl(_tmpl_undo, fg, bg);
 		s_tarr_print(_win, tmpl, _pos_undo);
 
 	} else {
@@ -360,8 +370,7 @@ void dice_print(const s_status *status) {
 	if (s_dices_is_done(status->dices)) {
 		bg = _color_ctrl_confirm[D_STAT_ACTIVE];
 		fg = _color_ctrl_bg[D_STAT_ACTIVE];
-
-		tmpl = ctl_get_tmpl(_tmpl_confirm, fg, bg);
+		tmpl = dice_update_tmpl(_tmpl_confirm, fg, bg);
 		s_tarr_print(_win, tmpl, _pos_confim);
 
 	} else {
