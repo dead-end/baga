@@ -77,6 +77,8 @@ void s_game_print(const s_game *game);
 
 s_field* s_game_get(s_game *game, const s_field_id id);
 
+s_field* s_game_set(s_game *game, const e_field_type type, const int idx, const e_owner owner, const int num);
+
 s_field* s_game_can_mv(s_game *game, s_status *status, const s_field *field_src);
 
 #endif /* INC_S_GAME_H_ */
