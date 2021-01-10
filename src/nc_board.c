@@ -338,14 +338,14 @@ void nc_board_process(s_game *game, s_status *status, const s_field_id id) {
 		return;
 	}
 
-	//
-	// Identify the source field
-	//
-	s_field *field_src = s_game_get(game, id);
+	s_field *field_src = rules_get_field_src(game, status, id);
+	if (field_src == NULL) {
+		return;
+	}
 
 	s_field *field_dst = s_game_can_mv(game, status, field_src);
 	if (field_dst == NULL) {
-		log_debug("field - type: %s owner: %s index: %d num: %d", e_field_type_str(field_src->id.type), e_owner_str(field_src->owner), field_src->id.idx, field_src->num);
+		log_debug_str("No target field found");
 		return;
 	}
 
