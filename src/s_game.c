@@ -140,6 +140,45 @@ s_field* s_game_get(s_game *game, const s_field_id id) {
 }
 
 /******************************************************************************
+ * The function sets a field and returns a pointer to that field.
+ *****************************************************************************/
+
+s_field* s_game_set(s_game *game, const e_field_type type, const int idx, const e_owner owner, const int num) {
+
+	s_field *field;
+
+	switch (type) {
+
+	case E_FIELD_BAR:
+		field = &game->reenter[idx];
+		if (idx != owner) {
+			log_exit("idx: %d owner: %d", idx, owner);
+		}
+		break;
+
+	case E_FIELD_BEAR_OFF:
+		field = &game->bear_off[idx];
+		if (idx != owner) {
+			log_exit("idx: %d owner: %d", idx, owner);
+		}
+		break;
+
+	case E_FIELD_POINTS:
+		field = &game->point[idx];
+		field->owner = owner;
+		break;
+
+	default:
+		log_exit("Unknown type: %d", type)
+		;
+	}
+
+	field->num = num;
+
+	return field;
+}
+
+/******************************************************************************
  *
  *****************************************************************************/
 // TODO: unit tests
@@ -204,11 +243,6 @@ s_field_id s_field_get_dst_id(const s_game *game, const s_field *field_src, cons
 // TODO: the function is not complete.
 // - ensure that it is the turn of the owner of the checker.
 s_field* s_game_can_mv(s_game *game, s_status *status, const s_field *field_src) {
-
-	if (!s_field_is_valid_src(field_src, status)) {
-		log_debug_str("Source not valid!");
-		return NULL;
-	}
 
 	const s_field_id id_dst = s_field_get_dst_id(game, field_src, status);
 	if (id_dst.type == E_FIELD_NONE) {
