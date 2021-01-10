@@ -32,7 +32,7 @@
 
 #ifdef DEBUG
 
-static void s_field_log(const s_field *field, const char *msg) {
+void s_field_log(const s_field *field, const char *msg) {
 
 	log_debug("[idx: %d type: %s num: %d owner: %s] - %s",
 
@@ -46,42 +46,41 @@ static void s_field_log(const s_field *field, const char *msg) {
  * (turn).
  *****************************************************************************/
 
-bool s_field_is_valid_src(const s_field *field, const s_status *status) {
-
-	log_debug("Phase: %s", e_player_phase_str(status->player_phase[status->turn]));
-
-#ifdef DEBUG
-
-	//
-	// Ensure that the game did not ended.
-	//
-	if (s_status_is_end(status)) {
-		log_exit_str("Game ended!");
-	}
-#endif
-
-	//
-	// If a checker reached the bear off area, it cannot moved again.
-	//
-	if (field->id.type == E_FIELD_BEAR_OFF) {
-		return false;
-	}
-
-	//
-	// If there is no checker on the field, there is nothing to do.
-	//
-	if (field->num == 0 || field->owner != status->turn) {
-		return false;
-	}
-
-	if (status->player_phase[status->turn] == E_PHASE_BAR) {
-		log_debug_str("E_PHASE_BAR => source has to be the bar.");
-		return field->id.type == E_FIELD_BAR;
-	}
-
-	return true;
-}
-
+//bool s_field_is_valid_src(const s_field *field, const s_status *status) {
+//
+//	log_debug("Phase: %s", e_player_phase_str(status->player_phase[status->turn]));
+//
+//#ifdef DEBUG
+//
+//	//
+//	// Ensure that the game did not ended.
+//	//
+//	if (s_status_is_end(status)) {
+//		log_exit_str("Game ended!");
+//	}
+//#endif
+//
+//	//
+//	// If a checker reached the bear off area, it cannot moved again.
+//	//
+//	if (field->id.type == E_FIELD_BEAR_OFF) {
+//		return false;
+//	}
+//
+//	//
+//	// If there is no checker on the field, there is nothing to do.
+//	//
+//	if (field->num == 0 || field->owner != status->turn) {
+//		return false;
+//	}
+//
+//	if (status->player_phase[status->turn] == E_PHASE_BAR) {
+//		log_debug_str("E_PHASE_BAR => source has to be the bar.");
+//		return field->id.type == E_FIELD_BAR;
+//	}
+//
+//	return true;
+//}
 /******************************************************************************
  * The function moves a checker from a source to a destination field.
  *****************************************************************************/
