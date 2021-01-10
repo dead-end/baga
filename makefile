@@ -98,12 +98,12 @@ SRC_LIBS = \
 	$(SRC_DIR)/e_owner.c    \
 	$(SRC_DIR)/rules.c  \
 	$(SRC_DIR)/ut_rules.c  \
+	$(SRC_DIR)/s_field_id.c   \
 
 INC_ADD = \
 	$(INCLUDE_DIR)/lib_s_tchar.h \
 	$(INCLUDE_DIR)/lib_utils.h \
 	$(INCLUDE_DIR)/bg_defs.h   \
-	$(INCLUDE_DIR)/s_field_id.h   \
 	$(INCLUDE_DIR)/s_area.h  \
 
 OBJ_LIBS = $(subst $(SRC_DIR),$(BUILD_DIR),$(subst .c,.o,$(SRC_LIBS)))

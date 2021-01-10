@@ -1,7 +1,7 @@
 /*
  * MIT License
  *
- * Copyright (c) 2020 dead-end
+ * Copyright (c) 2021 dead-end
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -22,57 +22,70 @@
  * SOFTWARE.
  */
 
-#ifndef INC_S_FIELD_ID_H_
-#define INC_S_FIELD_ID_H_
+#include "bg_defs.h"
+#include "lib_logging.h"
+#include "s_field_id.h"
 
 /******************************************************************************
- * An enumeration for the three types of fields, which can contain checkers.
+ * The function returns a string representation of the type of a field.
  *****************************************************************************/
 
-typedef enum {
+char* e_field_type_str(const e_field_type type) {
 
-	E_FIELD_POINTS = 0, E_FIELD_BAR = 1, E_FIELD_BEAR_OFF = 2, E_FIELD_NONE = -1,
+	switch (type) {
 
-} e_field_type;
+	case E_FIELD_POINTS:
+		return "POINT";
+
+	case E_FIELD_BAR:
+		return "BAR";
+
+	case E_FIELD_BEAR_OFF:
+		return "BEAR-OFF";
+
+	case E_FIELD_NONE:
+		return "NONE";
+
+	default:
+		log_exit("Unknown type: %d", type)
+		;
+	}
+}
 
 /******************************************************************************
- * The struct defines a field in the game, which is one of the points or one of
- * the bar or bear off areas.
+ * The function ensures that the field id has valid values.
  *****************************************************************************/
 
-typedef struct {
+void s_field_id_ensure_valid(const s_field_id id) {
 
-	//
-	// The type of the field.
-	//
-	e_field_type type;
+	switch (id.type) {
 
-	//
-	// The index of a point (starting upper right with 0) or black / white for
-	// the bar or the bear off area.
-	//
-	int idx;
+	case E_FIELD_BAR:
+		if (id.idx < 0 || id.idx > NUM_PLAYER) {
+			log_exit("Field: E_FIELD_BAR index out of range: %d", id.idx);
+		}
+		break;
 
-} s_field_id;
+	case E_FIELD_BEAR_OFF:
+		if (id.idx < 0 || id.idx > NUM_PLAYER) {
+			log_exit("Field: E_FIELD_BEAR_OFF index out of range: %d", id.idx);
+		}
+		break;
 
-/******************************************************************************
- * Macro definitions.
- *****************************************************************************/
+	case E_FIELD_POINTS:
+		if (id.idx < 0 || id.idx > POINTS_NUM) {
+			log_exit("Field: E_FIELD_POINTS index out of range: %d", id.idx);
+		}
+		break;
 
-#define FIELD_NONE_IDX -1
+	case E_FIELD_NONE:
+		if (id.idx != FIELD_NONE_IDX) {
+			log_exit("Field: E_FIELD_NONE index out of range: %d", id.idx);
+		}
+		break;
+	default:
+		log_exit("Unknown type: %d", id.type)
+		;
+	}
+}
 
-#define s_field_id_set(f,t,i) (f).type = (t) ; (f).idx = (i)
-
-#define s_field_id_set_ptr(f,t,i) (f)->type = (t) ; (f)->idx = (i)
-
-#define s_field_id_set_none_ptr(f) s_field_id_set_ptr(f, E_FIELD_NONE, FIELD_NONE_IDX)
-
-/******************************************************************************
- * The function declarations.
- *****************************************************************************/
-
-char* e_field_type_str(const e_field_type type);
-
-void s_field_id_ensure_valid(s_field_id id);
-
-#endif /* INC_S_FIELD_ID_H_ */
