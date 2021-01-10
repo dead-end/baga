@@ -109,8 +109,6 @@ typedef struct {
  * Function declarations.
  *****************************************************************************/
 
-char* s_field_type_str(const e_field_type type);
-
 char* s_field_owner_str(const e_owner owner);
 
 bool s_field_is_valid_src(const s_field *field, const s_status *status);

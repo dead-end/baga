@@ -26,32 +26,6 @@
 #include "s_field.h"
 
 /******************************************************************************
- * The function returns a string representation of the type of a field.
- *****************************************************************************/
-
-char* s_field_type_str(const e_field_type type) {
-
-	switch (type) {
-
-	case E_FIELD_POINTS:
-		return "POINT";
-
-	case E_FIELD_BAR:
-		return "BAR";
-
-	case E_FIELD_BEAR_OFF:
-		return "BEAR-OFF";
-
-	case E_FIELD_NONE:
-		return "NONE";
-
-	default:
-		log_exit("Unknown type: %d", type)
-		;
-	}
-}
-
-/******************************************************************************
  * The function prints the field. If DEBUG is not defined, then there is no
  * logging and you have 2 unused parameter.
  *****************************************************************************/
@@ -62,7 +36,7 @@ static void s_field_log(const s_field *field, const char *msg) {
 
 	log_debug("[idx: %d type: %s num: %d owner: %s] - %s",
 
-	field->id.idx, s_field_type_str(field->id.type), field->num, e_owner_str(field->owner), msg);
+	field->id.idx, e_field_type_str(field->id.type), field->num, e_owner_str(field->owner), msg);
 }
 
 #endif
@@ -158,7 +132,7 @@ int s_field_get_src_idx(const s_field *field_src) {
 	// Ensure that the source field type is the expected.
 	//
 	if (field_src->id.type != E_FIELD_BAR && field_src->id.type != E_FIELD_POINTS) {
-		log_exit("invalid type: %s", s_field_type_str(field_src->id.type));
+		log_exit("invalid type: %s", e_field_type_str(field_src->id.type));
 	}
 #endif
 
