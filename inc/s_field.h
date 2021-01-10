@@ -111,10 +111,18 @@ typedef struct {
 
 char* s_field_owner_str(const e_owner owner);
 
-bool s_field_is_valid_src(const s_field *field, const s_status *status);
-
 void s_field_mv(s_field *field_src, s_field *field_dst);
 
 int s_field_get_src_idx(const s_field *field_src);
+
+/******************************************************************************
+ * Function declarations for the debug mode.
+ *****************************************************************************/
+
+#ifdef DEBUG
+
+void s_field_log(const s_field *field, const char *msg);
+
+#endif
 
 #endif /* INC_S_FIELD_H_ */
