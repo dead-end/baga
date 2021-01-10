@@ -77,6 +77,14 @@ bool s_field_is_valid_src(const s_field *field, const s_status *status) {
 	log_debug("Phase: %s", e_player_phase_str(status->player_phase[status->turn]));
 
 	//
+	// Check end
+	// TODO: ensure that this is the right place...
+	//
+	if (s_status_is_end(status)) {
+		return false;
+	}
+
+	//
 	// If a checker reached the bear off area, it cannot moved again.
 	//
 	if (field->id.type == E_FIELD_BEAR_OFF) {
