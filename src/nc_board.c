@@ -331,13 +331,21 @@ void traveler_mv(s_field *field_src, s_field *field_dst) {
 void nc_board_process(s_game *game, s_status *status, const s_field_id id) {
 
 	//
+	// If the game ended, there is nothing to do.
+	//
+	if (s_status_is_end(status)) {
+		log_debug_str("Game ended!");
+		return;
+	}
+
+	//
 	// Identify the source field
 	//
 	s_field *field_src = s_game_get(game, id);
 
 	s_field *field_dst = s_game_can_mv(game, status, field_src);
 	if (field_dst == NULL) {
-		log_debug("field - type: %s owner: %s index: %d num: %d", s_field_type_str(field_src->id.type), e_owner_str(field_src->owner), field_src->id.idx, field_src->num);
+		log_debug("field - type: %s owner: %s index: %d num: %d", e_field_type_str(field_src->id.type), e_owner_str(field_src->owner), field_src->id.idx, field_src->num);
 		return;
 	}
 
