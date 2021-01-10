@@ -114,6 +114,14 @@ void s_game_print(const s_game *game) {
 
 s_field* s_game_get(s_game *game, const s_field_id id) {
 
+#ifdef DEBUG
+
+	//
+	// Ensure that the field id is valid
+	//
+	s_field_id_ensure_valid(id);
+#endif
+
 	switch (id.type) {
 
 	case E_FIELD_BAR:
