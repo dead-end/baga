@@ -34,6 +34,8 @@
 
 #define init_game_status(g,s,o) s_game_init(g); (s).turn = (o)
 
+#define init_game_status_phase(g,s,o,p) s_game_init(g); (s).turn = (o) ; (s).player_phase[o] = (p)
+
 /******************************************************************************
  * The function is a helper function for the test_rules_update_phase() test.
  *****************************************************************************/
@@ -151,6 +153,117 @@ static void test_rules_min_rel_idx() {
 }
 
 /******************************************************************************
+ * The function checks the members of a s_field.
+ *****************************************************************************/
+
+static void ut_check_field(const s_field *field, const e_field_type type, const int idx, const char *msg) {
+
+	ut_check_bool(field != NULL, true, msg);
+	ut_check_int(field->id.type, type, msg);
+	ut_check_int(field->id.idx, idx, msg);
+}
+
+/******************************************************************************
+ * The function tests the rules_get_field_src() function.
+ *****************************************************************************/
+
+static void test_rules_get_field_src() {
+	s_game game;
+	s_status status;
+	s_field *field;
+
+	//
+	// Point ok
+	//
+	init_game_status_phase(&game, status, E_OWNER_TOP, E_PHASE_NORMAL);
+
+	field = s_game_set(&game, E_FIELD_POINTS, 5, E_OWNER_TOP, 1);
+	field = rules_get_field_src(&game, &status, field->id);
+
+	ut_check_field(field, E_FIELD_POINTS, 5, "Point OK");
+
+	//
+	// Point not set
+	//
+	init_game_status_phase(&game, status, E_OWNER_TOP, E_PHASE_NORMAL);
+
+	field = s_game_set(&game, E_FIELD_POINTS, 10, E_OWNER_TOP, 0);
+	field = rules_get_field_src(&game, &status, field->id);
+
+	ut_check_bool(field == NULL, true, "Not set");
+
+	//
+	// Point wrong owner
+	//
+	init_game_status_phase(&game, status, E_OWNER_TOP, E_PHASE_NORMAL);
+
+	field = s_game_set(&game, E_FIELD_POINTS, 15, E_OWNER_BOT, 1);
+	field = rules_get_field_src(&game, &status, field->id);
+
+	ut_check_bool(field == NULL, true, "Wrong owner");
+
+	//
+	// Bar ok
+	//
+	init_game_status_phase(&game, status, E_OWNER_TOP, E_PHASE_BAR);
+
+	field = s_game_set(&game, E_FIELD_BAR, E_OWNER_TOP, E_OWNER_TOP, 1);
+	field = rules_get_field_src(&game, &status, field->id);
+
+	ut_check_field(field, E_FIELD_BAR, E_OWNER_TOP, "Bar");
+
+	//
+	// Bar wrong owner
+	//
+	init_game_status_phase(&game, status, E_OWNER_TOP, E_PHASE_BAR);
+
+	field = s_game_set(&game, E_FIELD_BAR, E_OWNER_BOT, E_OWNER_BOT, 1);
+	field = rules_get_field_src(&game, &status, field->id);
+
+	ut_check_bool(field == NULL, true, "Bar wrong owner");
+
+	//
+	// Bar wrong phase
+	//
+	init_game_status_phase(&game, status, E_OWNER_TOP, E_PHASE_NORMAL);
+
+	field = s_game_set(&game, E_FIELD_BAR, E_OWNER_TOP, E_OWNER_TOP, 1);
+	field = rules_get_field_src(&game, &status, field->id);
+
+	ut_check_bool(field == NULL, true, "Bar wrong phase");
+
+	//
+	// Bear-off own
+	//
+	init_game_status_phase(&game, status, E_OWNER_TOP, E_PHASE_NORMAL);
+
+	field = s_game_set(&game, E_PHASE_BEAR_OFF, E_OWNER_TOP, E_OWNER_TOP, 1);
+	field = rules_get_field_src(&game, &status, field->id);
+
+	ut_check_bool(field == NULL, true, "Bear-off own");
+
+	//
+	// Bear-off wrong
+	//
+	init_game_status_phase(&game, status, E_OWNER_TOP, E_PHASE_NORMAL);
+
+	field = s_game_set(&game, E_PHASE_BEAR_OFF, E_OWNER_BOT, E_OWNER_BOT, 1);
+	field = rules_get_field_src(&game, &status, field->id);
+
+	ut_check_bool(field == NULL, true, "Bear-off wrong");
+
+	//
+	// Bear-off phase
+	//
+	init_game_status_phase(&game, status, E_OWNER_TOP, E_PHASE_BEAR_OFF);
+
+	field = s_game_set(&game, E_PHASE_BEAR_OFF, E_OWNER_TOP, E_OWNER_TOP, 1);
+	field = rules_get_field_src(&game, &status, field->id);
+
+	ut_check_bool(field == NULL, true, "Bear-off own");
+}
+
+/******************************************************************************
  * The function is the a wrapper, that triggers the internal unit tests.
  *****************************************************************************/
 
@@ -159,4 +272,6 @@ void ut_rules_exec() {
 	test_rules_update_phase();
 
 	test_rules_min_rel_idx();
+
+	test_rules_get_field_src();
 }
