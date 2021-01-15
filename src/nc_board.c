@@ -343,7 +343,7 @@ void nc_board_process(s_game *game, s_status *status, const s_field_id id) {
 		return;
 	}
 
-	s_field *field_dst = s_game_can_mv(game, status, field_src);
+	s_field *field_dst = rules_can_mv(game, status, field_src);
 	if (field_dst == NULL) {
 		log_debug_str("No target field found");
 		return;
