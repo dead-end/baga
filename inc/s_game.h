@@ -1,7 +1,7 @@
 /*
  * MIT License
  *
- * Copyright (c) 2020 dead-end
+ * Copyright (c) 2021 dead-end
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -59,7 +59,11 @@ typedef struct {
  * Three macros that set checkers to points / bars / bear-offs.
  *****************************************************************************/
 
+#define s_game_get_point(g,i) (&(g)->point[i])
+
 #define s_game_set_point_rel(g,o,i,n) s_field_set((g)->point[s_field_idx_rel(o, i)], n, o)
+
+#define s_game_get_bear_off(g,o) (&(g)->bear_off[o])
 
 #define s_game_set_bear_off(g,o,n) (g)->bear_off[o].num = (n)
 
@@ -78,7 +82,5 @@ void s_game_print(const s_game *game);
 s_field* s_game_get(s_game *game, const s_field_id id);
 
 s_field* s_game_set(s_game *game, const e_field_type type, const int idx, const e_owner owner, const int num);
-
-s_field* s_game_can_mv(s_game *game, s_status *status, const s_field *field_src);
 
 #endif /* INC_S_GAME_H_ */

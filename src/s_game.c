@@ -1,7 +1,7 @@
 /*
  * MIT License
  *
- * Copyright (c) 2020 dead-end
+ * Copyright (c) 2021 dead-end
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -176,91 +176,4 @@ s_field* s_game_set(s_game *game, const e_field_type type, const int idx, const 
 	field->num = num;
 
 	return field;
-}
-
-/******************************************************************************
- *
- *****************************************************************************/
-// TODO: unit tests
-// TODO: maybe a macro
-bool s_game_is_min_out(const s_game *game, const s_status *status, const int dice) {
-
-	const int idx_rel = rules_min_rel_idx(game, status);
-
-	return idx_rel + dice > POINTS_NUM - 1;
-}
-
-/******************************************************************************
- * The function is called with a source field and the status and it computes
- * the index of the destination field.
- *****************************************************************************/
-// TODO: missing: bear-off phase
-// TODO: Name
-s_field_id s_field_get_dst_id(const s_game *game, const s_field *field_src, const s_status *status) {
-	s_field_id id_dst;
-
-	//
-	// Get the value from the active dice.
-	//
-	const int dice = s_dices_get_value(&status->dices);
-
-	//
-	// Get the source index of the field with respect to bars.
-	//
-	const int idx_src = s_field_get_src_idx(field_src);
-
-	//
-	// Compute the destination index.
-	//
-	id_dst.idx = s_field_idx_add_abs(field_src->owner, idx_src, dice);
-	id_dst.type = E_FIELD_POINTS;
-
-	log_debug("field index src: %d dst: %d dice: %d", idx_src, id_dst.idx, dice);
-
-	if (s_field_idx_is_out(field_src->owner, id_dst.idx)) {
-
-		if (status->player_phase[status->turn] == E_PHASE_BEAR_OFF && (s_field_idx_is_ex_out(field_src->owner, id_dst.idx) || s_game_is_min_out(game, status, dice))) {
-			s_field_id_set(id_dst, E_FIELD_BEAR_OFF, status->turn);
-
-		} else {
-			log_debug("out of range dst: %d src: %d", id_dst.idx, idx_src);
-			s_field_id_set(id_dst, E_FIELD_NONE, -1);
-		}
-	}
-
-	return id_dst;
-}
-
-/******************************************************************************
- * The function is called with a source field and the result from a dice. The
- * source field is identified by a mouse event, so everything is possible.
- *
- * If the field is valid and contains a checker, the function checks if it can
- * move the given number of fields. If so, it returns the destination field. If
- * not it returns NULL.
- *****************************************************************************/
-
-// TODO: the function is not complete.
-// - ensure that it is the turn of the owner of the checker.
-s_field* s_game_can_mv(s_game *game, s_status *status, const s_field *field_src) {
-
-	const s_field_id id_dst = s_field_get_dst_id(game, field_src, status);
-	if (id_dst.type == E_FIELD_NONE) {
-		log_debug_str("no dest!");
-		return NULL;
-	}
-
-	s_field *field_dst = s_game_get(game, id_dst);
-
-	//
-	// num > 1 => hit
-	//
-	if (field_dst->owner != E_OWNER_NONE && field_dst->owner != field_src->owner && field_dst->num > 1) {
-		log_debug_str("diff owner!");
-		return NULL;
-	}
-
-	log_debug("Owner: %d, idx: %d", field_src->owner, field_src->num);
-
-	return field_dst;
 }
