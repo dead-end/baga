@@ -92,6 +92,8 @@ typedef struct {
 
 #define s_status_is_end(s) ((s)->player_phase[0] == E_PHASE_WIN || (s)->player_phase[1] == E_PHASE_WIN)
 
+#define s_status_is_phase(s,o,p) ((s)->player_phase[o] == (p))
+
 #define s_status_set_phase(s,o,p) (s)->player_phase[o] = (p)
 
 /******************************************************************************
