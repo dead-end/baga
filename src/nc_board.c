@@ -305,7 +305,7 @@ static void travler_move(const s_board *board, const s_pos *checker_from, const 
  *
  *****************************************************************************/
 // TODO: proper name and description
-void traveler_mv(s_field *field_src, s_field *field_dst) {
+static void traveler_mv(s_field *field_src, s_field *field_dst) {
 
 	//
 	// Get the positions on the board.
@@ -338,23 +338,31 @@ void nc_board_process(s_game *game, s_status *status, const s_field_id id) {
 		return;
 	}
 
+	//
+	// Get the source field. It returns NULL is the field is not valid.
+	//
 	s_field *field_src = rules_get_field_src(game, status, id);
 	if (field_src == NULL) {
 		return;
 	}
 
+	//
+	// Get the destination field. It returns NULL is the field is not valid.
+	//
 	s_field *field_dst = rules_can_mv(game, status, field_src);
 	if (field_dst == NULL) {
 		log_debug_str("No target field found");
 		return;
 	}
 
+	//
+	// Hit the opponent checker if necessary.
+	//
 	const e_owner owner_other = e_owner_other(status->turn);
 	if (field_dst->owner == owner_other) {
 		const s_field_id field_other = { .type = E_FIELD_BAR, .idx = owner_other };
 		traveler_mv(field_dst, s_game_get(game, field_other));
-		// TODO: decide where to set the phase. Maybe a macro
-		status->player_phase[owner_other] = E_PHASE_BAR;
+		s_status_set_phase(status, owner_other, E_PHASE_BAR);
 	}
 
 	traveler_mv(field_src, field_dst);
