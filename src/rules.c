@@ -98,9 +98,11 @@ void rules_update_phase(const s_game *game, s_status *status) {
  * The function is called with an id of a field. The id comes from an mouse
  * event. The function returns that field, if it is a valid source field for a
  * move or NULL if not.
+ *
+ * (unit tested)
  *****************************************************************************/
 
-s_field* rules_get_field_src(s_game *game, s_status *status, const s_field_id field_id) {
+s_field* rules_get_field_src(s_game *game, const s_status *status, const s_field_id field_id) {
 
 	//
 	// If a checker reached the bear off area, it cannot moved again.
@@ -152,4 +154,79 @@ s_field* rules_get_field_src(s_game *game, s_status *status, const s_field_id fi
 	}
 
 	return field_src;
+}
+
+/******************************************************************************
+ * The function is called with a source field and the result from a dice. The
+ * source field is identified by a mouse event, so everything is possible.
+ *
+ * If the field is valid and contains a checker, the function checks if it can
+ * move the given number of fields. If so, it returns the destination field. If
+ * not it returns NULL.
+ *****************************************************************************/
+// TODO: unit tests
+s_field* rules_can_mv(s_game *game, const s_status *status, const s_field *field_src) {
+
+	//
+	// Get the value from the active dice.
+	//
+	const int dice = s_dices_get_value(&status->dices);
+
+	//
+	// Get the relative index of the destination.
+	//
+	const int idx_rel_dst = (field_src->id.type == E_FIELD_BAR ? -1 : s_field_idx_rel(field_src->owner, field_src->id.idx)) + dice;
+
+	//
+	// Check if the destination is outside the board.
+	//
+	if (idx_rel_dst > POINTS_NUM - 1) {
+
+		//
+		// If the destination is outside, check if we have a bear off phase.
+		//
+		if (s_status_is_phase(status, field_src->owner, E_PHASE_BEAR_OFF)) {
+
+			//
+			// Check if the destination is an exact move outside.
+			//
+			if (idx_rel_dst == POINTS_NUM) {
+				log_debug("Bear off exact - dst-rel: %d", idx_rel_dst);
+				return s_game_get_bear_off(game, field_src->owner);
+			}
+
+			//
+			// If the minimum + dice is outside, then the destination is valid.
+			//
+			const int min_rel_idx = rules_min_rel_idx(game, status);
+
+			if (min_rel_idx + dice > POINTS_NUM - 1) {
+				log_debug("Bear off min - dst-rel: %d min: %d", idx_rel_dst, min_rel_idx);
+				return s_game_get_bear_off(game, field_src->owner);
+			}
+		}
+
+		//
+		// At this point the target is outside and there is not valid bear off
+		// move.
+		//
+		log_debug_str("Outside board and no valid destination!");
+		return NULL;
+	}
+
+	//
+	// At this point our destination is a regular point.
+	//
+	s_field *field_dst = s_game_get_point(game, s_field_idx_rel(field_src->owner, idx_rel_dst));
+
+	//
+	// Ensure that the destination is not occupied by the opponent (num > 1 => hit).
+	//
+	if (field_dst->owner != E_OWNER_NONE && field_dst->owner != field_src->owner && field_dst->num > 1) {
+		log_debug("Destination occupied by the opponent - dst-rel: %d", idx_rel_dst);
+		return NULL;
+	}
+
+	log_debug("Valid regular point - owner: %d, idx: %d", field_src->owner, field_src->num);
+	return field_dst;
 }

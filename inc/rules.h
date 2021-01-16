@@ -36,6 +36,8 @@ void rules_update_phase(const s_game *game, s_status *status);
 
 int rules_min_rel_idx(const s_game *game, const s_status *status);
 
-s_field* rules_get_field_src(s_game *game, s_status *status, const s_field_id id);
+s_field* rules_get_field_src(s_game *game, const s_status *status, const s_field_id id);
+
+s_field* rules_can_mv(s_game *game, const s_status *status, const s_field *field_src);
 
 #endif /* INC_RULES_H_ */
