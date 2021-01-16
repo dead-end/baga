@@ -58,23 +58,14 @@ void s_status_start(s_status *status) {
 }
 
 /******************************************************************************
- * The function is called on the next turn.
- *****************************************************************************/
-
-void s_status_next_turn(s_status *status) {
-	status->turn = e_owner_other(status->turn);
-
-	s_dices_toss(&status->dices);
-}
-
-/******************************************************************************
  *
  *****************************************************************************/
 // TODO: comment / maybe name with dice
 void s_status_mv_done(s_status *status) {
 
 	if (s_dices_set(&status->dices)) {
-		s_status_next_turn(status);
+		status->turn = e_owner_other(status->turn);
+		s_dices_toss(&status->dices);
 	}
 
 	s_dices_debug(&status->dices);
