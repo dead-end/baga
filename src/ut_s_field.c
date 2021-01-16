@@ -31,7 +31,7 @@
  *
  * After refactoring the macro is simple.
  *****************************************************************************/
-
+// TODO: not used
 static void test_s_field_idx_rel() {
 	int idx_rel;
 
@@ -73,7 +73,7 @@ static void test_s_field_idx_rel() {
 /******************************************************************************
  * The function checks the s_field_idx_is_out() calls.
  *****************************************************************************/
-
+// TODO: not used
 static void test_s_field_idx_is_out() {
 
 	bool result;
@@ -101,7 +101,7 @@ static void test_s_field_idx_is_out() {
 /******************************************************************************
  * The function checks the test_s_field_idx_add_abs() calls.
  *****************************************************************************/
-
+// TODO: not used
 static void test_s_field_idx_add_abs() {
 	int idx1, idx2;
 	int idx;
