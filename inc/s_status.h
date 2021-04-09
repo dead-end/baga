@@ -29,37 +29,7 @@
 #include "s_dices.h"
 #include "s_game_cfg.h"
 #include "e_owner.h"
-
-/******************************************************************************
- * The enum defines the possible phases of a player.
- *****************************************************************************/
-
-typedef enum {
-
-	//
-	// None of the other two phases.
-	//
-	E_PHASE_NORMAL = 0,
-
-	//
-	// At least one of the checkers is on the bar.
-	//
-	E_PHASE_BAR = 1,
-
-	//
-	// All checkers are in that player's home board.
-	//
-	E_PHASE_BEAR_OFF = 2,
-
-	//
-	// All checkers are in the bear off.
-	//
-	E_PHASE_WIN = 3,
-
-} e_player_phase;
-
-// TODO: new place
-const char* e_player_phase_str(const e_player_phase player_phase);
+#include "e_player_phase.h"
 
 /******************************************************************************
  *

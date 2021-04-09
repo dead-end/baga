@@ -29,7 +29,8 @@
 #include "dice.h"
 
 /******************************************************************************
- * The function initializes the status struct.
+ * The function initializes the status struct, with the game configurations.
+ * The values do not change after the start of the game.
  *****************************************************************************/
 
 void s_status_init(s_status *status, const s_game_cfg *game_cfg) {
@@ -51,10 +52,10 @@ void s_status_start(s_status *status) {
 	//
 	status->turn = status->owner_start;
 
-	s_dices_toss(&status->dices);
-
 	status->player_phase[0] = E_PHASE_NORMAL;
 	status->player_phase[1] = E_PHASE_NORMAL;
+
+	s_dices_toss(&status->dices);
 }
 
 /******************************************************************************
@@ -80,31 +81,4 @@ bool s_status_mv_done(s_status *status) {
 	dice_print(status);
 
 	return result;
-}
-
-/******************************************************************************
- * The function returns a string representation of the game phase. It is used
- * for debugging.
- *****************************************************************************/
-
-const char* e_player_phase_str(const e_player_phase player_phase) {
-
-	switch (player_phase) {
-
-	case E_PHASE_NORMAL:
-		return "E_PHASE_NORMAL";
-
-	case E_PHASE_BAR:
-		return "E_PHASE_BAR";
-
-	case E_PHASE_BEAR_OFF:
-		return "E_PHASE_BEAR_OFF";
-
-	case E_PHASE_WIN:
-		return "E_PHASE_WIN";
-
-	default:
-		log_exit("Unknown phase: %d", player_phase)
-		;
-	}
 }
