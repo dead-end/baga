@@ -104,6 +104,6 @@ void s_status_init(s_status *status, const s_game_cfg *game_cfg);
 
 void s_status_start(s_status *status);
 
-void s_status_mv_done(s_status *status);
+bool s_status_mv_done(s_status *status);
 
 #endif /* INC_S_STATUS_H_ */

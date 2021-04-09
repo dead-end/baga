@@ -61,11 +61,15 @@ void s_status_start(s_status *status) {
  *
  *****************************************************************************/
 // TODO: comment / maybe name with dice
-void s_status_mv_done(s_status *status) {
+bool s_status_mv_done(s_status *status) {
+	bool result;
 
 	if (s_dices_set(&status->dices)) {
 		status->turn = e_owner_other(status->turn);
 		s_dices_toss(&status->dices);
+		result = true;
+	} else {
+		result = false;
 	}
 
 	s_dices_debug(&status->dices);
@@ -74,6 +78,8 @@ void s_status_mv_done(s_status *status) {
 	// TODO: is this correct? I added this drunk :o)
 	//
 	dice_print(status);
+
+	return result;
 }
 
 /******************************************************************************
