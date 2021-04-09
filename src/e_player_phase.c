@@ -22,6 +22,11 @@
  * SOFTWARE.
  */
 
+/******************************************************************************
+ * The source file provides utility functions for the enum for the phases of
+ * the player.
+ *****************************************************************************/
+
 #include "e_player_phase.h"
 #include "lib_logging.h"
 

@@ -22,6 +22,11 @@
  * SOFTWARE.
  */
 
+/******************************************************************************
+ * The header file provides an enum for the phases of the game. Each player has
+ * his own phase, which defines which set of rules is applied (for this pase).
+ *****************************************************************************/
+
 #ifndef INC_E_PLAYER_PHASE_H_
 #define INC_E_PLAYER_PHASE_H_
 
