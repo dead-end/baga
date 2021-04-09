@@ -1,7 +1,7 @@
 /*
  * MIT License
  *
- * Copyright (c) 2020 dead-end
+ * Copyright (c) 2021 dead-end
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -21,6 +21,12 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  */
+
+/******************************************************************************
+ * The header file defines an enum for the 4 directions (up, down, left,
+ * right) and provides an interface with utility functions. The directions are
+ * used for the movement of the checker as part of an animation.
+ *****************************************************************************/
 
 #ifndef INC_DIRECTION_H_
 #define INC_DIRECTION_H_
