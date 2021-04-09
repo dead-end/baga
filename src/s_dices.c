@@ -146,6 +146,8 @@ void s_dices_toss(s_dices *dices) {
 /******************************************************************************
  * The function returns the current value of the dices. This is the value of
  * the active dice.
+ *
+ * (Unit tested)
  *****************************************************************************/
 
 int s_dices_get_value(const s_dices *dices) {
@@ -169,6 +171,8 @@ int s_dices_get_value(const s_dices *dices) {
  * E_DICE_ACTIVE.
  *
  * The function returns true if both dices are set (next turn).
+ *
+ * (Unit tested)
  *****************************************************************************/
 
 bool s_dices_processed(s_dices *dices) {
@@ -218,6 +222,8 @@ bool s_dices_processed(s_dices *dices) {
  * tries to toggle the active dice. To succeed this requires that the clicked
  * dice is inactive (in this case the other has to be active). All other dice
  * states are not valid for toggle.
+ *
+ * (Unit tested)
  *****************************************************************************/
 
 bool s_dice_toggle_active(s_dices *dices, const int idx) {
