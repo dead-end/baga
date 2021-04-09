@@ -22,6 +22,12 @@
  * SOFTWARE.
  */
 
+/******************************************************************************
+ * The source file implements the functionality of a pair of dices. The two
+ * dices always work together. Each dice has its own status, but the
+ * functionality always requires two.
+ *****************************************************************************/
+
 #include <time.h>
 
 #include "lib_logging.h"
@@ -37,7 +43,7 @@
  * The macro is rolling the dice.
  *****************************************************************************/
 
-#define rolling_dice() rand() % 6 + 1
+#define rolling_dice() (rand() % 6 + 1)
 
 /******************************************************************************
  * The function initializes the random numbers.
@@ -86,9 +92,9 @@ const char* s_dice_status_str(const e_dice_status dice_status) {
 void s_dices_debug(const s_dices *dices) {
 
 	for (int i = 0; i < 2; i++) {
-		log_debug("dice: %d num: %d set: %d value: %d %s",
+		log_debug("dice: %d max: %d set: %d value: %d %s",
 
-		i, dices->dice[i].num, dices->dice[i].num_set, dices->dice[i].value, s_dice_status_str(dices->dice[i].status));
+		i, dices->dice[i].max_set, dices->dice[i].num_set, dices->dice[i].value, s_dice_status_str(dices->dice[i].status));
 	}
 }
 
@@ -120,15 +126,15 @@ void s_dices_toss(s_dices *dices) {
 	dices->dice[1].status = E_DICE_INACTIVE;
 
 	//
-	// Set the number depending on the double value.
+	// Set the max number depending on whether we have doublets.
 	//
 	if (dices->dice[0].value == dices->dice[1].value) {
-		dices->dice[0].num = 2;
-		dices->dice[1].num = 2;
+		dices->dice[0].max_set = 2;
+		dices->dice[1].max_set = 2;
 
 	} else {
-		dices->dice[0].num = 1;
-		dices->dice[1].num = 1;
+		dices->dice[0].max_set = 1;
+		dices->dice[1].max_set = 1;
 	}
 
 #ifdef DEBUG
@@ -138,7 +144,8 @@ void s_dices_toss(s_dices *dices) {
 }
 
 /******************************************************************************
- * The function returns the current value of the dices.
+ * The function returns the current value of the dices. This is the value of
+ * the active dice.
  *****************************************************************************/
 
 int s_dices_get_value(const s_dices *dices) {
@@ -155,14 +162,16 @@ int s_dices_get_value(const s_dices *dices) {
 }
 
 /******************************************************************************
- * The function sets the E_DICE_ACTIVE dice to E_DICE_SET. It is assumed that
- * there is a E_DICE_ACTIVE dice. If the other dice is E_DICE_INACTIVE, it is
- * switched to E_DICE_ACTIVE.
+ * The function is called if a dice value is processed. If we have doublets
+ * then the current dice value can be processed. If the dices are not doublets
+ * or both values are processed the status of the E_DICE_ACTIVE dice is set to
+ * E_DICE_SET. If the other dice is E_DICE_INACTIVE, it is switched to
+ * E_DICE_ACTIVE.
  *
  * The function returns true if both dices are set (next turn).
  *****************************************************************************/
 
-bool s_dices_set(s_dices *dices) {
+bool s_dices_processed(s_dices *dices) {
 	s_dice *dice;
 
 	for (int dice_idx = 0; dice_idx < 2; dice_idx++) {
@@ -171,10 +180,16 @@ bool s_dices_set(s_dices *dices) {
 
 		if (dice->status == E_DICE_ACTIVE) {
 
+			//
+			// If we have doublets each dice can be set twice.
+			//
 			dice->num_set++;
-			if (dice->num_set == dice->num) {
+			if (dice->num_set == dice->max_set) {
 				dice->status = E_DICE_SET;
 
+				//
+				// Get the other dice
+				//
 				s_dice *dice_other = &dices->dice[s_dice_other(dice_idx)];
 
 				//
@@ -182,14 +197,13 @@ bool s_dices_set(s_dices *dices) {
 				//
 				if (dice_other->status == E_DICE_INACTIVE) {
 					dice_other->status = E_DICE_ACTIVE;
+					return false;
 				}
 
 				//
 				// If the other dice cannot be activated, we are done.
 				//
-				else {
-					return true;
-				}
+				return true;
 			}
 
 			return false;
@@ -200,12 +214,13 @@ bool s_dices_set(s_dices *dices) {
 }
 
 /******************************************************************************
- * The function toogles the active dice. This requires that the target, defined
- * by the index is inactive and the other dice is active. All other dice states
- * are not valid for toogle.
+ * The function is called in reaction to a mouse event on one of the dices and
+ * tries to toggle the active dice. To succeed this requires that the clicked
+ * dice is inactive (in this case the other has to be active). All other dice
+ * states are not valid for toggle.
  *****************************************************************************/
 
-bool s_dice_toogle_active(s_dices *dices, const int idx) {
+bool s_dice_toggle_active(s_dices *dices, const int idx) {
 
 	log_debug("Checking toogle: %d", idx);
 

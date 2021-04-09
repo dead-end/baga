@@ -22,6 +22,11 @@
  * SOFTWARE.
  */
 
+/******************************************************************************
+ * The header file provides an interface to the functionality of a dice. The
+ * layout is not part of this interface.
+ *****************************************************************************/
+
 #ifndef INC_S_DICES_H_
 #define INC_S_DICES_H_
 
@@ -34,7 +39,7 @@
 typedef enum {
 
 	//
-	// The dice can be set and is selected to be set.
+	// The dice is active, which means it is selected to be set.
 	//
 	E_DICE_ACTIVE = 0,
 
@@ -72,12 +77,12 @@ typedef struct {
 	int value;
 
 	//
-	// If both dices have the same value, num is 2 otherwise 1.
+	// If both dices have the same value, max_set is 2 otherwise 1.
 	//
-	int num;
+	int max_set;
 
 	//
-	// The number of values set. If num == num_set => E_DICE_SET
+	// The number of values set. If max_set == num_set => E_DICE_SET
 	//
 	int num_set;
 
@@ -103,17 +108,18 @@ typedef struct {
 #define s_dices_has_status(d,i,s)  ((d).dice[i].status == (s))
 
 /******************************************************************************
- * The macro checks if a dice is not active.
- *
- * TODO: is the name correct?
+ * The macro checks if at least one dice is active. If not, the user cannot do
+ * anything more.
  *****************************************************************************/
 
 #define s_dices_is_done(s) ((s).dice[0].status != E_DICE_ACTIVE && (s).dice[1].status != E_DICE_ACTIVE)
 
 /******************************************************************************
- * The macro checks if a dice can be undone. The status E_DICE_SET cannot be
- * used, because if both dices have the same value. The num_set parameter is
- * set every time a checker moves, so this is appropriate.
+ * The macro checks if a dice can be undone. This requires that at least one
+ * dice has been used / set. The status E_DICE_SET cannot be used, because if
+ * we have doublets and we used only the first value, the status is not
+ * E_DICE_SET. The num_set parameter is set every time a checker moves, so this
+ * is appropriate.
  *****************************************************************************/
 
 #define s_dices_can_undo(s) ((s).dice[0].num_set > 0 || (s).dice[1].num_set > 0)
@@ -132,8 +138,8 @@ const char* s_dice_status_str(const e_dice_status dice_status);
 
 void s_dices_debug(const s_dices *dices);
 
-bool s_dices_set(s_dices *dices);
+bool s_dices_processed(s_dices *dices);
 
-bool s_dice_toogle_active(s_dices *dices, const int idx);
+bool s_dice_toggle_active(s_dices *dices, const int idx);
 
 #endif /* INC_S_DICES_H_ */
