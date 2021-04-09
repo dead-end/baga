@@ -95,7 +95,8 @@ SRC_LIBS = \
 	$(SRC_DIR)/ut_lib_color_pair.c \
 	$(SRC_DIR)/ut_lib_string.c     \
 	$(SRC_DIR)/ut_s_color_def.c    \
-	$(SRC_DIR)/e_owner.c    \
+	$(SRC_DIR)/e_owner.c           \
+	$(SRC_DIR)/e_player_phase.c    \
 	$(SRC_DIR)/rules.c  \
 	$(SRC_DIR)/ut_rules.c  \
 	$(SRC_DIR)/s_field_id.c   \
