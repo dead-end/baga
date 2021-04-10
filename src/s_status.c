@@ -65,7 +65,7 @@ void s_status_start(s_status *status) {
 bool s_status_mv_done(s_status *status) {
 	bool result;
 
-	if (s_dices_set(&status->dices)) {
+	if (s_dices_processed(&status->dices)) {
 		status->turn = e_owner_other(status->turn);
 		s_dices_toss(&status->dices);
 		result = true;
