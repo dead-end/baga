@@ -65,15 +65,15 @@ typedef struct {
  * Three macros that set checkers to points / bars / bear-offs.
  *****************************************************************************/
 
-#define s_fieldset_get_point(g,i) (&(g)->point[i])
+#define s_fieldset_get_point(f,i) (&(f)->point[i])
 
-#define s_fieldset_set_point_rel(g,o,i,n) s_field_set((g)->point[s_field_idx_rel(o, i)], n, o)
+#define s_fieldset_set_point_rel(f,o,i,n) s_field_set((f)->point[s_field_idx_rel(o, i)], n, o)
 
-#define s_fieldset_get_bear_off(g,o) (&(g)->bear_off[o])
+#define s_fieldset_get_bear_off(f,o) (&(f)->bear_off[o])
 
-#define s_fieldset_set_bear_off(g,o,n) (g)->bear_off[o].num = (n)
+#define s_fieldset_set_bear_off(f,o,n) (f)->bear_off[o].num = (n)
 
-#define s_fieldset_set_bar(g,o,n) (g)->reenter[o].num = (n)
+#define s_fieldset_set_bar(f,o,n) (f)->reenter[o].num = (n)
 
 /******************************************************************************
  * Function declarations.
