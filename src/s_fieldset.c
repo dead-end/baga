@@ -23,85 +23,86 @@
  */
 
 /******************************************************************************
- * The source file implements function to access the s_game, which is a
+ * The source file implements function to access the s_fieldset, which is a
  * collection of fields: points, bear off, bar
  *****************************************************************************/
 
+#include "s_fieldset.h"
 #include "lib_logging.h"
-#include "s_game.h"
 
 /******************************************************************************
- * The function initializes the s_game struct. It sets the owner of the fields.
- * The points have no owner, the bar and the bear off area have a fixed owner.
- * The number of checkers on the fields are set to 0 on all fields.
+ * The function initializes the s_fieldset struct. It sets the owner of the
+ * fields. The points have no owner, the bar and the bear off area have a fixed
+ * owner. The number of checkers on the fields are set to 0 on all fields.
  *****************************************************************************/
 
-void s_game_init(s_game *game) {
+void s_fieldset_init(s_fieldset *fieldset) {
 
 	//
 	// The points have no owner (all fields have 0 checker)
 	//
 	for (int i = 0; i < POINTS_NUM; i++) {
 
-		s_field_set_full(game->point[i], E_FIELD_POINTS, i, 0, E_OWNER_NONE);
+		s_field_set_full(fieldset->point[i], E_FIELD_POINTS, i, 0, E_OWNER_NONE);
 	}
 
 	//
 	// Each player has his bear off area (all fields have 0 checker)
 	//
-	s_field_set_full(game->bear_off[E_OWNER_TOP], E_FIELD_BEAR_OFF, E_OWNER_TOP, 0, E_OWNER_TOP);
+	s_field_set_full(fieldset->bear_off[E_OWNER_TOP], E_FIELD_BEAR_OFF, E_OWNER_TOP, 0, E_OWNER_TOP);
 
-	s_field_set_full(game->bear_off[E_OWNER_BOT], E_FIELD_BEAR_OFF, E_OWNER_BOT, 0, E_OWNER_BOT);
+	s_field_set_full(fieldset->bear_off[E_OWNER_BOT], E_FIELD_BEAR_OFF, E_OWNER_BOT, 0, E_OWNER_BOT);
 
 	//
 	// Each player has his bar (all fields have 0 checker)
 	//
-	s_field_set_full(game->reenter[E_OWNER_TOP], E_FIELD_BAR, E_OWNER_TOP, 0, E_OWNER_TOP);
+	s_field_set_full(fieldset->reenter[E_OWNER_TOP], E_FIELD_BAR, E_OWNER_TOP, 0, E_OWNER_TOP);
 
-	s_field_set_full(game->reenter[E_OWNER_BOT], E_FIELD_BAR, E_OWNER_BOT, 0, E_OWNER_BOT);
+	s_field_set_full(fieldset->reenter[E_OWNER_BOT], E_FIELD_BAR, E_OWNER_BOT, 0, E_OWNER_BOT);
 }
 
 /******************************************************************************
- * The function resets the s_game struct and sets the checker for the new game.
+ * The function resets the s_fieldset struct and sets the checker for the new
+ * game.
  *****************************************************************************/
 
-void s_game_new_game(s_game *game) {
+void s_fieldset_new_game(s_fieldset *fieldset) {
 
 	//
 	// Set all to 0
 	//
-	s_game_init(game);
+	s_fieldset_init(fieldset);
 
 	//
 	// Index 0
 	//
-	s_field_set(game->point[s_field_idx_rel( E_OWNER_BOT, 0)], 2, E_OWNER_BOT);
-	s_field_set(game->point[s_field_idx_rel( E_OWNER_TOP, 0)], 2, E_OWNER_TOP);
+	s_field_set(fieldset->point[s_field_idx_rel( E_OWNER_BOT, 0)], 2, E_OWNER_BOT);
+	s_field_set(fieldset->point[s_field_idx_rel( E_OWNER_TOP, 0)], 2, E_OWNER_TOP);
 
 	//
 	// Index 11
 	//
-	s_field_set(game->point[s_field_idx_rel( E_OWNER_BOT, 11)], 5, E_OWNER_BOT);
-	s_field_set(game->point[s_field_idx_rel( E_OWNER_TOP, 11)], 5, E_OWNER_TOP);
+	s_field_set(fieldset->point[s_field_idx_rel( E_OWNER_BOT, 11)], 5, E_OWNER_BOT);
+	s_field_set(fieldset->point[s_field_idx_rel( E_OWNER_TOP, 11)], 5, E_OWNER_TOP);
 
 	//
 	// Index 16
 	//
-	s_field_set(game->point[s_field_idx_rel( E_OWNER_BOT, 16)], 3, E_OWNER_BOT);
-	s_field_set(game->point[s_field_idx_rel( E_OWNER_TOP, 16)], 3, E_OWNER_TOP);
+	s_field_set(fieldset->point[s_field_idx_rel( E_OWNER_BOT, 16)], 3, E_OWNER_BOT);
+	s_field_set(fieldset->point[s_field_idx_rel( E_OWNER_TOP, 16)], 3, E_OWNER_TOP);
 
 	//
 	// Index 11
 	//
-	s_field_set(game->point[s_field_idx_rel( E_OWNER_BOT, 18)], 5, E_OWNER_BOT);
-	s_field_set(game->point[s_field_idx_rel(E_OWNER_TOP, 18)], 5, E_OWNER_TOP);
+	s_field_set(fieldset->point[s_field_idx_rel( E_OWNER_BOT, 18)], 5, E_OWNER_BOT);
+	s_field_set(fieldset->point[s_field_idx_rel(E_OWNER_TOP, 18)], 5, E_OWNER_TOP);
 }
 
 /******************************************************************************
  * The function returns a pointer to the field with the given id.
  *****************************************************************************/
 
-s_field* s_game_get(s_game *game, const s_field_id id) {
+s_field* s_fieldset_get(s_fieldset *fieldset, const s_field_id id) {
 
 #ifdef DEBUG
 
@@ -114,13 +115,13 @@ s_field* s_game_get(s_game *game, const s_field_id id) {
 	switch (id.type) {
 
 	case E_FIELD_BAR:
-		return &game->reenter[id.idx];
+		return &fieldset->reenter[id.idx];
 
 	case E_FIELD_BEAR_OFF:
-		return &game->bear_off[id.idx];
+		return &fieldset->bear_off[id.idx];
 
 	case E_FIELD_POINTS:
-		return &game->point[id.idx];
+		return &fieldset->point[id.idx];
 
 	default:
 		log_exit("Unknown type: %d", id.type)
@@ -132,28 +133,28 @@ s_field* s_game_get(s_game *game, const s_field_id id) {
  * The function sets a field and returns a pointer to that field.
  *****************************************************************************/
 
-s_field* s_game_set(s_game *game, const e_field_type type, const int idx, const e_owner owner, const int num) {
+s_field* s_fieldset_set(s_fieldset *fieldset, const e_field_type type, const int idx, const e_owner owner, const int num) {
 
 	s_field *field;
 
 	switch (type) {
 
 	case E_FIELD_BAR:
-		field = &game->reenter[idx];
+		field = &fieldset->reenter[idx];
 		if (idx != owner) {
 			log_exit("idx: %d owner: %d", idx, owner);
 		}
 		break;
 
 	case E_FIELD_BEAR_OFF:
-		field = &game->bear_off[idx];
+		field = &fieldset->bear_off[idx];
 		if (idx != owner) {
 			log_exit("idx: %d owner: %d", idx, owner);
 		}
 		break;
 
 	case E_FIELD_POINTS:
-		field = &game->point[idx];
+		field = &fieldset->point[idx];
 		field->owner = owner;
 		break;
 

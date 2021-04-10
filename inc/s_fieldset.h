@@ -23,14 +23,14 @@
  */
 
 /******************************************************************************
- * The header file provides an interface for the s_game struct, which is a
+ * The header file provides an interface for the s_fieldset struct, which is a
  * collection of fields: points, bear off, bar
  *
  * It is a pure data structure and knows nothing about ncurses, status, phases.
  *****************************************************************************/
 
-#ifndef INC_S_GAME_H_
-#define INC_S_GAME_H_
+#ifndef INC_S_FIELDSET_H_
+#define INC_S_FIELDSET_H_
 
 #include "bg_defs.h"
 #include "s_field_id.h"
@@ -59,32 +59,32 @@ typedef struct {
 	//
 	s_field reenter[NUM_PLAYER];
 
-} s_game;
+} s_fieldset;
 
 /******************************************************************************
  * Three macros that set checkers to points / bars / bear-offs.
  *****************************************************************************/
 
-#define s_game_get_point(g,i) (&(g)->point[i])
+#define s_fieldset_get_point(g,i) (&(g)->point[i])
 
-#define s_game_set_point_rel(g,o,i,n) s_field_set((g)->point[s_field_idx_rel(o, i)], n, o)
+#define s_fieldset_set_point_rel(g,o,i,n) s_field_set((g)->point[s_field_idx_rel(o, i)], n, o)
 
-#define s_game_get_bear_off(g,o) (&(g)->bear_off[o])
+#define s_fieldset_get_bear_off(g,o) (&(g)->bear_off[o])
 
-#define s_game_set_bear_off(g,o,n) (g)->bear_off[o].num = (n)
+#define s_fieldset_set_bear_off(g,o,n) (g)->bear_off[o].num = (n)
 
-#define s_game_set_bar(g,o,n) (g)->reenter[o].num = (n)
+#define s_fieldset_set_bar(g,o,n) (g)->reenter[o].num = (n)
 
 /******************************************************************************
  * Function declarations.
  *****************************************************************************/
 
-void s_game_init(s_game *game);
+void s_fieldset_init(s_fieldset *fieldset);
 
-void s_game_new_game(s_game *game);
+void s_fieldset_new_game(s_fieldset *fieldset);
 
-s_field* s_game_get(s_game *game, const s_field_id id);
+s_field* s_fieldset_get(s_fieldset *fieldset, const s_field_id id);
 
-s_field* s_game_set(s_game *game, const e_field_type type, const int idx, const e_owner owner, const int num);
+s_field* s_fieldset_set(s_fieldset *fieldset, const e_field_type type, const int idx, const e_owner owner, const int num);
 
-#endif /* INC_S_GAME_H_ */
+#endif /* INC_S_FIELDSET_H_ */
