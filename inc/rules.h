@@ -22,22 +22,28 @@
  * SOFTWARE.
  */
 
+/******************************************************************************
+ * The header field provides an interface for functions that implement rules of
+ * the game. They operate on the fieldset, which is a collection of fields
+ * (points, bear off, bar) and the status of the game.
+ *****************************************************************************/
+
 #ifndef INC_RULES_H_
 #define INC_RULES_H_
 
-#include "s_game.h"
+#include "s_fieldset.h"
 #include "s_status.h"
 
 /******************************************************************************
  * Definition of functions and macros.
  *****************************************************************************/
 
-void rules_update_phase(const s_game *game, s_status *status);
+void rules_update_phase(const s_fieldset *fieldset, s_status *status);
 
-int rules_min_rel_idx(const s_game *game, const s_status *status);
+int rules_min_rel_idx(const s_fieldset *fieldset, const s_status *status);
 
-s_field* rules_get_field_src(s_game *game, const s_status *status, const s_field_id id);
+s_field* rules_get_field_src(s_fieldset *fieldset, const s_status *status, const s_field_id id);
 
-s_field* rules_can_mv(s_game *game, const s_status *status, const s_field *field_src);
+s_field* rules_can_mv(s_fieldset *fieldset, const s_status *status, const s_field *field_src);
 
 #endif /* INC_RULES_H_ */

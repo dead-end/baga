@@ -22,26 +22,40 @@
  * SOFTWARE.
  */
 
+/******************************************************************************
+ * The header source file implements functions that implement rules of the
+ * game. They operate on the fieldset, which is a collection of fields (points,
+ * bear off, bar) and the status of the game.
+ *****************************************************************************/
+
 #include "bg_defs.h"
 #include "lib_logging.h"
 #include "rules.h"
 
 /******************************************************************************
+ * The function is looking for the last checker of the player in turn on the
+ * points. It is used to decide whether the player is in the E_PHASE_BEAR_OFF
+ * phase. The requires that the last checker is in the last quarter of the
+ * points.
+ *
  * The function computes the minimal relative index for the player that is in
  * turn. The function assumes that at least one checker is on a point.
  *
  * (unit tested)
  *****************************************************************************/
 
-int rules_min_rel_idx(const s_game *game, const s_status *status) {
+int rules_min_rel_idx(const s_fieldset *fieldset, const s_status *status) {
 	int idx_abs;
 	const s_field *field;
 
 	for (int idx_rel = 0; idx_rel < POINTS_NUM; idx_rel++) {
 
+		//
+		// The index in the direction of the player.
+		//
 		idx_abs = s_field_idx_rel(status->turn, idx_rel);
 
-		field = &game->point[idx_abs];
+		field = &fieldset->point[idx_abs];
 
 		//
 		// We stop as we find the first checker.
@@ -61,26 +75,26 @@ int rules_min_rel_idx(const s_game *game, const s_status *status) {
  * (unit tested)
  *****************************************************************************/
 
-void rules_update_phase(const s_game *game, s_status *status) {
+void rules_update_phase(const s_fieldset *fieldset, s_status *status) {
 
 	//
 	// Check: E_PHASE_BEAR_OFF => E_PHASE_WIN
 	//
-	if (game->bear_off[status->turn].num == CHECKER_NUM) {
+	if (fieldset->bear_off[status->turn].num == CHECKER_NUM) {
 		status->player_phase[status->turn] = E_PHASE_WIN;
 	}
 
 	//
 	// Check: E_PHASE_NORMAL / E_PHASE_BEAR_OFF => E_PHASE_BAR
 	//
-	else if (game->reenter[status->turn].num > 0) {
+	else if (fieldset->reenter[status->turn].num > 0) {
 		status->player_phase[status->turn] = E_PHASE_BAR;
 	}
 
 	//
 	// Check: E_PHASE_NORMAL / E_PHASE_BAR  => E_PHASE_BEAR_OFF
 	//
-	else if (rules_min_rel_idx(game, status) >= 3 * POINTS_QUARTER) {
+	else if (rules_min_rel_idx(fieldset, status) >= 3 * POINTS_QUARTER) {
 		status->player_phase[status->turn] = E_PHASE_BEAR_OFF;
 	}
 
@@ -102,7 +116,7 @@ void rules_update_phase(const s_game *game, s_status *status) {
  * (unit tested)
  *****************************************************************************/
 
-s_field* rules_get_field_src(s_game *game, const s_status *status, const s_field_id field_id) {
+s_field* rules_get_field_src(s_fieldset *fieldset, const s_status *status, const s_field_id field_id) {
 
 	//
 	// If a checker reached the bear off area, it cannot moved again.
@@ -114,7 +128,7 @@ s_field* rules_get_field_src(s_game *game, const s_status *status, const s_field
 	//
 	// Identify the source field
 	//
-	s_field *field_src = s_game_get(game, field_id);
+	s_field *field_src = s_fieldset_get(fieldset, field_id);
 
 #ifdef DEBUG
 	s_field_log(field_src, "Source field");
@@ -165,7 +179,7 @@ s_field* rules_get_field_src(s_game *game, const s_status *status, const s_field
  * not it returns NULL.
  *****************************************************************************/
 // TODO: unit tests
-s_field* rules_can_mv(s_game *game, const s_status *status, const s_field *field_src) {
+s_field* rules_can_mv(s_fieldset *fieldset, const s_status *status, const s_field *field_src) {
 
 	//
 	// Get the value from the active dice.
@@ -192,17 +206,17 @@ s_field* rules_can_mv(s_game *game, const s_status *status, const s_field *field
 			//
 			if (idx_rel_dst == POINTS_NUM) {
 				log_debug("Bear off exact - dst-rel: %d", idx_rel_dst);
-				return s_game_get_bear_off(game, field_src->owner);
+				return s_fieldset_get_bear_off(fieldset, field_src->owner);
 			}
 
 			//
 			// If the minimum + dice is outside, then the destination is valid.
 			//
-			const int min_rel_idx = rules_min_rel_idx(game, status);
+			const int min_rel_idx = rules_min_rel_idx(fieldset, status);
 
 			if (min_rel_idx + dice > POINTS_NUM - 1) {
 				log_debug("Bear off min - dst-rel: %d min: %d", idx_rel_dst, min_rel_idx);
-				return s_game_get_bear_off(game, field_src->owner);
+				return s_fieldset_get_bear_off(fieldset, field_src->owner);
 			}
 		}
 
@@ -217,7 +231,7 @@ s_field* rules_can_mv(s_game *game, const s_status *status, const s_field *field
 	//
 	// At this point our destination is a regular point.
 	//
-	s_field *field_dst = s_game_get_point(game, s_field_idx_rel(field_src->owner, idx_rel_dst));
+	s_field *field_dst = s_fieldset_get_point(fieldset, s_field_idx_rel(field_src->owner, idx_rel_dst));
 
 	//
 	// Ensure that the destination is not occupied by the opponent (num > 1 => hit).
