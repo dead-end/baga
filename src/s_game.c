@@ -22,30 +22,40 @@
  * SOFTWARE.
  */
 
+/******************************************************************************
+ * The source file implements function to access the s_game, which is a
+ * collection of fields: points, bear off, bar
+ *****************************************************************************/
+
 #include "lib_logging.h"
-#include "lib_utils.h"
 #include "s_game.h"
-#include "nc_board.h"
-#include "rules.h"
 
 /******************************************************************************
- * The function initializes the s_game struct. No checker are placed.
+ * The function initializes the s_game struct. It sets the owner of the fields.
+ * The points have no owner, the bar and the bear off area have a fixed owner.
+ * The number of checkers on the fields are set to 0 on all fields.
  *****************************************************************************/
 
 void s_game_init(s_game *game) {
 
 	//
-	// Initialize the points
+	// The points have no owner (all fields have 0 checker)
 	//
 	for (int i = 0; i < POINTS_NUM; i++) {
 
 		s_field_set_full(game->point[i], E_FIELD_POINTS, i, 0, E_OWNER_NONE);
 	}
 
+	//
+	// Each player has his bear off area (all fields have 0 checker)
+	//
 	s_field_set_full(game->bear_off[E_OWNER_TOP], E_FIELD_BEAR_OFF, E_OWNER_TOP, 0, E_OWNER_TOP);
 
 	s_field_set_full(game->bear_off[E_OWNER_BOT], E_FIELD_BEAR_OFF, E_OWNER_BOT, 0, E_OWNER_BOT);
 
+	//
+	// Each player has his bar (all fields have 0 checker)
+	//
 	s_field_set_full(game->reenter[E_OWNER_TOP], E_FIELD_BAR, E_OWNER_TOP, 0, E_OWNER_TOP);
 
 	s_field_set_full(game->reenter[E_OWNER_BOT], E_FIELD_BAR, E_OWNER_BOT, 0, E_OWNER_BOT);
@@ -55,7 +65,7 @@ void s_game_init(s_game *game) {
  * The function resets the s_game struct and sets the checker for the new game.
  *****************************************************************************/
 
-void s_game_new_game(s_game *game, s_status *status) {
+void s_game_new_game(s_game *game) {
 
 	//
 	// Set all to 0
@@ -85,27 +95,6 @@ void s_game_new_game(s_game *game, s_status *status) {
 	//
 	s_field_set(game->point[s_field_idx_rel( E_OWNER_BOT, 18)], 5, E_OWNER_BOT);
 	s_field_set(game->point[s_field_idx_rel(E_OWNER_TOP, 18)], 5, E_OWNER_TOP);
-
-	//
-	// Reset the status for a new game.
-	//
-	// TODO: correct here?
-	s_status_start(status);
-}
-
-/******************************************************************************
- * The function prints the checkers to the board.
- *****************************************************************************/
-
-void s_game_print(const s_game *game) {
-
-	for (int i = 0; i < POINTS_NUM; i++) {
-
-		if (game->point[i].num != 0) {
-
-			s_board_add_checkers(&game->point[i]);
-		}
-	}
 }
 
 /******************************************************************************

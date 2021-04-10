@@ -22,13 +22,19 @@
  * SOFTWARE.
  */
 
+/******************************************************************************
+ * The header file provides an interface for the s_game struct, which is a
+ * collection of fields: points, bear off, bar
+ *
+ * It is a pure data structure and knows nothing about ncurses, status, phases.
+ *****************************************************************************/
+
 #ifndef INC_S_GAME_H_
 #define INC_S_GAME_H_
 
 #include "bg_defs.h"
 #include "s_field_id.h"
 #include "s_field.h"
-#include "s_status.h"
 
 /******************************************************************************
  * The struct contains the fields of the game board.
@@ -75,9 +81,7 @@ typedef struct {
 
 void s_game_init(s_game *game);
 
-void s_game_new_game(s_game *game, s_status *status);
-
-void s_game_print(const s_game *game);
+void s_game_new_game(s_game *game);
 
 s_field* s_game_get(s_game *game, const s_field_id id);
 
