@@ -28,7 +28,7 @@
 #include <ncurses.h>
 
 #include "bg_defs.h"
-#include "s_game.h"
+#include "s_fieldset.h"
 #include "s_point_layout.h"
 #include "s_game_cfg.h"
 #include "s_status.h"
@@ -43,9 +43,8 @@ void nc_board_free();
 
 void nc_board_print();
 
-// TODO: there is a cross dependency s_game <=> nc_board
-void s_board_add_checkers(const s_field *field);
+void s_board_print_game(const s_fieldset *fieldset);
 
-void nc_board_process(s_game *game, s_status *status, const s_field_id field);
+void nc_board_process(s_fieldset *fieldset, s_status *status, const s_field_id field);
 
 #endif /* INC_NC_BOARD_H_ */

@@ -22,6 +22,7 @@
  * SOFTWARE.
  */
 
+#include "s_fieldset.h"
 #include "lib_logging.h"
 #include "lib_utils.h"
 #include "lib_curses.h"
@@ -33,7 +34,6 @@
 #include "direction.h"
 #include "nc_board.h"
 #include "s_board.h"
-#include "s_game.h"
 #include "e_owner.h"
 #include "rules.h"
 
@@ -158,14 +158,23 @@ void s_board_points_add_checkers_pos(const s_board *board, s_pos pos, const e_ow
 }
 
 /******************************************************************************
- *
+ * The function prints the checkers to the board.
  *****************************************************************************/
 
-void s_board_add_checkers(const s_field *field) {
+void s_board_print_game(const s_fieldset *fieldset) {
+	const s_field *field;
+	s_pos pos_tmp;
 
-	const s_pos pos_tmp = s_pos_get_checker(field->id);
+	for (int i = 0; i < POINTS_NUM; i++) {
 
-	s_board_points_add_checkers_pos(&_board, pos_tmp, field->owner, field->num, E_UNCOMP);
+		field = s_fieldset_get_point(fieldset, i);
+
+		if (field->num != 0) {
+
+			pos_tmp = s_pos_get_checker(field->id);
+			s_board_points_add_checkers_pos(&_board, pos_tmp, field->owner, field->num, E_UNCOMP);
+		}
+	}
 }
 
 /******************************************************************************
@@ -328,7 +337,7 @@ static void traveler_mv(s_field *field_src, s_field *field_dst) {
  * The function is called with the s_field_id from a mouse event.
  *****************************************************************************/
 // TODO: working state
-void nc_board_process(s_game *game, s_status *status, const s_field_id id) {
+void nc_board_process(s_fieldset *fieldset, s_status *status, const s_field_id id) {
 
 	//
 	// If the game ended, there is nothing to do.
@@ -341,7 +350,7 @@ void nc_board_process(s_game *game, s_status *status, const s_field_id id) {
 	//
 	// Get the source field. It returns NULL is the field is not valid.
 	//
-	s_field *field_src = rules_get_field_src(game, status, id);
+	s_field *field_src = rules_get_field_src(fieldset, status, id);
 	if (field_src == NULL) {
 		return;
 	}
@@ -349,7 +358,7 @@ void nc_board_process(s_game *game, s_status *status, const s_field_id id) {
 	//
 	// Get the destination field. It returns NULL is the field is not valid.
 	//
-	s_field *field_dst = rules_can_mv(game, status, field_src);
+	s_field *field_dst = rules_can_mv(fieldset, status, field_src);
 	if (field_dst == NULL) {
 		log_debug_str("No target field found");
 		return;
@@ -361,13 +370,13 @@ void nc_board_process(s_game *game, s_status *status, const s_field_id id) {
 	const e_owner owner_other = e_owner_other(status->turn);
 	if (field_dst->owner == owner_other) {
 		const s_field_id field_other = { .type = E_FIELD_BAR, .idx = owner_other };
-		traveler_mv(field_dst, s_game_get(game, field_other));
+		traveler_mv(field_dst, s_fieldset_get(fieldset, field_other));
 		s_status_set_phase(status, owner_other, E_PHASE_BAR);
 	}
 
 	traveler_mv(field_src, field_dst);
 
-	rules_update_phase(game, status);
+	rules_update_phase(fieldset, status);
 
 	//TODO: correct here ?? cross dependency s_status <=> nc_board.
 	s_status_mv_done(status);
