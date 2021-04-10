@@ -1,7 +1,7 @@
 /*
  * MIT License
  *
- * Copyright (c) 2020 dead-end
+ * Copyright (c) 2021 dead-end
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -25,15 +25,26 @@
 #ifndef INC_DICE_H_
 #define INC_DICE_H_
 
+/******************************************************************************
+ * The header file provides an interface to the window with the 4 buttons:
+ *
+ * - 2 dices (which are buttons)
+ * - undo button
+ * - confirm button
+ *****************************************************************************/
+
 #include <ncurses.h>
 
-#include "bg_defs.h"
 #include "s_status.h"
 #include "s_game_cfg.h"
 #include "lib_s_point.h"
 
 /******************************************************************************
- * Sizes for the dices
+ * Sizes for the dices. They are globally defined to be able to compute the
+ * size of the overall layout.
+ *
+ * TODO: maybe it is better to use a function that computes the total size of
+ * the window.
  *****************************************************************************/
 
 #define D_ROWS 4

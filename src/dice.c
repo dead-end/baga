@@ -1,7 +1,7 @@
 /*
  * MIT License
  *
- * Copyright (c) 2020 dead-end
+ * Copyright (c) 2021 dead-end
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -22,20 +22,25 @@
  * SOFTWARE.
  */
 
+/******************************************************************************
+ * The source file implements the window with the 4 buttons (2 dices, undo and
+ * confirm). All 4 buttons have the same size and are build from a template
+ * with characters and a foreground and background color, which reflect the
+ * status of the button.
+ *
+ * TODO: undo button does not do anything.
+ * TODO: confirm button missing
+ *****************************************************************************/
+
 #include <wchar.h>
 
-// TODO: check includes
-#include "bg_defs.h"
 #include "s_color_def.h"
-#include "lib_color.h"
-#include "lib_color_pair.h"
 #include "lib_logging.h"
 #include "s_tarr.h"
-#include "s_status.h"
 #include "dice.h"
 
 /******************************************************************************
- * Definition of the characters to build the templates.
+ * The buttons are build with the following characters.
  *****************************************************************************/
 
 //
@@ -54,7 +59,7 @@
 #define LO L'\u2580'
 
 /******************************************************************************
- * The elements have fixed positions inside the window.
+ * The buttons have fixed positions inside the window.
  *****************************************************************************/
 
 static const s_point _pos_dice_0 = { .row = 0, .col = 0 };
@@ -66,20 +71,21 @@ static const s_point _pos_undo = { .row = 0, .col = 2 * (D_COLS + D_PAD) };
 static const s_point _pos_confim = { .row = 0, .col = 3 * (D_COLS + D_PAD) };
 
 /******************************************************************************
- * The constant dimension of the templates.
+ * The constant dimension of the buttons (and their templates).
  *****************************************************************************/
 
 static const s_point _tmp_dim = { .row = D_ROWS, .col = D_COLS };
 
 /******************************************************************************
- * The definition of the characters for the dices.
+ * The definition of the 6 templates of the dices, which show the values from
+ * 1 to 6.
  *****************************************************************************/
 
 static const wchar_t _tmpl_dices[6][D_ROWS][D_COLS] = {
 
 {
 
-// Dice: 1
+// Dice value: 1
 
 		{ UP, UP, UP, UP, UP, UP, UP },
 
@@ -93,7 +99,7 @@ static const wchar_t _tmpl_dices[6][D_ROWS][D_COLS] = {
 
 {
 
-// Dice: 2
+// Dice value: 2
 
 		{ UP, UP, UP, UP, UP, UP, UP },
 
@@ -107,7 +113,7 @@ static const wchar_t _tmpl_dices[6][D_ROWS][D_COLS] = {
 
 {
 
-// Dice: 3
+// Dice value: 3
 
 		{ UP, UP, UP, UP, UP, UP, UP },
 
@@ -121,7 +127,7 @@ static const wchar_t _tmpl_dices[6][D_ROWS][D_COLS] = {
 
 {
 
-// Dice: 4
+// Dice value: 4
 
 		{ UP, UP, UP, UP, UP, UP, UP },
 
@@ -135,7 +141,7 @@ static const wchar_t _tmpl_dices[6][D_ROWS][D_COLS] = {
 
 {
 
-// Dice: 5
+// Dice value: 5
 
 		{ UP, UP, UP, UP, UP, UP, UP },
 
@@ -149,7 +155,7 @@ static const wchar_t _tmpl_dices[6][D_ROWS][D_COLS] = {
 
 {
 
-// Dice: 6
+// Dice value: 6
 
 		{ UP, UP, UP, UP, UP, UP, UP },
 
@@ -210,32 +216,67 @@ static const wchar_t _tmpl_confirm[D_ROWS][D_COLS] =
 static WINDOW *_win;
 
 /******************************************************************************
- * The template that is used for the dices and the buttons.
+ * The template that is used for the dices and the buttons. (The dices are
+ * buttons).
  *****************************************************************************/
 
-static s_tarr *_tmpl;
+static s_tarr *_button_tmpl;
 
 /******************************************************************************
+ * The enum defines the status of a button (dice, confirm, undo).
  *
+ * TODO: maybe it makes sense to add a E_BUTTON_DISABLED status, for dices that
+ * are set, or dices that are impossible.
  *****************************************************************************/
-// TODO: e_dice_state => s_dice
-#define D_STATUS_NUM 2
 
-#define D_STAT_ACTIVE 0
+typedef enum {
 
-#define D_STAT_INACTIVE 1
+	//
+	// The status of an active, usable button.
+	//
+	E_BUTTON_ACTIVE = 0,
 
-// TODO: colorpairs instead of colors
-static short _color_dices[NUM_PLAYER][D_STATUS_NUM];
+	//
+	// The status of an inactive button.
+	//
+	E_BUTTON_INACTIVE = 1,
 
-static short _color_ctrl_undo[D_STATUS_NUM];
+} e_button_status;
 
-static short _color_ctrl_confirm[D_STATUS_NUM];
-
-static short _color_ctrl_bg[D_STATUS_NUM];
+#define BUTTON_STATUS_MAX 2
 
 /******************************************************************************
+ * The definition of the foreground and background colors of the buttons. Each
+ * button has a pair for each status.
  *
+ * TODO: colorpairs instead of colors
+ *****************************************************************************/
+
+//
+// The definition of the foreground colors for the dices for each player (for
+// the stati)
+//
+static short _color_dices[NUM_PLAYER][BUTTON_STATUS_MAX];
+
+//
+// The definition of the foreground color of the undo button (for the stati).
+//
+static short _color_ctrl_undo[BUTTON_STATUS_MAX];
+
+//
+// The definition of the foreground color of the confirm button (for the
+// stati).
+//
+static short _color_ctrl_confirm[BUTTON_STATUS_MAX];
+
+//
+// The definition of the background color for all buttons (for the stati).
+//
+static short _color_ctrl_bg[BUTTON_STATUS_MAX];
+
+/******************************************************************************
+ * The initialize function allocates the memory for the template and gets the
+ * colors for the buttons.
  *****************************************************************************/
 
 void dice_init(const s_game_cfg *game_cfg, WINDOW *win) {
@@ -251,39 +292,40 @@ void dice_init(const s_game_cfg *game_cfg, WINDOW *win) {
 #endif
 
 	_win = win;
-	_tmpl = s_tarr_new(D_ROWS, D_COLS);
+
+	_button_tmpl = s_tarr_new(D_ROWS, D_COLS);
 
 	//
 	// Create color: black
 	//
 	const int owner_black = e_player_color_2_owner(game_cfg->owner_top_color, PLAYER_COLOR_BLACK);
-	_color_dices[owner_black][D_STAT_ACTIVE] = s_color_def_hex_create(game_cfg->clr_dice_black_active);
-	_color_dices[owner_black][D_STAT_INACTIVE] = s_color_def_hex_create(game_cfg->clr_dice_black_inactive);
+	_color_dices[owner_black][E_BUTTON_ACTIVE] = s_color_def_hex_create(game_cfg->clr_dice_black_active);
+	_color_dices[owner_black][E_BUTTON_INACTIVE] = s_color_def_hex_create(game_cfg->clr_dice_black_inactive);
 
 	//
 	// Create color: white
 	//
 	const int owner_white = e_player_color_2_owner(game_cfg->owner_top_color, PLAYER_COLOR_WHITE);
-	_color_dices[owner_white][D_STAT_ACTIVE] = s_color_def_hex_create(game_cfg->clr_dice_white_active);
-	_color_dices[owner_white][D_STAT_INACTIVE] = s_color_def_hex_create(game_cfg->clr_dice_white_inactive);
+	_color_dices[owner_white][E_BUTTON_ACTIVE] = s_color_def_hex_create(game_cfg->clr_dice_white_active);
+	_color_dices[owner_white][E_BUTTON_INACTIVE] = s_color_def_hex_create(game_cfg->clr_dice_white_inactive);
 
 	//
 	// Create color: undo
 	//
-	_color_ctrl_undo[D_STAT_ACTIVE] = s_color_def_hex_create(game_cfg->clr_ctrl_undo_active);
-	_color_ctrl_undo[D_STAT_INACTIVE] = s_color_def_hex_create(game_cfg->clr_ctrl_undo_inactive);
+	_color_ctrl_undo[E_BUTTON_ACTIVE] = s_color_def_hex_create(game_cfg->clr_ctrl_undo_active);
+	_color_ctrl_undo[E_BUTTON_INACTIVE] = s_color_def_hex_create(game_cfg->clr_ctrl_undo_inactive);
 
 	//
 	// Create color: confirm
 	//
-	_color_ctrl_confirm[D_STAT_ACTIVE] = s_color_def_hex_create(game_cfg->clr_ctrl_confirm_active);
-	_color_ctrl_confirm[D_STAT_INACTIVE] = s_color_def_hex_create(game_cfg->clr_ctrl_confirm_inactive);
+	_color_ctrl_confirm[E_BUTTON_ACTIVE] = s_color_def_hex_create(game_cfg->clr_ctrl_confirm_active);
+	_color_ctrl_confirm[E_BUTTON_INACTIVE] = s_color_def_hex_create(game_cfg->clr_ctrl_confirm_inactive);
 
 	//
 	// Create color: background
 	//
-	_color_ctrl_bg[D_STAT_ACTIVE] = s_color_def_hex_create(game_cfg->clr_ctrl_bg_active);
-	_color_ctrl_bg[D_STAT_INACTIVE] = s_color_def_hex_create(game_cfg->clr_ctrl_bg_inactive);
+	_color_ctrl_bg[E_BUTTON_ACTIVE] = s_color_def_hex_create(game_cfg->clr_ctrl_bg_active);
+	_color_ctrl_bg[E_BUTTON_INACTIVE] = s_color_def_hex_create(game_cfg->clr_ctrl_bg_inactive);
 }
 
 /******************************************************************************
@@ -292,48 +334,55 @@ void dice_init(const s_game_cfg *game_cfg, WINDOW *win) {
 
 void dice_free() {
 
-	s_tarr_free(&_tmpl);
+	s_tarr_free(&_button_tmpl);
 }
 
 /******************************************************************************
- * The function is called with template of character, the forground and the
- * background colors.
+ * We have 8 character templates. 6 templates for the dice numbers and one for
+ * the undo and one for the confirm button. The 4 buttons (2 dices, undo,
+ * confirm) consists of one of the character templates with a foreground and
+ * background color, reflecting the state of the button.
+ *
+ * The function copies the characters from the template with a foreground and
+ * background color to the button template.
  *****************************************************************************/
 
-static s_tarr* dice_update_tmpl(const wchar_t _tmpl_chr[D_ROWS][D_COLS], const short fg, const short bg) {
+static void update_button_tmpl(s_tarr *tmpl_button, const wchar_t tmpl_chars[D_ROWS][D_COLS], const short fg, const short bg) {
 	s_tchar *tchar;
 
 	for (int row = 0; row < D_ROWS; row++) {
 		for (int col = 0; col < D_COLS; col++) {
 
-			tchar = &s_tarr_get(_tmpl, row, col);
-			tchar->chr = _tmpl_chr[row][col];
+			tchar = &s_tarr_get(tmpl_button, row, col);
+
+			tchar->chr = tmpl_chars[row][col];
 			tchar->fg = fg;
 			tchar->bg = (row == 0) ? 0 : bg;
 		}
 	}
-
-	return _tmpl;
 }
 
 /******************************************************************************
- * The function sets the colors for the dices.
+ * The function sets the colors for the dices. The colors depend on the player
+ * (black / white) and the status (active / inactive).
+ *
+ * TODO: maybe we need a color for not possible.
  *****************************************************************************/
 
 static void dice_get_color(const s_status *status, const bool active, short *fg, short *bg) {
 
-	const int idx = active ? D_STAT_ACTIVE : D_STAT_INACTIVE;
+	const int idx = active ? E_BUTTON_ACTIVE : E_BUTTON_INACTIVE;
 
 	*fg = _color_dices[status->turn][idx];
 	*bg = _color_dices[e_owner_other(status->turn)][idx];
 }
 
 /******************************************************************************
- *
+ * The function is called with the status struct and prints the window with the
+ * 4 buttons (2 dices, undo and confirm).
  *****************************************************************************/
 
 void dice_print(const s_status *status) {
-	s_tarr *tmpl;
 
 	short fg, bg;
 
@@ -341,24 +390,24 @@ void dice_print(const s_status *status) {
 	// Dice: 0
 	//
 	dice_get_color(status, s_dices_has_status(status->dices, 0, E_DICE_ACTIVE), &fg, &bg);
-	tmpl = dice_update_tmpl(_tmpl_dices[status->dices.dice[0].value - 1], fg, bg);
-	s_tarr_print(_win, tmpl, _pos_dice_0);
+	update_button_tmpl(_button_tmpl, _tmpl_dices[status->dices.dice[0].value - 1], fg, bg);
+	s_tarr_print(_win, _button_tmpl, _pos_dice_0);
 
 	//
 	// Dice: 1
 	//
 	dice_get_color(status, s_dices_has_status(status->dices, 1, E_DICE_ACTIVE), &fg, &bg);
-	tmpl = dice_update_tmpl(_tmpl_dices[status->dices.dice[1].value - 1], fg, bg);
-	s_tarr_print(_win, tmpl, _pos_dice_1);
+	update_button_tmpl(_button_tmpl, _tmpl_dices[status->dices.dice[1].value - 1], fg, bg);
+	s_tarr_print(_win, _button_tmpl, _pos_dice_1);
 
 	//
 	// Control: undo
 	//
 	if (s_dices_can_undo(status->dices)) {
-		bg = _color_ctrl_undo[D_STAT_ACTIVE];
-		fg = _color_ctrl_bg[D_STAT_ACTIVE];
-		tmpl = dice_update_tmpl(_tmpl_undo, fg, bg);
-		s_tarr_print(_win, tmpl, _pos_undo);
+		bg = _color_ctrl_undo[E_BUTTON_ACTIVE];
+		fg = _color_ctrl_bg[E_BUTTON_ACTIVE];
+		update_button_tmpl(_button_tmpl, _tmpl_undo, fg, bg);
+		s_tarr_print(_win, _button_tmpl, _pos_undo);
 
 	} else {
 		s_tarr_print_empty(_win, _tmp_dim, _pos_undo);
@@ -368,10 +417,10 @@ void dice_print(const s_status *status) {
 	// Control: confirm
 	//
 	if (s_dices_is_done(status->dices)) {
-		bg = _color_ctrl_confirm[D_STAT_ACTIVE];
-		fg = _color_ctrl_bg[D_STAT_ACTIVE];
-		tmpl = dice_update_tmpl(_tmpl_confirm, fg, bg);
-		s_tarr_print(_win, tmpl, _pos_confim);
+		bg = _color_ctrl_confirm[E_BUTTON_ACTIVE];
+		fg = _color_ctrl_bg[E_BUTTON_ACTIVE];
+		update_button_tmpl(_button_tmpl, _tmpl_confirm, fg, bg);
+		s_tarr_print(_win, _button_tmpl, _pos_confim);
 
 	} else {
 		s_tarr_print_empty(_win, _tmp_dim, _pos_confim);
@@ -381,7 +430,8 @@ void dice_print(const s_status *status) {
 }
 
 /******************************************************************************
- * The function processes mouse events. The events are relative to the window.
+ * The function processes mouse events. The events are relative to the window,
+ * which contains only buttons, so we need to check which button is clicked.
  *****************************************************************************/
 
 void dice_process_event(s_status *status, const s_point *event) {
@@ -391,7 +441,7 @@ void dice_process_event(s_status *status, const s_point *event) {
 	//
 	if (s_point_is_inside(&_pos_dice_0, &_tmp_dim, event)) {
 
-		if (s_dice_toogle_active(&status->dices, 0)) {
+		if (s_dice_toggle_active(&status->dices, 0)) {
 			dice_print(status);
 		}
 	}
@@ -401,16 +451,18 @@ void dice_process_event(s_status *status, const s_point *event) {
 	//
 	else if (s_point_is_inside(&_pos_dice_1, &_tmp_dim, event)) {
 
-		if (s_dice_toogle_active(&status->dices, 1)) {
+		if (s_dice_toggle_active(&status->dices, 1)) {
 			dice_print(status);
 		}
 	}
 
 	else if (s_point_is_inside(&_pos_undo, &_tmp_dim, event)) {
+		// TODO: no undo button
 		log_debug_str("on undo");
 	}
 
 	else if (s_point_is_inside(&_pos_confim, &_tmp_dim, event)) {
+		// TODO: no confirm button
 		log_debug_str("on confirm");
 	}
 
