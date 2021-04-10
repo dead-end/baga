@@ -63,50 +63,41 @@ LIBS        = $(shell $(NCURSES_CONFIG) --libs) -lm -lmenuw
 ################################################################################
 
 SRC_LIBS = \
-	$(SRC_DIR)/lib_logging.c    \
-	$(SRC_DIR)/lib_color.c      \
-	$(SRC_DIR)/lib_color_pair.c \
-	$(SRC_DIR)/lib_string.c     \
-	$(SRC_DIR)/lib_s_point.c     \
-	$(SRC_DIR)/ut_lib_s_point.c     \
-	$(SRC_DIR)/lib_curses.c     \
-	$(SRC_DIR)/lib_popup.c     \
-	$(SRC_DIR)/s_color_def.c \
-	$(SRC_DIR)/s_game.c  \
-	$(SRC_DIR)/nc_board.c  \
-	$(SRC_DIR)/s_tmpl_checker.c \
-	$(SRC_DIR)/s_tmpl_points.c  \
-	$(SRC_DIR)/s_game_cfg.c  \
-	$(SRC_DIR)/s_tarr.c  \
-	$(SRC_DIR)/ut_s_tarr.c  \
-	$(SRC_DIR)/s_pos.c  \
-	$(SRC_DIR)/s_board.c  \
-	$(SRC_DIR)/layout.c  \
-	$(SRC_DIR)/s_status.c  \
-	$(SRC_DIR)/s_field.c  \
-	$(SRC_DIR)/ut_s_field.c  \
-	$(SRC_DIR)/dice.c        \
-	$(SRC_DIR)/s_dices.c     \
-	$(SRC_DIR)/ut_s_dices.c  \
-	$(SRC_DIR)/direction.c  \
-	$(SRC_DIR)/ut_direction.c  \
-	$(SRC_DIR)/s_point_layout.c  \
-	$(SRC_DIR)/ut_s_point_layout.c  \
 	$(SRC_DIR)/ut_utils.c          \
-	$(SRC_DIR)/ut_lib_color_pair.c \
-	$(SRC_DIR)/ut_lib_string.c     \
-	$(SRC_DIR)/ut_s_color_def.c    \
+	$(SRC_DIR)/lib_logging.c       \
+	$(SRC_DIR)/lib_curses.c        \
+	$(SRC_DIR)/lib_popup.c         \
+	$(SRC_DIR)/lib_color.c         \
+	$(SRC_DIR)/lib_color_pair.c    $(SRC_DIR)/ut_lib_color_pair.c \
+	$(SRC_DIR)/lib_string.c        $(SRC_DIR)/ut_lib_string.c     \
+	$(SRC_DIR)/lib_s_point.c       $(SRC_DIR)/ut_lib_s_point.c    \
+	$(SRC_DIR)/s_color_def.c       $(SRC_DIR)/ut_s_color_def.c    \
+	$(SRC_DIR)/s_tarr.c            $(SRC_DIR)/ut_s_tarr.c         \
+	$(SRC_DIR)/s_game.c            \
+	$(SRC_DIR)/nc_board.c          \
+	$(SRC_DIR)/s_game_cfg.c        \
+	$(SRC_DIR)/s_tmpl_checker.c    \
+	$(SRC_DIR)/s_tmpl_points.c     \
+	$(SRC_DIR)/s_pos.c             \
+	$(SRC_DIR)/s_board.c           \
+	$(SRC_DIR)/layout.c            \
+	$(SRC_DIR)/s_status.c          \
+    $(SRC_DIR)/s_field_id.c        \
+	$(SRC_DIR)/s_field.c           $(SRC_DIR)/ut_s_field.c        \
+	$(SRC_DIR)/dice.c              \
+	$(SRC_DIR)/s_dices.c           $(SRC_DIR)/ut_s_dices.c        \
+	$(SRC_DIR)/direction.c         $(SRC_DIR)/ut_direction.c      \
+	$(SRC_DIR)/s_point_layout.c    $(SRC_DIR)/ut_s_point_layout.c \
+	$(SRC_DIR)/rules.c             $(SRC_DIR)/ut_rules.c          \
 	$(SRC_DIR)/e_owner.c           \
 	$(SRC_DIR)/e_player_phase.c    \
-	$(SRC_DIR)/rules.c  \
-	$(SRC_DIR)/ut_rules.c  \
-	$(SRC_DIR)/s_field_id.c   \
+
 
 INC_ADD = \
-	$(INCLUDE_DIR)/lib_s_tchar.h \
-	$(INCLUDE_DIR)/lib_utils.h \
-	$(INCLUDE_DIR)/bg_defs.h   \
-	$(INCLUDE_DIR)/s_area.h  \
+	$(INCLUDE_DIR)/lib_s_tchar.h   \
+	$(INCLUDE_DIR)/lib_utils.h     \
+	$(INCLUDE_DIR)/bg_defs.h       \
+	$(INCLUDE_DIR)/s_area.h        \
 
 OBJ_LIBS = $(subst $(SRC_DIR),$(BUILD_DIR),$(subst .c,.o,$(SRC_LIBS)))
 
