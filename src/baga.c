@@ -28,9 +28,9 @@
 #include "lib_curses.h"
 #include "lib_string.h"
 #include "lib_popup.h"
+#include "s_fieldset.h"
 #include "nc_board.h"
 #include "s_pos.h"
-#include "s_game.h"
 #include "layout.h"
 #include "dice.h"
 
@@ -178,14 +178,19 @@ int main() {
 	//
 	// Initialize the game board function
 	//
-	s_game game;
+	s_fieldset fieldset;
 
-	s_game_new_game(&game, &status);
+	s_fieldset_new_game(&fieldset);
+
+	//
+	// Reset the status for a new game.
+	//
+	s_status_start(&status);
 
 	//
 	// Print
 	//
-	s_game_print(&game);
+	s_board_print_game(&fieldset);
 
 	nc_board_print();
 
@@ -239,7 +244,7 @@ int main() {
 						s_pos_mouse_target(m_event, &field_id);
 
 						if (field_id.type != E_FIELD_NONE) {
-							nc_board_process(&game, &status, field_id);
+							nc_board_process(&fieldset, &status, field_id);
 						}
 
 					} else if (lc_event_stdscr_to_win(layout_win_dice(), event.y, event.x, &m_event)) {
