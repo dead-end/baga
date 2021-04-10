@@ -22,30 +22,30 @@
  * SOFTWARE.
  */
 
+#include "s_fieldset.h"
 #include "bg_defs.h"
 #include "ut_utils.h"
-#include "s_game.h"
 #include "s_status.h"
 #include "rules.h"
 
 /******************************************************************************
- * The macro initializes the game and the status.
+ * The macro initializes the fieldset and the status.
  *****************************************************************************/
 
-#define init_game_status(g,s,o) s_game_init(g); (s).turn = (o)
+#define init_fieldset_status(f,s,o) s_fieldset_init(f); (s).turn = (o)
 
-#define init_game_status_phase(g,s,o,p) s_game_init(g); (s).turn = (o) ; (s).player_phase[o] = (p)
+#define init_fielset_status_phase(f,s,o,p) s_fieldset_init(f); (s).turn = (o) ; (s).player_phase[o] = (p)
 
 /******************************************************************************
  * The function is a helper function for the test_rules_update_phase() test.
  *****************************************************************************/
 
-static void check_rules_update_phase(const s_game *game, s_status *status, e_player_phase player_phase_exp, const char *msg) {
+static void check_rules_update_phase(const s_fieldset *fieldset, s_status *status, e_player_phase player_phase_exp, const char *msg) {
 
 	//
 	// Update the phase in the status
 	//
-	rules_update_phase(game, status);
+	rules_update_phase(fieldset, status);
 
 	//
 	// Check the result
@@ -58,56 +58,56 @@ static void check_rules_update_phase(const s_game *game, s_status *status, e_pla
  *****************************************************************************/
 
 static void test_rules_update_phase() {
-	s_game game;
+	s_fieldset fieldset;
 	s_status status;
 
 	//
 	// Check: win
 	//
-	init_game_status(&game, status, E_OWNER_TOP);
-	s_game_set_bear_off(&game, status.turn, CHECKER_NUM);
-	check_rules_update_phase(&game, &status, E_PHASE_WIN, "win - top");
+	init_fieldset_status(&fieldset, status, E_OWNER_TOP);
+	s_fieldset_set_bear_off(&fieldset, status.turn, CHECKER_NUM);
+	check_rules_update_phase(&fieldset, &status, E_PHASE_WIN, "win - top");
 
-	init_game_status(&game, status, E_OWNER_BOT);
-	s_game_set_bear_off(&game, status.turn, CHECKER_NUM);
-	check_rules_update_phase(&game, &status, E_PHASE_WIN, "win - bottom");
+	init_fieldset_status(&fieldset, status, E_OWNER_BOT);
+	s_fieldset_set_bear_off(&fieldset, status.turn, CHECKER_NUM);
+	check_rules_update_phase(&fieldset, &status, E_PHASE_WIN, "win - bottom");
 
 	//
 	// Check: bar
 	//
-	init_game_status(&game, status, E_OWNER_TOP);
-	s_game_set_bear_off(&game, status.turn, CHECKER_NUM -1);
-	s_game_set_bar(&game, status.turn, 1);
-	check_rules_update_phase(&game, &status, E_PHASE_BAR, "bar - top");
+	init_fieldset_status(&fieldset, status, E_OWNER_TOP);
+	s_fieldset_set_bear_off(&fieldset, status.turn, CHECKER_NUM - 1);
+	s_fieldset_set_bar(&fieldset, status.turn, 1);
+	check_rules_update_phase(&fieldset, &status, E_PHASE_BAR, "bar - top");
 
-	init_game_status(&game, status, E_OWNER_BOT);
-	s_game_set_bear_off(&game, status.turn, CHECKER_NUM -1);
-	s_game_set_bar(&game, status.turn, 1);
-	check_rules_update_phase(&game, &status, E_PHASE_BAR, "bar - bottom");
+	init_fieldset_status(&fieldset, status, E_OWNER_BOT);
+	s_fieldset_set_bear_off(&fieldset, status.turn, CHECKER_NUM - 1);
+	s_fieldset_set_bar(&fieldset, status.turn, 1);
+	check_rules_update_phase(&fieldset, &status, E_PHASE_BAR, "bar - bottom");
 
 	//
 	// Check: bear-off
 	//
-	init_game_status(&game, status, E_OWNER_TOP);
-	s_game_set_point_rel(&game, status.turn, 20, CHECKER_NUM);
-	check_rules_update_phase(&game, &status, E_PHASE_BEAR_OFF, "bear-off - top");
+	init_fieldset_status(&fieldset, status, E_OWNER_TOP);
+	s_fieldset_set_point_rel(&fieldset, status.turn, 20, CHECKER_NUM);
+	check_rules_update_phase(&fieldset, &status, E_PHASE_BEAR_OFF, "bear-off - top");
 
-	init_game_status(&game, status, E_OWNER_BOT);
-	s_game_set_point_rel(&game, status.turn, 20, CHECKER_NUM);
-	check_rules_update_phase(&game, &status, E_PHASE_BEAR_OFF, "bear-off - bottom");
+	init_fieldset_status(&fieldset, status, E_OWNER_BOT);
+	s_fieldset_set_point_rel(&fieldset, status.turn, 20, CHECKER_NUM);
+	check_rules_update_phase(&fieldset, &status, E_PHASE_BEAR_OFF, "bear-off - bottom");
 
 	//
 	// Check: normal
 	//
-	init_game_status(&game, status, E_OWNER_TOP);
-	s_game_set_point_rel(&game, status.turn, 20, CHECKER_NUM - 1);
-	s_game_set_point_rel(&game, status.turn, 10, 1);
-	check_rules_update_phase(&game, &status, E_PHASE_NORMAL, "normal - top");
+	init_fieldset_status(&fieldset, status, E_OWNER_TOP);
+	s_fieldset_set_point_rel(&fieldset, status.turn, 20, CHECKER_NUM - 1);
+	s_fieldset_set_point_rel(&fieldset, status.turn, 10, 1);
+	check_rules_update_phase(&fieldset, &status, E_PHASE_NORMAL, "normal - top");
 
-	init_game_status(&game, status, E_OWNER_TOP);
-	s_game_set_point_rel(&game, status.turn, 20, CHECKER_NUM - 1);
-	s_game_set_point_rel(&game, status.turn, 10, 1);
-	check_rules_update_phase(&game, &status, E_PHASE_NORMAL, "normal - bottom");
+	init_fieldset_status(&fieldset, status, E_OWNER_TOP);
+	s_fieldset_set_point_rel(&fieldset, status.turn, 20, CHECKER_NUM - 1);
+	s_fieldset_set_point_rel(&fieldset, status.turn, 10, 1);
+	check_rules_update_phase(&fieldset, &status, E_PHASE_NORMAL, "normal - bottom");
 }
 
 /******************************************************************************
@@ -115,41 +115,41 @@ static void test_rules_update_phase() {
  *****************************************************************************/
 
 static void test_rules_min_rel_idx() {
-	s_game game;
+	s_fieldset fieldset;
 	s_status status;
 
 	//
 	// Check: 0
 	//
-	init_game_status(&game, status, E_OWNER_TOP);
-	s_game_set_point_rel(&game, status.turn, 0, 1);
-	ut_check_int(rules_min_rel_idx(&game, &status), 0, "top 0");
+	init_fieldset_status(&fieldset, status, E_OWNER_TOP);
+	s_fieldset_set_point_rel(&fieldset, status.turn, 0, 1);
+	ut_check_int(rules_min_rel_idx(&fieldset, &status), 0, "top 0");
 
-	init_game_status(&game, status, E_OWNER_BOT);
-	s_game_set_point_rel(&game, status.turn, 0, 1);
-	ut_check_int(rules_min_rel_idx(&game, &status), 0, "bottom 0");
+	init_fieldset_status(&fieldset, status, E_OWNER_BOT);
+	s_fieldset_set_point_rel(&fieldset, status.turn, 0, 1);
+	ut_check_int(rules_min_rel_idx(&fieldset, &status), 0, "bottom 0");
 
 	//
 	// Check: 10
 	//
-	init_game_status(&game, status, E_OWNER_TOP);
-	s_game_set_point_rel(&game, status.turn, 10, 1);
-	ut_check_int(rules_min_rel_idx(&game, &status), 10, "top 10");
+	init_fieldset_status(&fieldset, status, E_OWNER_TOP);
+	s_fieldset_set_point_rel(&fieldset, status.turn, 10, 1);
+	ut_check_int(rules_min_rel_idx(&fieldset, &status), 10, "top 10");
 
-	init_game_status(&game, status, E_OWNER_BOT);
-	s_game_set_point_rel(&game, status.turn, 10, 1);
-	ut_check_int(rules_min_rel_idx(&game, &status), 10, "bottom 10");
+	init_fieldset_status(&fieldset, status, E_OWNER_BOT);
+	s_fieldset_set_point_rel(&fieldset, status.turn, 10, 1);
+	ut_check_int(rules_min_rel_idx(&fieldset, &status), 10, "bottom 10");
 
 	//
 	// Check: 23
 	//
-	init_game_status(&game, status, E_OWNER_TOP);
-	s_game_set_point_rel(&game, status.turn, POINTS_NUM - 1, 1);
-	ut_check_int(rules_min_rel_idx(&game, &status), POINTS_NUM - 1, "top 23");
+	init_fieldset_status(&fieldset, status, E_OWNER_TOP);
+	s_fieldset_set_point_rel(&fieldset, status.turn, POINTS_NUM - 1, 1);
+	ut_check_int(rules_min_rel_idx(&fieldset, &status), POINTS_NUM - 1, "top 23");
 
-	init_game_status(&game, status, E_OWNER_BOT);
-	s_game_set_point_rel(&game, status.turn, POINTS_NUM - 1, 1);
-	ut_check_int(rules_min_rel_idx(&game, &status), POINTS_NUM - 1, "bottom 23");
+	init_fieldset_status(&fieldset, status, E_OWNER_BOT);
+	s_fieldset_set_point_rel(&fieldset, status.turn, POINTS_NUM - 1, 1);
+	ut_check_int(rules_min_rel_idx(&fieldset, &status), POINTS_NUM - 1, "bottom 23");
 }
 
 /******************************************************************************
@@ -168,97 +168,97 @@ static void ut_check_field(const s_field *field, const e_field_type type, const 
  *****************************************************************************/
 
 static void test_rules_get_field_src() {
-	s_game game;
+	s_fieldset fieldset;
 	s_status status;
 	s_field *field;
 
 	//
 	// Point ok
 	//
-	init_game_status_phase(&game, status, E_OWNER_TOP, E_PHASE_NORMAL);
+	init_fielset_status_phase(&fieldset, status, E_OWNER_TOP, E_PHASE_NORMAL);
 
-	field = s_game_set(&game, E_FIELD_POINTS, 5, E_OWNER_TOP, 1);
-	field = rules_get_field_src(&game, &status, field->id);
+	field = s_fieldset_set(&fieldset, E_FIELD_POINTS, 5, E_OWNER_TOP, 1);
+	field = rules_get_field_src(&fieldset, &status, field->id);
 
 	ut_check_field(field, E_FIELD_POINTS, 5, "Point OK");
 
 	//
 	// Point not set
 	//
-	init_game_status_phase(&game, status, E_OWNER_TOP, E_PHASE_NORMAL);
+	init_fielset_status_phase(&fieldset, status, E_OWNER_TOP, E_PHASE_NORMAL);
 
-	field = s_game_set(&game, E_FIELD_POINTS, 10, E_OWNER_TOP, 0);
-	field = rules_get_field_src(&game, &status, field->id);
+	field = s_fieldset_set(&fieldset, E_FIELD_POINTS, 10, E_OWNER_TOP, 0);
+	field = rules_get_field_src(&fieldset, &status, field->id);
 
 	ut_check_bool(field == NULL, true, "Not set");
 
 	//
 	// Point wrong owner
 	//
-	init_game_status_phase(&game, status, E_OWNER_TOP, E_PHASE_NORMAL);
+	init_fielset_status_phase(&fieldset, status, E_OWNER_TOP, E_PHASE_NORMAL);
 
-	field = s_game_set(&game, E_FIELD_POINTS, 15, E_OWNER_BOT, 1);
-	field = rules_get_field_src(&game, &status, field->id);
+	field = s_fieldset_set(&fieldset, E_FIELD_POINTS, 15, E_OWNER_BOT, 1);
+	field = rules_get_field_src(&fieldset, &status, field->id);
 
 	ut_check_bool(field == NULL, true, "Wrong owner");
 
 	//
 	// Bar ok
 	//
-	init_game_status_phase(&game, status, E_OWNER_TOP, E_PHASE_BAR);
+	init_fielset_status_phase(&fieldset, status, E_OWNER_TOP, E_PHASE_BAR);
 
-	field = s_game_set(&game, E_FIELD_BAR, E_OWNER_TOP, E_OWNER_TOP, 1);
-	field = rules_get_field_src(&game, &status, field->id);
+	field = s_fieldset_set(&fieldset, E_FIELD_BAR, E_OWNER_TOP, E_OWNER_TOP, 1);
+	field = rules_get_field_src(&fieldset, &status, field->id);
 
 	ut_check_field(field, E_FIELD_BAR, E_OWNER_TOP, "Bar");
 
 	//
 	// Bar wrong owner
 	//
-	init_game_status_phase(&game, status, E_OWNER_TOP, E_PHASE_BAR);
+	init_fielset_status_phase(&fieldset, status, E_OWNER_TOP, E_PHASE_BAR);
 
-	field = s_game_set(&game, E_FIELD_BAR, E_OWNER_BOT, E_OWNER_BOT, 1);
-	field = rules_get_field_src(&game, &status, field->id);
+	field = s_fieldset_set(&fieldset, E_FIELD_BAR, E_OWNER_BOT, E_OWNER_BOT, 1);
+	field = rules_get_field_src(&fieldset, &status, field->id);
 
 	ut_check_bool(field == NULL, true, "Bar wrong owner");
 
 	//
 	// Bar wrong phase
 	//
-	init_game_status_phase(&game, status, E_OWNER_TOP, E_PHASE_NORMAL);
+	init_fielset_status_phase(&fieldset, status, E_OWNER_TOP, E_PHASE_NORMAL);
 
-	field = s_game_set(&game, E_FIELD_BAR, E_OWNER_TOP, E_OWNER_TOP, 1);
-	field = rules_get_field_src(&game, &status, field->id);
+	field = s_fieldset_set(&fieldset, E_FIELD_BAR, E_OWNER_TOP, E_OWNER_TOP, 1);
+	field = rules_get_field_src(&fieldset, &status, field->id);
 
 	ut_check_bool(field == NULL, true, "Bar wrong phase");
 
 	//
 	// Bear-off own
 	//
-	init_game_status_phase(&game, status, E_OWNER_TOP, E_PHASE_NORMAL);
+	init_fielset_status_phase(&fieldset, status, E_OWNER_TOP, E_PHASE_NORMAL);
 
-	field = s_game_set(&game, E_PHASE_BEAR_OFF, E_OWNER_TOP, E_OWNER_TOP, 1);
-	field = rules_get_field_src(&game, &status, field->id);
+	field = s_fieldset_set(&fieldset, E_PHASE_BEAR_OFF, E_OWNER_TOP, E_OWNER_TOP, 1);
+	field = rules_get_field_src(&fieldset, &status, field->id);
 
 	ut_check_bool(field == NULL, true, "Bear-off own");
 
 	//
 	// Bear-off wrong
 	//
-	init_game_status_phase(&game, status, E_OWNER_TOP, E_PHASE_NORMAL);
+	init_fielset_status_phase(&fieldset, status, E_OWNER_TOP, E_PHASE_NORMAL);
 
-	field = s_game_set(&game, E_PHASE_BEAR_OFF, E_OWNER_BOT, E_OWNER_BOT, 1);
-	field = rules_get_field_src(&game, &status, field->id);
+	field = s_fieldset_set(&fieldset, E_PHASE_BEAR_OFF, E_OWNER_BOT, E_OWNER_BOT, 1);
+	field = rules_get_field_src(&fieldset, &status, field->id);
 
 	ut_check_bool(field == NULL, true, "Bear-off wrong");
 
 	//
 	// Bear-off phase
 	//
-	init_game_status_phase(&game, status, E_OWNER_TOP, E_PHASE_BEAR_OFF);
+	init_fielset_status_phase(&fieldset, status, E_OWNER_TOP, E_PHASE_BEAR_OFF);
 
-	field = s_game_set(&game, E_PHASE_BEAR_OFF, E_OWNER_TOP, E_OWNER_TOP, 1);
-	field = rules_get_field_src(&game, &status, field->id);
+	field = s_fieldset_set(&fieldset, E_PHASE_BEAR_OFF, E_OWNER_TOP, E_OWNER_TOP, 1);
+	field = rules_get_field_src(&fieldset, &status, field->id);
 
 	ut_check_bool(field == NULL, true, "Bear-off own");
 }
