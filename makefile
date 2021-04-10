@@ -73,7 +73,6 @@ SRC_LIBS = \
 	$(SRC_DIR)/lib_s_point.c       $(SRC_DIR)/ut_lib_s_point.c    \
 	$(SRC_DIR)/s_color_def.c       $(SRC_DIR)/ut_s_color_def.c    \
 	$(SRC_DIR)/s_tarr.c            $(SRC_DIR)/ut_s_tarr.c         \
-	$(SRC_DIR)/s_game.c            \
 	$(SRC_DIR)/nc_board.c          \
 	$(SRC_DIR)/s_game_cfg.c        \
 	$(SRC_DIR)/s_tmpl_checker.c    \
@@ -84,6 +83,7 @@ SRC_LIBS = \
 	$(SRC_DIR)/s_status.c          \
     $(SRC_DIR)/s_field_id.c        \
 	$(SRC_DIR)/s_field.c           $(SRC_DIR)/ut_s_field.c        \
+	$(SRC_DIR)/s_fieldset.c        \
 	$(SRC_DIR)/dice.c              \
 	$(SRC_DIR)/s_dices.c           $(SRC_DIR)/ut_s_dices.c        \
 	$(SRC_DIR)/direction.c         $(SRC_DIR)/ut_direction.c      \
