@@ -71,34 +71,6 @@ static void test_s_field_idx_rel() {
 }
 
 /******************************************************************************
- * The function checks the s_field_idx_is_out() calls.
- *****************************************************************************/
-// TODO: not used
-static void test_s_field_idx_is_out() {
-
-	bool result;
-
-	result = s_field_idx_is_out(E_OWNER_TOP, 0);
-	ut_check_bool(result, false, "top 0");
-
-	result = s_field_idx_is_out(E_OWNER_TOP, 23);
-	ut_check_bool(result, false, "top 23");
-
-	result = s_field_idx_is_out(E_OWNER_TOP, 24);
-	ut_check_bool(result, true, "top 24");
-
-	result = s_field_idx_is_out(E_OWNER_BOT, 23);
-	ut_check_bool(result, false, "bottom 23");
-
-	result = s_field_idx_is_out(E_OWNER_BOT, 0);
-	ut_check_bool(result, false, "bottom 0");
-
-	result = s_field_idx_is_out(E_OWNER_BOT, -1);
-	ut_check_bool(result, true, "bottom -1");
-
-}
-
-/******************************************************************************
  * The function checks the test_s_field_idx_add_abs() calls.
  *****************************************************************************/
 // TODO: not used
@@ -151,8 +123,6 @@ static void test_s_field_idx_add_abs() {
 void ut_s_field_exec() {
 
 	test_s_field_idx_rel();
-
-	test_s_field_idx_is_out();
 
 	test_s_field_idx_add_abs();
 }
