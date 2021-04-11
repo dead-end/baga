@@ -80,6 +80,6 @@ char* e_field_type_str(const e_field_type type);
 
 void s_field_id_valid_values(const e_field_type type, const int idx);
 
-#define s_field_id_valid_id(i) s_field_id_valid_values(i.tpye, i.idx)
+#define s_field_id_valid_id(i) s_field_id_valid_values(i.type, i.idx)
 
 #endif /* INC_S_FIELD_ID_H_ */
