@@ -34,9 +34,19 @@
 
 void s_field_log(const s_field *field, const char *msg) {
 
-	log_debug("[idx: %d type: %s num: %d owner: %s] - %s",
+	//
+	// For bars and bear off the index is the owner.
+	//
+	if (field->id.type == E_FIELD_BAR || field->id.type == E_FIELD_BEAR_OFF) {
+		log_debug("[idx: %s type: %s num: %d owner: %s] - %s",
 
-	field->id.idx, e_field_type_str(field->id.type), field->num, e_owner_str(field->owner), msg);
+		e_owner_str(field->id.idx), e_field_type_str(field->id.type), field->num, e_owner_str(field->owner), msg);
+
+	} else {
+		log_debug("[idx: %d type: %s num: %d owner: %s] - %s",
+
+		field->id.idx, e_field_type_str(field->id.type), field->num, e_owner_str(field->owner), msg);
+	}
 }
 
 #endif
