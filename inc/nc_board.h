@@ -43,7 +43,7 @@ void nc_board_free();
 
 void nc_board_print();
 
-void s_board_print_game(const s_fieldset *fieldset);
+void s_board_print_game(s_fieldset *fieldset);
 
 void nc_board_process(s_fieldset *fieldset, s_status *status, const s_field_id field);
 

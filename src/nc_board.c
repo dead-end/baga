@@ -161,7 +161,7 @@ void s_board_points_add_checkers_pos(const s_board *board, s_pos pos, const e_ow
  * The function prints the checkers to the board.
  *****************************************************************************/
 
-void s_board_print_game(const s_fieldset *fieldset) {
+void s_board_print_game(s_fieldset *fieldset) {
 	const s_field *field;
 	s_pos pos_tmp;
 
@@ -370,7 +370,7 @@ void nc_board_process(s_fieldset *fieldset, s_status *status, const s_field_id i
 	const e_owner owner_other = e_owner_other(status->turn);
 	if (field_dst->owner == owner_other) {
 		const s_field_id field_other = { .type = E_FIELD_BAR, .idx = owner_other };
-		traveler_mv(field_dst, s_fieldset_get(fieldset, field_other));
+		traveler_mv(field_dst, s_fieldset_get_by_id(fieldset, field_other));
 		s_status_set_phase(status, owner_other, E_PHASE_BAR);
 	}
 
