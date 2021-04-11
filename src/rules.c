@@ -207,6 +207,8 @@ static bool rules_is_dest_occupied(const s_field *field_src, const s_field *fiel
  * If the field is valid and contains a checker, the function checks if it can
  * move the given number of fields. If so, it returns the destination field. If
  * not it returns NULL.
+ *
+ * (Unit tested - 3 functions)
  *****************************************************************************/
 
 s_field* rules_can_mv(s_fieldset *fieldset, const s_status *status, const s_field *field_src) {
