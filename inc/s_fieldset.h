@@ -70,12 +70,16 @@ void s_fieldset_init(s_fieldset *fieldset);
 void s_fieldset_new_game(s_fieldset *fieldset);
 
 /******************************************************************************
- * Functions and macros are used to get a field.
+ * Functions and macros are used to get a field. There is one function and all
+ * the macros used that function.
+ *
+ * For the bar and bear off, the owner and the index are the same. A relative
+ * index is only valid for a point.
  *****************************************************************************/
 
-#define s_fieldset_get_by_id(f,i) s_fieldset_get(f, i.type, i.idx)
-
 s_field* s_fieldset_get(s_fieldset *fieldset, const e_field_type type, const int idx);
+
+#define s_fieldset_get_by_id(f,i) s_fieldset_get(f, i.type, i.idx)
 
 #define s_fieldset_get_point(f,i) s_fieldset_get(f, E_FIELD_POINTS, i)
 
@@ -86,9 +90,11 @@ s_field* s_fieldset_get(s_fieldset *fieldset, const e_field_type type, const int
 #define s_fieldset_get_bar(f,o) s_fieldset_get(f, E_FIELD_BAR, o)
 
 /******************************************************************************
- * Functions and macros to set a field. The s_fieldset_set() is the appropriate
- * choice. There are macros for the types. For the bar and bear off, the owner
- * and the index are the same. A relative index is only valid for a point.
+ * Functions and macros to set a field. There is one function and all the
+ * macros used that function.
+ *
+ * For the bar and bear off, the owner and the index are the same. A relative
+ * index is only valid for a point.
  *****************************************************************************/
 
 s_field* s_fieldset_set(s_fieldset *fieldset, const e_field_type type, const e_owner owner, const int idx, const int num);
