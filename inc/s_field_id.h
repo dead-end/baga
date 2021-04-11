@@ -22,6 +22,11 @@
  * SOFTWARE.
  */
 
+/******************************************************************************
+ * The header file provides an interface for a field id. The consists of a type
+ * and an index. For bars and bear off, the index is irrelevant.
+ *****************************************************************************/
+
 #ifndef INC_S_FIELD_ID_H_
 #define INC_S_FIELD_ID_H_
 
@@ -73,6 +78,8 @@ typedef struct {
 
 char* e_field_type_str(const e_field_type type);
 
-void s_field_id_ensure_valid(s_field_id id);
+void s_field_id_valid_values(const e_field_type type, const int idx);
+
+#define s_field_id_valid_id(i) s_field_id_valid_values(i.tpye, i.idx)
 
 #endif /* INC_S_FIELD_ID_H_ */

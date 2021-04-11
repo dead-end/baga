@@ -22,6 +22,10 @@
  * SOFTWARE.
  */
 
+/******************************************************************************
+ * The source file implements utility functions for field id's.
+ *****************************************************************************/
+
 #include "bg_defs.h"
 #include "lib_logging.h"
 #include "s_field_id.h"
@@ -53,39 +57,38 @@ char* e_field_type_str(const e_field_type type) {
 }
 
 /******************************************************************************
- * The function ensures that the field id has valid values.
+ * The function ensures that the values of an id are valid.
  *****************************************************************************/
 
-void s_field_id_ensure_valid(const s_field_id id) {
+void s_field_id_valid_values(const e_field_type type, const int idx) {
 
-	switch (id.type) {
+	switch (type) {
 
 	case E_FIELD_BAR:
-		if (id.idx < 0 || id.idx > NUM_PLAYER) {
-			log_exit("Field: E_FIELD_BAR index out of range: %d", id.idx);
+		if (idx < 0 || idx > NUM_PLAYER) {
+			log_exit("Field: E_FIELD_BAR index out of range: %d", idx);
 		}
 		break;
 
 	case E_FIELD_BEAR_OFF:
-		if (id.idx < 0 || id.idx > NUM_PLAYER) {
-			log_exit("Field: E_FIELD_BEAR_OFF index out of range: %d", id.idx);
+		if (idx < 0 || idx > NUM_PLAYER) {
+			log_exit("Field: E_FIELD_BEAR_OFF index out of range: %d", idx);
 		}
 		break;
 
 	case E_FIELD_POINTS:
-		if (id.idx < 0 || id.idx > POINTS_NUM) {
-			log_exit("Field: E_FIELD_POINTS index out of range: %d", id.idx);
+		if (idx < 0 || idx > POINTS_NUM) {
+			log_exit("Field: E_FIELD_POINTS index out of range: %d", idx);
 		}
 		break;
 
 	case E_FIELD_NONE:
-		if (id.idx != FIELD_NONE_IDX) {
-			log_exit("Field: E_FIELD_NONE index out of range: %d", id.idx);
+		if (idx != FIELD_NONE_IDX) {
+			log_exit("Field: E_FIELD_NONE index out of range: %d", idx);
 		}
 		break;
 	default:
-		log_exit("Unknown type: %d", id.type)
+		log_exit("Unknown type: %d", type)
 		;
 	}
 }
-
