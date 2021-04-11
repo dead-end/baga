@@ -91,6 +91,8 @@ void s_field_mv(s_field *field_src, s_field *field_dst) {
  * The function returns the index of the source field. If the source field is a
  * point the index does not change. But if the source is the bar, we need a
  * source index to add our dice to.
+ *
+ * TODO: not used
  *****************************************************************************/
 
 int s_field_get_src_idx(const s_field *field_src) {
