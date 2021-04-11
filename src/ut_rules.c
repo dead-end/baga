@@ -22,6 +22,8 @@
  * SOFTWARE.
  */
 
+#include "lib_logging.h"
+
 #include "s_fieldset.h"
 #include "bg_defs.h"
 #include "ut_utils.h"
@@ -177,7 +179,7 @@ static void test_rules_get_field_src() {
 	//
 	init_fielset_status_phase(&fieldset, status, E_OWNER_TOP, E_PHASE_NORMAL);
 
-	field = s_fieldset_set(&fieldset, E_FIELD_POINTS, 5, E_OWNER_TOP, 1);
+	field = s_fieldset_set_point(&fieldset, E_OWNER_TOP, 5, 1);
 	field = rules_get_field_src(&fieldset, &status, field->id);
 
 	ut_check_field(field, E_FIELD_POINTS, 5, "Point OK");
@@ -187,7 +189,7 @@ static void test_rules_get_field_src() {
 	//
 	init_fielset_status_phase(&fieldset, status, E_OWNER_TOP, E_PHASE_NORMAL);
 
-	field = s_fieldset_set(&fieldset, E_FIELD_POINTS, 10, E_OWNER_TOP, 0);
+	field = s_fieldset_set_point(&fieldset, E_OWNER_TOP, 10, 0);
 	field = rules_get_field_src(&fieldset, &status, field->id);
 
 	ut_check_bool(field == NULL, true, "Not set");
@@ -197,7 +199,7 @@ static void test_rules_get_field_src() {
 	//
 	init_fielset_status_phase(&fieldset, status, E_OWNER_TOP, E_PHASE_NORMAL);
 
-	field = s_fieldset_set(&fieldset, E_FIELD_POINTS, 15, E_OWNER_BOT, 1);
+	field = s_fieldset_set_point(&fieldset, E_OWNER_BOT, 15, 1);
 	field = rules_get_field_src(&fieldset, &status, field->id);
 
 	ut_check_bool(field == NULL, true, "Wrong owner");
@@ -207,7 +209,7 @@ static void test_rules_get_field_src() {
 	//
 	init_fielset_status_phase(&fieldset, status, E_OWNER_TOP, E_PHASE_BAR);
 
-	field = s_fieldset_set(&fieldset, E_FIELD_BAR, E_OWNER_TOP, E_OWNER_TOP, 1);
+	field = s_fieldset_set_bar(&fieldset, E_OWNER_TOP, 1);
 	field = rules_get_field_src(&fieldset, &status, field->id);
 
 	ut_check_field(field, E_FIELD_BAR, E_OWNER_TOP, "Bar");
@@ -217,7 +219,7 @@ static void test_rules_get_field_src() {
 	//
 	init_fielset_status_phase(&fieldset, status, E_OWNER_TOP, E_PHASE_BAR);
 
-	field = s_fieldset_set(&fieldset, E_FIELD_BAR, E_OWNER_BOT, E_OWNER_BOT, 1);
+	field = s_fieldset_set_bar(&fieldset, E_OWNER_BOT, 1);
 	field = rules_get_field_src(&fieldset, &status, field->id);
 
 	ut_check_bool(field == NULL, true, "Bar wrong owner");
@@ -227,7 +229,7 @@ static void test_rules_get_field_src() {
 	//
 	init_fielset_status_phase(&fieldset, status, E_OWNER_TOP, E_PHASE_NORMAL);
 
-	field = s_fieldset_set(&fieldset, E_FIELD_BAR, E_OWNER_TOP, E_OWNER_TOP, 1);
+	field = s_fieldset_set_bar(&fieldset, E_OWNER_TOP, 1);
 	field = rules_get_field_src(&fieldset, &status, field->id);
 
 	ut_check_bool(field == NULL, true, "Bar wrong phase");
@@ -237,7 +239,7 @@ static void test_rules_get_field_src() {
 	//
 	init_fielset_status_phase(&fieldset, status, E_OWNER_TOP, E_PHASE_NORMAL);
 
-	field = s_fieldset_set(&fieldset, E_PHASE_BEAR_OFF, E_OWNER_TOP, E_OWNER_TOP, 1);
+	field = s_fieldset_set_bear_off(&fieldset, E_OWNER_TOP, 1);
 	field = rules_get_field_src(&fieldset, &status, field->id);
 
 	ut_check_bool(field == NULL, true, "Bear-off own");
@@ -247,7 +249,7 @@ static void test_rules_get_field_src() {
 	//
 	init_fielset_status_phase(&fieldset, status, E_OWNER_TOP, E_PHASE_NORMAL);
 
-	field = s_fieldset_set(&fieldset, E_PHASE_BEAR_OFF, E_OWNER_BOT, E_OWNER_BOT, 1);
+	field = s_fieldset_set_bear_off(&fieldset, E_OWNER_BOT, 1);
 	field = rules_get_field_src(&fieldset, &status, field->id);
 
 	ut_check_bool(field == NULL, true, "Bear-off wrong");
@@ -257,10 +259,136 @@ static void test_rules_get_field_src() {
 	//
 	init_fielset_status_phase(&fieldset, status, E_OWNER_TOP, E_PHASE_BEAR_OFF);
 
-	field = s_fieldset_set(&fieldset, E_PHASE_BEAR_OFF, E_OWNER_TOP, E_OWNER_TOP, 1);
+	field = s_fieldset_set_bear_off(&fieldset, E_OWNER_TOP, 1);
 	field = rules_get_field_src(&fieldset, &status, field->id);
 
-	ut_check_bool(field == NULL, true, "Bear-off own");
+	ut_check_bool(field == NULL, true, "Bear-off phase");
+}
+
+/******************************************************************************
+ * The function tests a case of the rules_can_mv() function.
+ *
+ * The source is the bar, so the destination cannot be outside. The main
+ * question is whether the destination is occupied or not.
+ *****************************************************************************/
+
+static void test_rules_can_mv_bar() {
+	s_fieldset fieldset;
+	s_status status;
+	s_field *field_dst;
+
+	//
+	// Set the bear off phase
+	//
+	init_fielset_status_phase(&fieldset, status, E_OWNER_TOP, E_PHASE_BAR);
+
+	//
+	// Set the source
+	//
+	const s_field *field_src = s_fieldset_set_bar(&fieldset, E_OWNER_TOP, 1);
+
+	//
+	// Set the dice
+	//
+	s_dices_set(&status.dices, 4, 3);
+
+	//
+	// target: 0
+	//
+	s_fieldset_set_point_rel(&fieldset, E_OWNER_BOT, POINTS_NUM - 4, 0);
+	field_dst = rules_can_mv(&fieldset, &status, field_src);
+	ut_check_bool(field_dst != NULL, true, "From bar - 0");
+
+	//
+	// target: 1
+	//
+	s_fieldset_set_point_rel(&fieldset, E_OWNER_BOT, POINTS_NUM - 4, 1);
+	field_dst = rules_can_mv(&fieldset, &status, field_src);
+	ut_check_bool(field_dst != NULL, true, "From bar - 1");
+
+	//
+	// target: 2
+	//
+	s_fieldset_set_point_rel(&fieldset, E_OWNER_BOT, POINTS_NUM - 4, 2);
+	field_dst = rules_can_mv(&fieldset, &status, field_src);
+	ut_check_bool(field_dst != NULL, false, "From bar - 2");
+}
+
+/******************************************************************************
+ * The function tests a case of the rules_can_mv() function.
+ *
+ * The destination is exact outside, but the phase is not bear off.
+ *****************************************************************************/
+
+static void test_rules_can_mv_not_bear_off() {
+	s_fieldset fieldset;
+	s_status status;
+	s_field *field_dst;
+
+	//
+	// Set the bear off phase
+	//
+	init_fielset_status_phase(&fieldset, status, E_OWNER_TOP, E_PHASE_NORMAL);
+
+	//
+	// Set the source
+	//
+	const s_field *field_src = s_fieldset_set_point_rel(&fieldset, E_OWNER_TOP, POINTS_NUM - 3, 2);
+
+	//
+	// CASE: Exact out but not bear off phase
+	//
+	s_dices_set(&status.dices, 3, 3);
+	field_dst = rules_can_mv(&fieldset, &status, field_src);
+	ut_check_bool(field_dst == NULL, true, "Exact out but not bear off phase");
+}
+
+/******************************************************************************
+ * The function tests a case of the rules_can_mv() function.
+ *
+ * The function contains tests for the bear off phase.
+ *****************************************************************************/
+
+static void test_rules_can_mv_out() {
+	s_fieldset fieldset;
+	s_status status;
+	s_field *field_dst;
+
+	//
+	// Set the bear off phase
+	//
+	init_fielset_status_phase(&fieldset, status, E_OWNER_TOP, E_PHASE_BEAR_OFF);
+
+	//
+	// Set the last checker
+	//
+	s_fieldset_set_point_rel(&fieldset, E_OWNER_TOP, POINTS_NUM - 5, 2);
+
+	//
+	// Set the source after the last checker
+	//
+	const s_field *field_src = s_fieldset_set_point_rel(&fieldset, E_OWNER_TOP, POINTS_NUM - 3, 2);
+
+	//
+	// CASE: Exact Outside and bear off
+	//
+	s_dices_set(&status.dices, 3, 3);
+	field_dst = rules_can_mv(&fieldset, &status, field_src);
+	ut_check_bool(field_dst != NULL, true, "Exact Outside and bear off");
+
+	//
+	// CASE: Last is far out and bear off
+	//
+	s_dices_set(&status.dices, 6, 3);
+	field_dst = rules_can_mv(&fieldset, &status, field_src);
+	ut_check_bool(field_dst != NULL, true, "Far outside and bear off");
+
+	//
+	// CASE: Far outside and bear off but not last
+	//
+	s_dices_set(&status.dices, 4, 3);
+	field_dst = rules_can_mv(&fieldset, &status, field_src);
+	ut_check_bool(field_dst == NULL, true, "Far outside and bear off but not last");
 }
 
 /******************************************************************************
@@ -274,4 +402,10 @@ void ut_rules_exec() {
 	test_rules_min_rel_idx();
 
 	test_rules_get_field_src();
+
+	test_rules_can_mv_bar();
+
+	test_rules_can_mv_not_bear_off();
+
+	test_rules_can_mv_out();
 }

@@ -128,7 +128,7 @@ s_field* rules_get_field_src(s_fieldset *fieldset, const s_status *status, const
 	//
 	// Identify the source field
 	//
-	s_field *field_src = s_fieldset_get(fieldset, field_id);
+	s_field *field_src = s_fieldset_get_by_id(fieldset, field_id);
 
 #ifdef DEBUG
 	s_field_log(field_src, "Source field");
@@ -171,6 +171,36 @@ s_field* rules_get_field_src(s_fieldset *fieldset, const s_status *status, const
 }
 
 /******************************************************************************
+ * The function checks if a field is occupied by the opponent. This means there
+ * are at least two checkers. The test makes only sense if the destination
+ * field is a point.
+ *****************************************************************************/
+
+static bool rules_is_dest_occupied(const s_field *field_src, const s_field *field_dst) {
+
+#ifdef DEBUG
+
+	//
+	// Ensure that the destination is a point.
+	//
+	if (field_dst->id.type != E_FIELD_POINTS) {
+		log_exit_str("destination in not a point!");
+	}
+
+#endif
+
+	//
+	// The owner has to be the opponent and num has to be greater than 1.
+	//
+	if (field_dst->owner != E_OWNER_NONE && field_dst->owner != field_src->owner && field_dst->num > 1) {
+		log_debug_str("Destination occupied by the opponent!");
+		return true;
+	}
+
+	return false;
+}
+
+/******************************************************************************
  * The function is called with a source field and the result from a dice. The
  * source field is identified by a mouse event, so everything is possible.
  *
@@ -178,8 +208,20 @@ s_field* rules_get_field_src(s_fieldset *fieldset, const s_status *status, const
  * move the given number of fields. If so, it returns the destination field. If
  * not it returns NULL.
  *****************************************************************************/
-// TODO: unit tests
+
 s_field* rules_can_mv(s_fieldset *fieldset, const s_status *status, const s_field *field_src) {
+
+#ifdef DEBUG
+
+	s_field_log(field_src, "Source to move.");
+
+	s_field_id_valid_id(field_src->id);
+
+	if (field_src->owner == E_OWNER_NONE || field_src->num == 0) {
+		s_field_log(field_src, "src - is empty");
+		log_exit_str("Source is empty!");
+	}
+#endif
 
 	//
 	// Get the value from the active dice.
@@ -192,55 +234,66 @@ s_field* rules_can_mv(s_fieldset *fieldset, const s_status *status, const s_fiel
 	const int idx_rel_dst = (field_src->id.type == E_FIELD_BAR ? -1 : s_field_idx_rel(field_src->owner, field_src->id.idx)) + dice;
 
 	//
-	// Check if the destination is outside the board.
+	// CASE: destination is normal point
 	//
-	if (idx_rel_dst > POINTS_NUM - 1) {
+	if (!s_fieldset_rel_is_out(idx_rel_dst)) {
+
+		s_field *field_dst = s_fieldset_get_point(fieldset, s_field_idx_rel(field_src->owner, idx_rel_dst));
 
 		//
-		// If the destination is outside, check if we have a bear off phase.
+		// Ensure that the destination is not occupied by the opponent (num > 1 => hit).
 		//
-		if (s_status_is_phase(status, field_src->owner, E_PHASE_BEAR_OFF)) {
-
-			//
-			// Check if the destination is an exact move outside.
-			//
-			if (idx_rel_dst == POINTS_NUM) {
-				log_debug("Bear off exact - dst-rel: %d", idx_rel_dst);
-				return s_fieldset_get_bear_off(fieldset, field_src->owner);
-			}
-
-			//
-			// If the minimum + dice is outside, then the destination is valid.
-			//
-			const int min_rel_idx = rules_min_rel_idx(fieldset, status);
-
-			if (min_rel_idx + dice > POINTS_NUM - 1) {
-				log_debug("Bear off min - dst-rel: %d min: %d", idx_rel_dst, min_rel_idx);
-				return s_fieldset_get_bear_off(fieldset, field_src->owner);
-			}
+		if (rules_is_dest_occupied(field_src, field_dst)) {
+			return NULL;
 		}
 
-		//
-		// At this point the target is outside and there is not valid bear off
-		// move.
-		//
-		log_debug_str("Outside board and no valid destination!");
+#ifdef DEBUG
+		s_field_log(field_dst, "Destination is a regular point.");
+#endif
+		return field_dst;
+	}
+
+	//
+	// CASE: destination is out but no bear off phase
+	//
+	if (!s_status_is_phase(status, field_src->owner, E_PHASE_BEAR_OFF)) {
+		log_debug("Destination is outside: %d but phase: %s", idx_rel_dst, e_player_phase_str(status->player_phase[field_src->owner]));
 		return NULL;
 	}
 
 	//
-	// At this point our destination is a regular point.
+	// CASE: destination is exact outside and phase is bear off
 	//
-	s_field *field_dst = s_fieldset_get_point(fieldset, s_field_idx_rel(field_src->owner, idx_rel_dst));
+	if (s_fieldset_rel_is_out_ex(idx_rel_dst)) {
+		s_field *field_dst = s_fieldset_get_bear_off(fieldset, field_src->owner);
 
-	//
-	// Ensure that the destination is not occupied by the opponent (num > 1 => hit).
-	//
-	if (field_dst->owner != E_OWNER_NONE && field_dst->owner != field_src->owner && field_dst->num > 1) {
-		log_debug("Destination occupied by the opponent - dst-rel: %d", idx_rel_dst);
-		return NULL;
+#ifdef DEBUG
+		s_field_log(field_dst, "Destination is exact outside.");
+#endif
+		return field_dst;
 	}
 
-	log_debug("Valid regular point - owner: %d, idx: %d", field_src->owner, field_src->num);
-	return field_dst;
+	//
+	// If the minimum + dice is outside, then the destination is valid.
+	//
+	const int min_rel_idx = rules_min_rel_idx(fieldset, status);
+
+#ifdef DEBUG
+	const s_field *tmp = s_fieldset_get_point(fieldset, min_rel_idx);
+	s_field_log(tmp, "Minimal field of the player.");
+#endif
+
+	//
+	// CASE: far outside and bear off (exact out was tested before)
+	//
+	if (s_fieldset_rel_is_out(min_rel_idx + dice)) {
+		log_debug("Bear off min - dst-rel: %d min: %d", idx_rel_dst, min_rel_idx);
+		return s_fieldset_get_bear_off(fieldset, field_src->owner);
+	}
+
+	//
+	// CASE: far outside and no bear off
+	//
+	log_debug("Destination is far outside: %d", idx_rel_dst);
+	return NULL;
 }
