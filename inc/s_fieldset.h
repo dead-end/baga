@@ -107,4 +107,12 @@ s_field* s_fieldset_set(s_fieldset *fieldset, const e_field_type type, const e_o
 
 #define s_fieldset_set_bar(f,o,n) s_fieldset_set(f, E_FIELD_BAR, o, o, n)
 
+/******************************************************************************
+ * Macros to check if an index is outside.
+ *****************************************************************************/
+
+#define s_fieldset_rel_is_out(i) (i > POINTS_NUM - 1)
+
+#define s_fieldset_rel_is_out_ex(i) (i == POINTS_NUM)
+
 #endif /* INC_S_FIELDSET_H_ */
