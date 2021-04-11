@@ -31,7 +31,7 @@
  *
  * After refactoring the macro is simple.
  *****************************************************************************/
-// TODO: not used
+
 static void test_s_field_idx_rel() {
 	int idx_rel;
 
