@@ -101,22 +101,30 @@ void s_dices_debug(const s_dices *dices) {
 #endif
 
 /******************************************************************************
- * The function sets new values for the dices. They are sorted to ensure that
- * the first dice has the higher value.
+ * The function sets new values for the dices. This is mainly used for testing.
  *****************************************************************************/
 
 void s_dices_toss(s_dices *dices) {
 
-	dices->dice[0].value = rolling_dice();
-	dices->dice[1].value = rolling_dice();
+	s_dices_set(dices, rolling_dice(), rolling_dice());
+}
+
+/******************************************************************************
+ * The function sets new values for the dices. They are sorted to ensure that
+ * the first dice has the higher value.
+ *****************************************************************************/
+
+void s_dices_set(s_dices *dices, const int dice1, const int dice2) {
 
 	//
 	// Ensure that the first dice has the higher value.
 	//
-	if (dices->dice[0].value < dices->dice[1].value) {
-		const int value = dices->dice[1].value;
-		dices->dice[1].value = dices->dice[0].value;
-		dices->dice[0].value = value;
+	if (dice1 >= dice2) {
+		dices->dice[0].value = dice1;
+		dices->dice[1].value = dice2;
+	} else {
+		dices->dice[0].value = dice2;
+		dices->dice[1].value = dice1;
 	}
 
 	dices->dice[0].num_set = 0;

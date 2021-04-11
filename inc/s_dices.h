@@ -132,6 +132,8 @@ void s_dices_init();
 
 void s_dices_toss(s_dices *dices);
 
+void s_dices_set(s_dices *dices, const int dice1, const int dice2);
+
 int s_dices_get_value(const s_dices *dices);
 
 const char* s_dice_status_str(const e_dice_status dice_status);
