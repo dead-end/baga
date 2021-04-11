@@ -99,32 +99,32 @@ void s_fieldset_new_game(s_fieldset *fieldset) {
 }
 
 /******************************************************************************
- * The function returns a pointer to the field with the given id.
+ * The function returns a pointer to the field with the given id values.
  *****************************************************************************/
 
-s_field* s_fieldset_get(s_fieldset *fieldset, const s_field_id id) {
+s_field* s_fieldset_get(s_fieldset *fieldset, const e_field_type type, const int idx) {
 
 #ifdef DEBUG
 
 	//
 	// Ensure that the field id is valid
 	//
-	s_field_id_ensure_valid(id);
+	s_field_id_valid_values(type, idx);
 #endif
 
-	switch (id.type) {
+	switch (type) {
 
 	case E_FIELD_BAR:
-		return &fieldset->reenter[id.idx];
+		return &fieldset->reenter[idx];
 
 	case E_FIELD_BEAR_OFF:
-		return &fieldset->bear_off[id.idx];
+		return &fieldset->bear_off[idx];
 
 	case E_FIELD_POINTS:
-		return &fieldset->point[id.idx];
+		return &fieldset->point[idx];
 
 	default:
-		log_exit("Unknown type: %d", id.type)
+		log_exit("Unknown type: %d", type)
 		;
 	}
 }
@@ -133,7 +133,15 @@ s_field* s_fieldset_get(s_fieldset *fieldset, const s_field_id id) {
  * The function sets a field and returns a pointer to that field.
  *****************************************************************************/
 
-s_field* s_fieldset_set(s_fieldset *fieldset, const e_field_type type, const int idx, const e_owner owner, const int num) {
+s_field* s_fieldset_set(s_fieldset *fieldset, const e_field_type type, const e_owner owner, const int idx, const int num) {
+
+#ifdef DEBUG
+
+	//
+	// Ensure that the field id is valid
+	//
+	s_field_id_valid_values(type, idx);
+#endif
 
 	s_field *field;
 
@@ -164,6 +172,10 @@ s_field* s_fieldset_set(s_fieldset *fieldset, const e_field_type type, const int
 	}
 
 	field->num = num;
+
+#ifdef DEBUG
+	s_field_log(field, "Field set!");
+#endif
 
 	return field;
 }

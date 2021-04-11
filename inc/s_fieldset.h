@@ -62,20 +62,6 @@ typedef struct {
 } s_fieldset;
 
 /******************************************************************************
- * Three macros that set checkers to points / bars / bear-offs.
- *****************************************************************************/
-
-#define s_fieldset_get_point(f,i) (&(f)->point[i])
-
-#define s_fieldset_set_point_rel(f,o,i,n) s_field_set((f)->point[s_field_idx_rel(o, i)], n, o)
-
-#define s_fieldset_get_bear_off(f,o) (&(f)->bear_off[o])
-
-#define s_fieldset_set_bear_off(f,o,n) (f)->bear_off[o].num = (n)
-
-#define s_fieldset_set_bar(f,o,n) (f)->reenter[o].num = (n)
-
-/******************************************************************************
  * Function declarations.
  *****************************************************************************/
 
@@ -83,8 +69,36 @@ void s_fieldset_init(s_fieldset *fieldset);
 
 void s_fieldset_new_game(s_fieldset *fieldset);
 
-s_field* s_fieldset_get(s_fieldset *fieldset, const s_field_id id);
+/******************************************************************************
+ * Functions and macros are used to get a field.
+ *****************************************************************************/
 
-s_field* s_fieldset_set(s_fieldset *fieldset, const e_field_type type, const int idx, const e_owner owner, const int num);
+#define s_fieldset_get_by_id(f,i) s_fieldset_get(f, i.type, i.idx)
+
+s_field* s_fieldset_get(s_fieldset *fieldset, const e_field_type type, const int idx);
+
+#define s_fieldset_get_point(f,i) s_fieldset_get(f, E_FIELD_POINTS, i)
+
+#define s_fieldset_get_point_rel(f,o,i) s_fieldset_get(f, E_FIELD_POINTS, s_field_idx_rel(o, i))
+
+#define s_fieldset_get_bear_off(f,o) s_fieldset_get(f, E_FIELD_BEAR_OFF, o)
+
+#define s_fieldset_get_bar(f,o) s_fieldset_get(f, E_FIELD_BAR, o)
+
+/******************************************************************************
+ * Functions and macros to set a field. The s_fieldset_set() is the appropriate
+ * choice. There are macros for the types. For the bar and bear off, the owner
+ * and the index are the same. A relative index is only valid for a point.
+ *****************************************************************************/
+
+s_field* s_fieldset_set(s_fieldset *fieldset, const e_field_type type, const e_owner owner, const int idx, const int num);
+
+#define s_fieldset_set_point_rel(f,o,i,n) s_fieldset_set(f, E_FIELD_POINTS, o, s_field_idx_rel(o, i), n)
+
+#define s_fieldset_set_point(f,o,i,n) s_fieldset_set(f, E_FIELD_POINTS, o, i, n)
+
+#define s_fieldset_set_bear_off(f,o,n) s_fieldset_set(f, E_FIELD_BEAR_OFF, o, o, n)
+
+#define s_fieldset_set_bar(f,o,n) s_fieldset_set(f, E_FIELD_BAR, o, o, n)
 
 #endif /* INC_S_FIELDSET_H_ */
