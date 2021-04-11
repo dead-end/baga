@@ -24,7 +24,7 @@
 
 /******************************************************************************
  * The header file provides an interface for a field id. The consists of a type
- * and an index. For bars and bear off, the index is irrelevant.
+ * and an index. For bars and bear off, the index is the owner of the field.
  *****************************************************************************/
 
 #ifndef INC_S_FIELD_ID_H_
