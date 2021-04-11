@@ -71,58 +71,10 @@ static void test_s_field_idx_rel() {
 }
 
 /******************************************************************************
- * The function checks the test_s_field_idx_add_abs() calls.
- *****************************************************************************/
-// TODO: not used
-static void test_s_field_idx_add_abs() {
-	int idx1, idx2;
-	int idx;
-
-	idx = s_field_idx_add_abs(E_OWNER_TOP, 0, 5);
-	ut_check_int(idx, 5, "top 0 - 5");
-
-	idx = s_field_idx_add_abs(E_OWNER_BOT, 23, 5);
-	ut_check_int(idx, 18, "bottom 23 - 5");
-
-	//
-	// from rel => abs
-	//
-	idx = s_field_idx_rel(E_OWNER_BOT, 0);
-	idx = s_field_idx_add_abs(E_OWNER_BOT, idx, 5);
-	ut_check_int(idx, 18, "bottom 0 - 5");
-
-	//
-	// Using the macro should be the same as:
-	//
-	//   abs => rel
-	//   rel + 5
-	//   rel => abs
-	//
-	idx1 = s_field_idx_rel(E_OWNER_BOT, 23);
-	idx1 += 5;
-	idx1 = s_field_idx_rel(E_OWNER_BOT, idx1);
-
-	idx2 = s_field_idx_add_abs(E_OWNER_BOT, 23, 5);
-	ut_check_int(idx1, idx2, "bottom 0 - 5");
-
-	//
-	// Same with top
-	//
-	idx1 = s_field_idx_rel(E_OWNER_TOP, 23);
-	idx1 += 5;
-	idx1 = s_field_idx_rel(E_OWNER_TOP, idx1);
-
-	idx2 = s_field_idx_add_abs(E_OWNER_TOP, 23, 5);
-	ut_check_int(idx1, idx2, "bottom 0 - 5");
-}
-
-/******************************************************************************
  * The function is the a wrapper, that triggers the internal unit tests.
  *****************************************************************************/
 
 void ut_s_field_exec() {
 
 	test_s_field_idx_rel();
-
-	test_s_field_idx_add_abs();
 }

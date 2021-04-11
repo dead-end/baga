@@ -86,32 +86,12 @@ typedef struct {
 #define s_field_idx_rel(o,i) ((E_OWNER_TOP == (o)) ? (i) : lu_reverse_idx(POINTS_NUM,i))
 
 /******************************************************************************
- * The macro adds a value to an absolute index. This means adding or
- * subtracting depending on
- *
- * TODO: not used but unit tested
- *****************************************************************************/
-
-#define s_field_idx_add_abs(o,i,a) ((E_OWNER_TOP == (o)) ? ((i) + (a)) : ((i) - (a)))
-
-/******************************************************************************
- * The macro checks if the index is the max value. We assume that the value is
- * absolute. We get the relative index and this index has to be 23.
- *
- * TODO: not used not tested
- *****************************************************************************/
-
-#define s_field_idx_is_ex_out(o,i) (s_field_idx_rel(o,i) == POINTS_NUM)
-
-/******************************************************************************
  * Function declarations.
  *****************************************************************************/
 
 char* s_field_owner_str(const e_owner owner);
 
 void s_field_mv(s_field *field_src, s_field *field_dst);
-
-int s_field_get_src_idx(const s_field *field_src);
 
 /******************************************************************************
  * Function declarations for the debug mode.

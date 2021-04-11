@@ -86,30 +86,3 @@ void s_field_mv(s_field *field_src, s_field *field_dst) {
 #endif
 
 }
-
-/******************************************************************************
- * The function returns the index of the source field. If the source field is a
- * point the index does not change. But if the source is the bar, we need a
- * source index to add our dice to.
- *
- * TODO: not used
- *****************************************************************************/
-
-int s_field_get_src_idx(const s_field *field_src) {
-
-#ifdef DEBUG
-
-	//
-	// Ensure that the source field type is the expected.
-	//
-	if (field_src->id.type != E_FIELD_BAR && field_src->id.type != E_FIELD_POINTS) {
-		log_exit("invalid type: %s", e_field_type_str(field_src->id.type));
-	}
-#endif
-
-	if (field_src->id.type == E_FIELD_BAR) {
-		return (E_OWNER_TOP == field_src->owner) ? -1 : POINTS_NUM;
-	}
-
-	return field_src->id.idx;
-}
