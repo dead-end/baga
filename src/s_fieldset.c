@@ -163,7 +163,11 @@ s_field* s_fieldset_set(s_fieldset *fieldset, const e_field_type type, const e_o
 
 	case E_FIELD_POINTS:
 		field = &fieldset->point[idx];
-		field->owner = owner;
+		//
+		// If the number of checkers is 0, then the owner should be
+		// E_OWNER_NONE
+		//
+		field->owner = num == 0 ? E_OWNER_NONE : owner;
 		break;
 
 	default:
