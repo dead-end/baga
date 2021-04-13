@@ -22,13 +22,11 @@
  * SOFTWARE.
  */
 
+#include <s_board_areas.h>
 #include "lib_logging.h"
 #include "lib_utils.h"
 #include "lib_string.h"
 #include "bg_defs.h"
-#include "s_pos.h"
-
-// TODO: correct? why do we need an owner here in pos
 #include "e_owner.h"
 
 /******************************************************************************

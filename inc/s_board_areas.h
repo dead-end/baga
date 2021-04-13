@@ -22,8 +22,8 @@
  * SOFTWARE.
  */
 
-#ifndef INC_S_POS_H_
-#define INC_S_POS_H_
+#ifndef INC_S_BOARD_AREAS_H_
+#define INC_S_BOARD_AREAS_H_
 
 #include <stdbool.h>
 
@@ -82,4 +82,4 @@ s_pos s_pos_get_checker(const s_field_id field_id);
 
 void s_pos_mouse_target(const s_point mouse, s_field_id *field_id);
 
-#endif /* INC_S_POS_H_ */
+#endif /* INC_S_BOARD_AREAS_H_ */
