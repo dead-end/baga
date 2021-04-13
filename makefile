@@ -77,7 +77,7 @@ SRC_LIBS = \
 	$(SRC_DIR)/s_game_cfg.c        \
 	$(SRC_DIR)/s_tmpl_checker.c    \
 	$(SRC_DIR)/s_tmpl_points.c     \
-	$(SRC_DIR)/s_pos.c             \
+	$(SRC_DIR)/s_board_areas.c     \
 	$(SRC_DIR)/s_board.c           \
 	$(SRC_DIR)/layout.c            \
 	$(SRC_DIR)/s_status.c          \
