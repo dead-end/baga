@@ -23,6 +23,7 @@
  */
 
 #include <locale.h>
+#include <s_board_areas.h>
 
 #include "lib_logging.h"
 #include "lib_curses.h"
@@ -30,7 +31,6 @@
 #include "lib_popup.h"
 #include "s_fieldset.h"
 #include "nc_board.h"
-#include "s_pos.h"
 #include "layout.h"
 #include "dice.h"
 
@@ -151,7 +151,7 @@ int main() {
 
 	s_status_init(&status, &game_cfg);
 
-	const s_board_areas *board_areas = s_pos_init();
+	const s_board_areas *board_areas = s_board_areas_init();
 
 	layout_init(board_areas->board_dim, (s_point ) { .row = D_ROWS, .col = D_COLS * 4 + D_PAD * 3 });
 
@@ -241,7 +241,7 @@ int main() {
 
 					if (lc_event_stdscr_to_win(layout_win_board(), event.y, event.x, &m_event)) {
 
-						s_pos_mouse_target(m_event, &field_id);
+						s_board_areas_mouse_target(m_event, &field_id);
 
 						if (field_id.type != E_FIELD_NONE) {
 							nc_board_process(&fieldset, &status, field_id);
