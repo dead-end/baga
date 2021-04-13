@@ -28,7 +28,7 @@
 #include <stdbool.h>
 
 #include "bg_defs.h"
-#include "s_pos.h"
+#include "s_board_areas.h"
 
 /******************************************************************************
  * The definition of the checkers on a point.
