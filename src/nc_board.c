@@ -121,7 +121,7 @@ void nc_board_init(WINDOW *win, const s_game_cfg *game_cfg, const s_board_areas 
 	//
 	s_tmpl_point_create(game_cfg);
 
-	s_tmpl_point_add_2_tarr(_board.bg, s_pos_get_points());
+	s_tmpl_point_add_2_tarr(_board.bg, s_board_areas_get_points());
 
 	s_tmpl_point_free();
 
@@ -171,7 +171,7 @@ void s_board_print_game(s_fieldset *fieldset) {
 
 		if (field->num != 0) {
 
-			pos_tmp = s_pos_get_checker(field->id);
+			pos_tmp = s_board_areas_get_checker(field->id);
 			s_board_points_add_checkers_pos(&_board, pos_tmp, field->owner, field->num, E_UNCOMP);
 		}
 	}
@@ -319,8 +319,8 @@ static void traveler_mv(s_field *field_src, s_field *field_dst) {
 	//
 	// Get the positions on the board.
 	//
-	const s_pos pos_from = s_pos_get_checker(field_src->id);
-	const s_pos pos_to = s_pos_get_checker(field_dst->id);
+	const s_pos pos_from = s_board_areas_get_checker(field_src->id);
+	const s_pos pos_to = s_board_areas_get_checker(field_dst->id);
 
 	//
 	// Move the checker on the board (animation).
