@@ -28,8 +28,8 @@
 #include "lib_s_point.h"
 
 #include "s_area.h"
+#include "s_board_areas.h"
 #include "s_tarr.h"
-#include "s_pos.h"
 #include "s_game_cfg.h"
 
 /******************************************************************************
