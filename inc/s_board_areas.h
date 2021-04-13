@@ -1,7 +1,7 @@
 /*
  * MIT License
  *
- * Copyright (c) 2020 dead-end
+ * Copyright (c) 2021 dead-end
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -22,21 +22,30 @@
  * SOFTWARE.
  */
 
+/******************************************************************************
+ * The header file provides an interface to access the different areas of the
+ * board. We have an outer and inner board with points top and bottom. We have
+ * a bar and a bear off area.
+ *
+ * +---------------+-----+---------------+------+
+ * | top points    |     | top points    |      |
+ * |               |     |               | bear |
+ * | outer board   | bar | inner board   | off  |
+ * |               |     |               |      |
+ * | bottom points |     | bottom points |      |
+ * +---------------+-----+---------------+------+
+ *****************************************************************************/
+
 #ifndef INC_S_BOARD_AREAS_H_
 #define INC_S_BOARD_AREAS_H_
 
-#include <stdbool.h>
-
 #include "lib_s_point.h"
-#include "s_area.h"
 #include "s_field_id.h"
+#include "s_area.h"
 
 /******************************************************************************
  * Definitions of the various areas of the board. An area has a position and a
- * dimension. The main board has the following four areas:
- *
- * outer | inner | inner | bear
- * board | bar   | board | off
+ * dimension. The areas a listed above.
  *****************************************************************************/
 
 typedef struct {
@@ -74,12 +83,12 @@ typedef struct {
  * The function declarations.
  *****************************************************************************/
 
-const s_board_areas* s_pos_init();
+const s_board_areas* s_board_areas_init();
 
-const s_pos* s_pos_get_points();
+const s_pos* s_board_areas_get_points();
 
-s_pos s_pos_get_checker(const s_field_id field_id);
+s_pos s_board_areas_get_checker(const s_field_id field_id);
 
-void s_pos_mouse_target(const s_point mouse, s_field_id *field_id);
+void s_board_areas_mouse_target(const s_point mouse, s_field_id *field_id);
 
 #endif /* INC_S_BOARD_AREAS_H_ */
