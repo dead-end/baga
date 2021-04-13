@@ -22,7 +22,21 @@
  * SOFTWARE.
  */
 
-#include <s_board_areas.h>
+/******************************************************************************
+ * The source file provides functions to access the different areas of the
+ * board. We have an outer and inner board with points top and bottom. We have
+ * a bar and a bear off area.
+ *
+ * +---------------+-----+---------------+------+
+ * | top points    |     | top points    |      |
+ * |               |     |               | bear |
+ * | outer board   | bar | inner board   | off  |
+ * |               |     |               |      |
+ * | bottom points |     | bottom points |      |
+ * +---------------+-----+---------------+------+
+ *****************************************************************************/
+
+#include "s_board_areas.h"
 #include "lib_logging.h"
 #include "lib_utils.h"
 #include "lib_string.h"
@@ -31,10 +45,7 @@
 
 /******************************************************************************
  * Definitions of the various areas of the board. An area has a position and a
- * dimension. The main board has the following four areas:
- *
- * outer | inner | inner | bear
- * board | bar   | board | off
+ * dimension. The areas are listed above.
  *****************************************************************************/
 
 #define BORDER_ROW 1
@@ -55,45 +66,66 @@ static s_pos _pos_bar[NUM_PLAYER];
 static s_pos _pos_bear_off[NUM_PLAYER];
 
 /******************************************************************************
- * The function sets the positions of the checkers on the bear off areas.
+ * The function sets the positions of the checkers on the bear off areas. The
+ * bear of area is the whole are and each player has on half, top or bottom
+ * half.
  *****************************************************************************/
-// TODO: index is not up_2_down
-static void s_pos_set_bear_off(s_pos *pos_bear_off, const s_area *area_bear_off) {
 
-	pos_bear_off[0].pos.row = area_bear_off->pos.row + area_bear_off->dim.row - 1;
-	pos_bear_off[0].pos.col = area_bear_off->pos.col;
-	pos_bear_off[0].is_upper = false;
+static void s_board_areas_set_bear_off(s_pos *pos_bear_off, const s_area *area_bear_off) {
 
-	pos_bear_off[1].pos.row = area_bear_off->pos.row;
-	pos_bear_off[1].pos.col = area_bear_off->pos.col;
-	pos_bear_off[1].is_upper = true;
+	//
+	// The player starting on top ends at the bottom.
+	//
+	pos_bear_off[E_OWNER_TOP].pos.row = area_bear_off->pos.row + area_bear_off->dim.row - 1;
+	pos_bear_off[E_OWNER_TOP].pos.col = area_bear_off->pos.col;
+	pos_bear_off[E_OWNER_TOP].is_upper = false;
 
+	//
+	// The player starting on bottom ends at the top.
+	//
+	pos_bear_off[E_OWNER_BOT].pos.row = area_bear_off->pos.row;
+	pos_bear_off[E_OWNER_BOT].pos.col = area_bear_off->pos.col;
+	pos_bear_off[E_OWNER_BOT].is_upper = true;
 }
 
 /******************************************************************************
- * The function sets the positions of the checkers on the bar areas.
+ * The function sets the positions of the checkers on the bar areas. The bar
+ * area is the whole are and each player has on half, top or bottom half.
  *****************************************************************************/
-// TODO: index is not up_2_down
-static void s_pos_set_bar(s_pos *pos_bar, const s_area *area_bar) {
 
-	pos_bar[0].pos.row = area_bar->pos.row;
-	pos_bar[0].pos.col = area_bar->pos.col;
-	pos_bar[0].is_upper = true;
+static void s_board_areas_set_bar(s_pos *pos_bar, const s_area *area_bar) {
 
-	pos_bar[1].pos.row = area_bar->pos.row + area_bar->dim.row - 1;
-	pos_bar[1].pos.col = area_bar->pos.col;
-	pos_bar[1].is_upper = false;
+	//
+	// The bar of the player starting at the top is on the top.
+	//
+	pos_bar[E_OWNER_TOP].pos.row = area_bar->pos.row;
+	pos_bar[E_OWNER_TOP].pos.col = area_bar->pos.col;
+	pos_bar[E_OWNER_TOP].is_upper = true;
+
+	//
+	// The bar of the player starting at the bottom is at the bottom.
+	//
+	pos_bar[E_OWNER_BOT].pos.row = area_bar->pos.row + area_bar->dim.row - 1;
+	pos_bar[E_OWNER_BOT].pos.col = area_bar->pos.col;
+	pos_bar[E_OWNER_BOT].is_upper = false;
 }
 
 /******************************************************************************
- * The function sets the positions of the checkers on the points.
+ * The function sets the positions of the checkers on the points. The points
+ * are located on the inner and outer board. Both have an upper and lower half
+ * with point. Each quarter has 6 points.
  *****************************************************************************/
 
-static void s_pos_set_points(s_pos *pos_points, const s_area *area_board_outer, const s_area *area_board_inner) {
+static void s_board_areas_set_points(s_pos *pos_points, const s_area *area_board_outer, const s_area *area_board_inner) {
 
+	//
+	// The number of points on a quarter (which is 6)
+	//
 	const int quarter = POINTS_NUM / 4;
 
-	log_debug("inner board - pos: %d/%d dim: %d/%d", area_board_inner->pos.row, area_board_inner->pos.col, area_board_inner->dim.row, area_board_inner->dim.col);
+	log_debug("inner board - pos: %d/%d dim: %d/%d",
+
+	area_board_inner->pos.row, area_board_inner->pos.col, area_board_inner->dim.row, area_board_inner->dim.col);
 
 	const int lower_inner_row = area_board_inner->pos.row + area_board_inner->dim.row - 1;
 	const int lower_outer_row = area_board_outer->pos.row + area_board_outer->dim.row - 1;
@@ -101,28 +133,28 @@ static void s_pos_set_points(s_pos *pos_points, const s_area *area_board_outer, 
 	for (int i = 0; i < quarter; i++) {
 
 		//
-		// Upper right triangles
+		// Upper right triangles (inner board)
 		//
 		pos_points[0 * quarter + i].pos.row = area_board_inner->pos.row;
 		pos_points[0 * quarter + i].pos.col = area_board_inner->pos.col + lu_reverse_idx(quarter, i) * POINTS_COL;
 		pos_points[0 * quarter + i].is_upper = true;
 
 		//
-		// Upper left triangles
+		// Upper left triangles (outer board)
 		//
 		pos_points[1 * quarter + i].pos.row = area_board_outer->pos.row;
 		pos_points[1 * quarter + i].pos.col = area_board_outer->pos.col + lu_reverse_idx(quarter, i) * POINTS_COL;
 		pos_points[1 * quarter + i].is_upper = true;
 
 		//
-		// Lower left triangles
+		// Lower left triangles (inner board)
 		//
 		pos_points[2 * quarter + i].pos.row = lower_outer_row;
 		pos_points[2 * quarter + i].pos.col = area_board_outer->pos.col + i * POINTS_COL;
 		pos_points[2 * quarter + i].is_upper = false;
 
 		//
-		// Lower right triangles
+		// Lower right triangles (outer board)
 		//
 		pos_points[3 * quarter + i].pos.row = lower_inner_row;
 		pos_points[3 * quarter + i].pos.col = area_board_inner->pos.col + i * POINTS_COL;
@@ -131,10 +163,11 @@ static void s_pos_set_points(s_pos *pos_points, const s_area *area_board_outer, 
 }
 
 /******************************************************************************
- * The function initializes the different areas of the board.
+ * The function initializes the different areas of the board. Each area has a
+ * dimension and a position.
  *****************************************************************************/
 
-static void s_pos_areas_init(s_board_areas *board_areas) {
+static void s_board_areas_areas_init(s_board_areas *board_areas) {
 
 	const int board_half_row = (2 * POINTS_ROW + CHECKER_ROW + 2 * BORDER_ROW);
 	const int board_half_col = (6 * POINTS_COL);
@@ -182,25 +215,28 @@ static void s_pos_areas_init(s_board_areas *board_areas) {
 	board_areas->board_dim.col = board_areas->bear_off.pos.col + board_areas->bear_off.dim.col + BORDER_COL;
 }
 
+// ---------------------
+// TODO:
+
 /******************************************************************************
  * The function initializes the areas and positions.
  *****************************************************************************/
 
-const s_board_areas* s_pos_init() {
+const s_board_areas* s_board_areas_init() {
 
 	//
 	// Areas
 	//
-	s_pos_areas_init(&_board_areas);
+	s_board_areas_areas_init(&_board_areas);
 
 	//
 	// Positions
 	//
-	s_pos_set_bear_off(_pos_bear_off, &_board_areas.bear_off);
+	s_board_areas_set_bear_off(_pos_bear_off, &_board_areas.bear_off);
 
-	s_pos_set_bar(_pos_bar, &_board_areas.bar_inner);
+	s_board_areas_set_bar(_pos_bar, &_board_areas.bar_inner);
 
-	s_pos_set_points(_pos_points, &_board_areas.board_outer, &_board_areas.board_inner);
+	s_board_areas_set_points(_pos_points, &_board_areas.board_outer, &_board_areas.board_inner);
 
 	return &_board_areas;
 }
@@ -209,7 +245,7 @@ const s_board_areas* s_pos_init() {
  * TODO: not clear if this is the desired approach.
  *****************************************************************************/
 
-const s_pos* s_pos_get_points() {
+const s_pos* s_board_areas_get_points() {
 	return _pos_points;
 }
 
@@ -218,7 +254,7 @@ const s_pos* s_pos_get_points() {
  * area. The checker may be smaller than the containing area.
  *****************************************************************************/
 
-s_pos s_pos_get_checker(const s_field_id field_id) {
+s_pos s_board_areas_get_checker(const s_field_id field_id) {
 	s_pos result;
 
 	switch (field_id.type) {
@@ -277,7 +313,7 @@ s_pos s_pos_get_checker(const s_field_id field_id) {
  * position. This can be one of the points / bar / bear off.
  *****************************************************************************/
 
-void s_pos_mouse_target(const s_point mouse, s_field_id *field_id) {
+void s_board_areas_mouse_target(const s_point mouse, s_field_id *field_id) {
 
 	//
 	// Inner board
