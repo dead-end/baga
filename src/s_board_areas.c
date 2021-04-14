@@ -215,22 +215,20 @@ static void s_board_areas_areas_init(s_board_areas *board_areas) {
 	board_areas->board_dim.col = board_areas->bear_off.pos.col + board_areas->bear_off.dim.col + BORDER_COL;
 }
 
-// ---------------------
-// TODO:
-
 /******************************************************************************
- * The function initializes the areas and positions.
+ * The function initializes the areas and the positions of the points on the
+ * areas.
  *****************************************************************************/
 
 const s_board_areas* s_board_areas_init() {
 
 	//
-	// Areas
+	// Initialize the areas
 	//
 	s_board_areas_areas_init(&_board_areas);
 
 	//
-	// Positions
+	// Initialize the points and the areas for the checkers on the ares.
 	//
 	s_board_areas_set_bear_off(_pos_bear_off, &_board_areas.bear_off);
 
