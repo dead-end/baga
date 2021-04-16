@@ -178,12 +178,10 @@ int s_dices_get_value(const s_dices *dices) {
  * E_DICE_SET. If the other dice is E_DICE_INACTIVE, it is switched to
  * E_DICE_ACTIVE.
  *
- * The function returns true if both dices are set (next turn).
- *
  * (Unit tested)
  *****************************************************************************/
 
-bool s_dices_processed(s_dices *dices) {
+void s_dices_next(s_dices *dices) {
 	s_dice *dice;
 
 	for (int dice_idx = 0; dice_idx < 2; dice_idx++) {
@@ -209,16 +207,16 @@ bool s_dices_processed(s_dices *dices) {
 				//
 				if (dice_other->status == E_DICE_INACTIVE) {
 					dice_other->status = E_DICE_ACTIVE;
-					return false;
+					return;
 				}
 
 				//
 				// If the other dice cannot be activated, we are done.
 				//
-				return true;
+				return;
 			}
 
-			return false;
+			return;
 		}
 	}
 

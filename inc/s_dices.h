@@ -112,7 +112,7 @@ typedef struct {
  * anything more.
  *****************************************************************************/
 
-#define s_dices_is_done(s) ((s).dice[0].status != E_DICE_ACTIVE && (s).dice[1].status != E_DICE_ACTIVE)
+#define s_dices_is_done(d) ((d).dice[0].status != E_DICE_ACTIVE && (d).dice[1].status != E_DICE_ACTIVE)
 
 /******************************************************************************
  * The macro checks if a dice can be undone. This requires that at least one
@@ -140,7 +140,7 @@ const char* s_dice_status_str(const e_dice_status dice_status);
 
 void s_dices_debug(const s_dices *dices);
 
-bool s_dices_processed(s_dices *dices);
+void s_dices_next(s_dices *dices);
 
 bool s_dice_toggle_active(s_dices *dices, const int idx);
 
