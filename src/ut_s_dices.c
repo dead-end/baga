@@ -46,13 +46,15 @@ static void test_s_dices_processed() {
 	dices.dice[0].status = E_DICE_ACTIVE;
 	dices.dice[1].status = E_DICE_INACTIVE;
 
-	result = s_dices_processed(&dices);
+	s_dices_next(&dices);
+	result = s_dices_is_done(dices);
 
 	ut_check_bool(result, false, "diff 1-1");
 	ut_check_bool(dices.dice[0].status == E_DICE_SET, true, "diff 1-2");
 	ut_check_bool(dices.dice[1].status == E_DICE_ACTIVE, true, "diff 1-3");
 
-	result = s_dices_processed(&dices);
+	s_dices_next(&dices);
+	result = s_dices_is_done(dices);
 
 	ut_check_bool(result, true, "diff 2-1");
 	ut_check_bool(dices.dice[0].status == E_DICE_SET, true, "diff 2-2");
@@ -70,25 +72,29 @@ static void test_s_dices_processed() {
 	dices.dice[0].status = E_DICE_ACTIVE;
 	dices.dice[1].status = E_DICE_INACTIVE;
 
-	result = s_dices_processed(&dices);
+	s_dices_next(&dices);
+	result = s_dices_is_done(dices);
 
 	ut_check_bool(result, false, "same 1-1");
 	ut_check_bool(dices.dice[0].status == E_DICE_ACTIVE, true, "same 1-2");
 	ut_check_bool(dices.dice[1].status == E_DICE_INACTIVE, true, "same 1-3");
 
-	result = s_dices_processed(&dices);
+	s_dices_next(&dices);
+	result = s_dices_is_done(dices);
 
 	ut_check_bool(result, false, "same 2-1");
 	ut_check_bool(dices.dice[0].status == E_DICE_SET, true, "same 2-2");
 	ut_check_bool(dices.dice[1].status == E_DICE_ACTIVE, true, "same 2-3");
 
-	result = s_dices_processed(&dices);
+	s_dices_next(&dices);
+	result = s_dices_is_done(dices);
 
 	ut_check_bool(result, false, "same 3-1");
 	ut_check_bool(dices.dice[0].status == E_DICE_SET, true, "same 3-2");
 	ut_check_bool(dices.dice[1].status == E_DICE_ACTIVE, true, "same 3-3");
 
-	result = s_dices_processed(&dices);
+	s_dices_next(&dices);
+	result = s_dices_is_done(dices);
 
 	ut_check_bool(result, true, "same 4-1");
 	ut_check_bool(dices.dice[0].status == E_DICE_SET, true, "same 4-2");
