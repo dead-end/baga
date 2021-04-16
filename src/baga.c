@@ -241,6 +241,11 @@ int main() {
 
 					if (lc_event_stdscr_to_win(layout_win_board(), event.y, event.x, &m_event)) {
 
+						// TODO: check if a dice is active (this is done but not obvious from the macro name).
+						if (s_status_need_confirm(&status)) {
+							continue;
+						}
+
 						s_board_areas_mouse_target(m_event, &field_id);
 
 						if (field_id.type != E_FIELD_NONE) {
@@ -248,6 +253,7 @@ int main() {
 						}
 
 					} else if (lc_event_stdscr_to_win(layout_win_dice(), event.y, event.x, &m_event)) {
+
 						dice_process_event(&status, &m_event);
 					}
 
