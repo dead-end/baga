@@ -86,6 +86,8 @@ void s_status_do_confirm(s_status *status) {
 	//
 	s_dices_toss(&status->dices);
 
+	// TODO: check E_DICE_NOT_POS for the active dice
+
 	s_dices_debug(&status->dices);
 }
 
@@ -96,6 +98,8 @@ void s_status_do_confirm(s_status *status) {
 void s_status_next_dice(s_status *status) {
 
 	s_dices_next(&status->dices);
+
+	// TODO: check E_DICE_NOT_POS for the active dice
 
 	dice_print(status);
 }
