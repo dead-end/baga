@@ -59,26 +59,43 @@ void s_status_start(s_status *status) {
 }
 
 /******************************************************************************
- *
+ * The function is called to confirm the current round. It changes the player
+ * in turn and tosses the dices.
  *****************************************************************************/
-// TODO: comment / maybe name with dice
-bool s_status_mv_done(s_status *status) {
-	bool result;
 
-	if (s_dices_processed(&status->dices)) {
-		status->turn = e_owner_other(status->turn);
-		s_dices_toss(&status->dices);
-		result = true;
-	} else {
-		result = false;
+void s_status_do_confirm(s_status *status) {
+
+#ifdef DEBUG
+
+	//
+	// Ensure that we are in a state to confirm the round. This means that we
+	// have no active dice.
+	//
+	if (!s_dices_is_done(status->dices)) {
+		log_exit_str("Wrong status - dices not processed!");
 	}
+#endif
+
+	//
+	// Change the player in turn.
+	//
+	status->turn = e_owner_other(status->turn);
+
+	//
+	// Toss the dices.
+	//
+	s_dices_toss(&status->dices);
 
 	s_dices_debug(&status->dices);
+}
 
-	//
-	// TODO: is this correct? I added this drunk :o)
-	//
+/******************************************************************************
+ * The function selects the next dice and prints the control window.
+ *****************************************************************************/
+
+void s_status_next_dice(s_status *status) {
+
+	s_dices_next(&status->dices);
+
 	dice_print(status);
-
-	return result;
 }

@@ -67,6 +67,15 @@ typedef struct {
 #define s_status_set_phase(s,o,p) (s)->player_phase[o] = (p)
 
 /******************************************************************************
+ * The macro checks if the current round has to be confirmed. The human player
+ * confirms his own and the computer round.
+ *****************************************************************************/
+
+#define s_status_need_confirm(s) s_dices_is_done((s)->dices)
+
+void s_status_do_confirm(s_status *status);
+
+/******************************************************************************
  * The function declarations.
  *****************************************************************************/
 
@@ -74,6 +83,6 @@ void s_status_init(s_status *status, const s_game_cfg *game_cfg);
 
 void s_status_start(s_status *status);
 
-bool s_status_mv_done(s_status *status);
+void s_status_next_dice(s_status *status);
 
 #endif /* INC_S_STATUS_H_ */
