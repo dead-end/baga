@@ -461,9 +461,18 @@ void dice_process_event(s_status *status, const s_point *event) {
 		log_debug_str("on undo");
 	}
 
+	//
+	// Target: confirm button (position)
+	//
 	else if (s_point_is_inside(&_pos_confim, &_tmp_dim, event)) {
-		// TODO: no confirm button
-		log_debug_str("on confirm");
+
+		if (!s_status_need_confirm(status)) {
+			return;
+		}
+
+		s_status_do_confirm(status);
+
+		dice_print(status);
 	}
 
 	else {
