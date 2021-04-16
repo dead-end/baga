@@ -378,6 +378,5 @@ void nc_board_process(s_fieldset *fieldset, s_status *status, const s_field_id i
 
 	rules_update_phase(fieldset, status);
 
-	//TODO: correct here ?? cross dependency s_status <=> nc_board.
-	s_status_mv_done(status);
+	s_status_next_dice(status);
 }
