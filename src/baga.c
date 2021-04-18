@@ -185,9 +185,7 @@ int main() {
 	//
 	// Reset the status for a new game.
 	//
-	s_status_start(&status);
-	// TODO: part of setting the dice, so that it is called implicitly.
-	s_status_undo_save(&fieldset, &status);
+	s_status_start(&status, &fieldset);
 
 	//
 	// Print
