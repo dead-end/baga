@@ -41,9 +41,11 @@ void nc_board_init(WINDOW *win, const s_game_cfg *game_cfg, const s_board_areas 
 
 void nc_board_free();
 
-void nc_board_print();
+void nc_board_print_win();
 
-void s_board_print_game(s_fieldset *fieldset);
+void nc_board_points_add_checker(s_fieldset *fieldset);
+
+void nc_board_reset(s_fieldset *fieldset);
 
 void nc_board_process(s_fieldset *fieldset, s_status *status, const s_field_id field);
 
