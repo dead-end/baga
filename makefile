@@ -84,7 +84,7 @@ SRC_LIBS = \
     $(SRC_DIR)/s_field_id.c        \
 	$(SRC_DIR)/s_field.c           $(SRC_DIR)/ut_s_field.c        \
 	$(SRC_DIR)/s_fieldset.c        \
-	$(SRC_DIR)/dice.c              \
+	$(SRC_DIR)/controls.c              \
 	$(SRC_DIR)/s_dices.c           $(SRC_DIR)/ut_s_dices.c        \
 	$(SRC_DIR)/direction.c         $(SRC_DIR)/ut_direction.c      \
 	$(SRC_DIR)/s_point_layout.c    $(SRC_DIR)/ut_s_point_layout.c \
