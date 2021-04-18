@@ -74,7 +74,7 @@ typedef struct {
 
 #define s_status_need_confirm(s) s_dices_is_done((s)->dices)
 
-void s_status_do_confirm(s_status *status);
+void s_status_do_confirm(s_status *status, const s_fieldset *fieldset);
 
 /******************************************************************************
  * The function declarations.
@@ -82,7 +82,7 @@ void s_status_do_confirm(s_status *status);
 
 void s_status_init(s_status *status, const s_game_cfg *game_cfg);
 
-void s_status_start(s_status *status);
+void s_status_start(s_status *status, const s_fieldset *fieldset);
 
 void s_status_next_dice(s_status *status);
 
@@ -90,8 +90,6 @@ void s_status_next_dice(s_status *status);
  * Declaration of functions for an undo request.
  *****************************************************************************/
 
-void s_status_undo_save(const s_fieldset *fieldset, const s_status *status);
-
-void s_status_undo_reset(s_fieldset *fieldset, s_status *status);
+void s_status_undo_reset(s_status *status, s_fieldset *fieldset);
 
 #endif /* INC_S_STATUS_H_ */

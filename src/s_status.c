@@ -35,14 +35,13 @@
 
 static s_status _status_undo;
 
-// TODO: Maybe s_fieldset should be part of s_status. Do we use s_fieldset without s_status?
 static s_fieldset _fieldset_undo;
 
 /******************************************************************************
  * The functions saves the status, so that we can do a undo.
  *****************************************************************************/
 
-void s_status_undo_save(const s_fieldset *fieldset, const s_status *status) {
+static void s_status_undo_save(const s_status *status, const s_fieldset *fieldset) {
 
 	log_debug_str("Do save");
 
@@ -54,7 +53,7 @@ void s_status_undo_save(const s_fieldset *fieldset, const s_status *status) {
  * The function resets the status on an undo request.
  *****************************************************************************/
 
-void s_status_undo_reset(s_fieldset *fieldset, s_status *status) {
+void s_status_undo_reset(s_status *status, s_fieldset *fieldset) {
 
 	log_debug_str("Do reset");
 
@@ -79,7 +78,7 @@ void s_status_init(s_status *status, const s_game_cfg *game_cfg) {
  * turn.
  *****************************************************************************/
 
-void s_status_start(s_status *status) {
+void s_status_start(s_status *status, const s_fieldset *fieldset) {
 
 	//
 	// Set the player that starts: OWNER_TOP / OWNER_BOT
@@ -89,7 +88,11 @@ void s_status_start(s_status *status) {
 	status->player_phase[0] = E_PHASE_NORMAL;
 	status->player_phase[1] = E_PHASE_NORMAL;
 
+	//
+	// Toss the dices and save the result for an undo request.
+	//
 	s_dices_toss(&status->dices);
+	s_status_undo_save(status, fieldset);
 }
 
 /******************************************************************************
@@ -97,7 +100,7 @@ void s_status_start(s_status *status) {
  * in turn and tosses the dices.
  *****************************************************************************/
 
-void s_status_do_confirm(s_status *status) {
+void s_status_do_confirm(s_status *status, const s_fieldset *fieldset) {
 
 #ifdef DEBUG
 
@@ -116,9 +119,10 @@ void s_status_do_confirm(s_status *status) {
 	status->turn = e_owner_other(status->turn);
 
 	//
-	// Toss the dices.
+	// Toss the dices and save the result for an undo request.
 	//
 	s_dices_toss(&status->dices);
+	s_status_undo_save(status, fieldset);
 
 	// TODO: check E_DICE_NOT_POS for the active dice
 
