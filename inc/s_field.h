@@ -25,12 +25,9 @@
 #ifndef INC_S_FIELD_H_
 #define INC_S_FIELD_H_
 
-#include <stdbool.h>
-
 #include "bg_defs.h"
 #include "lib_utils.h"
 #include "s_field_id.h"
-#include "s_status.h"
 
 /******************************************************************************
  * The struct defines a field on a the game board. A field has an id, which is
