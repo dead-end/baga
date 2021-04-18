@@ -299,3 +299,46 @@ s_field* rules_can_mv(const s_status *status, s_fieldset *fieldset, const s_fiel
 	log_debug("Destination is far outside: %d", idx_rel_dst);
 	return NULL;
 }
+
+/******************************************************************************
+ *
+ *****************************************************************************/
+
+// TODO: first try / not used
+bool rules_is_dice_valid(s_status *status, s_fieldset *fieldset) {
+	s_field *field;
+
+	const int dice = s_dices_get_value(&status->dices);
+
+	if (s_status_is_phase(status, status->turn, E_PHASE_BAR)) {
+
+		field = s_fieldset_get_point_rel(fieldset, status->turn, dice - 1);
+		return !(field->owner == e_owner_other(status->turn) && field->num > 1);
+	}
+
+	bool is_last = true;
+
+	for (int i = 0; i < POINTS_NUM; i++) {
+
+		field = s_fieldset_get_point_rel(fieldset, status->turn, i);
+
+		if (field->owner != status->turn) {
+			continue;
+		}
+
+		if (i + dice == POINTS_NUM) {
+			return s_status_is_phase(status, status->turn, E_PHASE_BEAR_OFF);
+		}
+
+		if (i + dice >= POINTS_NUM) {
+			return is_last && s_status_is_phase(status, status->turn, E_PHASE_BEAR_OFF);
+		}
+
+		is_last = false;
+
+		field = s_fieldset_get_point_rel(fieldset, status->turn, i + dice);
+		return !(field->owner == e_owner_other(status->turn) && field->num > 1);
+	}
+
+	return false;
+}
