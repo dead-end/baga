@@ -23,16 +23,16 @@
  */
 
 #include <locale.h>
-#include <s_board_areas.h>
 
 #include "lib_logging.h"
 #include "lib_curses.h"
 #include "lib_string.h"
 #include "lib_popup.h"
+#include "s_board_areas.h"
 #include "s_fieldset.h"
 #include "nc_board.h"
 #include "layout.h"
-#include "dice.h"
+#include "controls.h"
 
 static const char *headers[] = {
 
@@ -62,7 +62,7 @@ static void exit_callback() {
 
 	layout_free();
 
-	dice_free();
+	controls_free();
 
 	nc_board_free();
 
@@ -155,7 +155,7 @@ int main() {
 
 	layout_init(board_areas->board_dim, (s_point ) { .row = D_ROWS, .col = D_COLS * 4 + D_PAD * 3 });
 
-	dice_init(&game_cfg, layout_win_dice());
+	controls_init(&game_cfg, layout_win_dice());
 
 	//
 	// Initialize the ncurses board function
@@ -196,7 +196,7 @@ int main() {
 
 	nc_board_print_win();
 
-	dice_print(&status);
+	controls_print(&status);
 
 	log_debug_str("Ending baga...");
 
@@ -256,7 +256,7 @@ int main() {
 
 					} else if (lc_event_stdscr_to_win(layout_win_dice(), event.y, event.x, &m_event)) {
 
-						if (dice_process_event(&fieldset, &status, &m_event)) {
+						if (controls_process_event(&fieldset, &status, &m_event)) {
 							nc_board_reset(&fieldset);
 						}
 					}
