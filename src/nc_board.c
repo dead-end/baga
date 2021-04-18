@@ -158,10 +158,11 @@ void s_board_points_add_checkers_pos(const s_board *board, s_pos pos, const e_ow
 }
 
 /******************************************************************************
- * The function prints the checkers to the board.
+ * The function adds the checkers from the fieldset to the points. No checkers
+ * are removed from the board.
  *****************************************************************************/
 
-void s_board_print_game(s_fieldset *fieldset) {
+void nc_board_points_add_checker(s_fieldset *fieldset) {
 	const s_field *field;
 	s_pos pos_tmp;
 
@@ -169,8 +170,14 @@ void s_board_print_game(s_fieldset *fieldset) {
 
 		field = s_fieldset_get_point(fieldset, i);
 
+		//
+		// We ignore fields without checker.
+		//
 		if (field->num != 0) {
 
+			//
+			// Get the position of the checkers on the board and add them.
+			//
 			pos_tmp = s_board_areas_get_checker(field->id);
 			s_board_points_add_checkers_pos(&_board, pos_tmp, field->owner, field->num, E_UNCOMP);
 		}
@@ -178,10 +185,32 @@ void s_board_print_game(s_fieldset *fieldset) {
 }
 
 /******************************************************************************
- * The function prints the board.
+ * The function resets and prints the board..
  *****************************************************************************/
 
-void nc_board_print() {
+void nc_board_reset(s_fieldset *fieldset) {
+
+	//
+	// Delete the current foreground.
+	//
+	s_tarr_set(_board.fg, S_TCHAR_UNUSED);
+
+	//
+	// Add the checker to the (empty) foreground.
+	//
+	nc_board_points_add_checker(fieldset);
+
+	//
+	// Print the board.
+	//
+	nc_board_print_win();
+}
+
+/******************************************************************************
+ * The function prints the board window.
+ *****************************************************************************/
+
+void nc_board_print_win() {
 
 	s_tarr_print_area(_board.win, _board.fg, _board.bg, (s_point ) { 0, 0 }, _board.fg->dim);
 
