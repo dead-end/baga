@@ -30,6 +30,7 @@
  *
  * TODO: undo button does not do anything.
  * TODO: confirm button missing
+ * TODO: rename to controls
  *****************************************************************************/
 
 #include <wchar.h>
@@ -432,9 +433,12 @@ void dice_print(const s_status *status) {
 /******************************************************************************
  * The function processes mouse events. The events are relative to the window,
  * which contains only buttons, so we need to check which button is clicked.
+ *
+ * The function returns true, if the board needs to be updated (due to reset
+ * request).
  *****************************************************************************/
 
-void dice_process_event(s_status *status, const s_point *event) {
+bool dice_process_event(s_fieldset *fieldset, s_status *status, const s_point *event) {
 
 	//
 	// Target: dice action: toogle
@@ -459,6 +463,12 @@ void dice_process_event(s_status *status, const s_point *event) {
 	else if (s_point_is_inside(&_pos_undo, &_tmp_dim, event)) {
 		// TODO: no undo button
 		log_debug_str("on undo");
+
+		if (s_dices_can_undo(status->dices)) {
+			s_status_undo_reset(fieldset, status);
+			dice_print(status);
+			return true;
+		}
 	}
 
 	//
@@ -467,10 +477,12 @@ void dice_process_event(s_status *status, const s_point *event) {
 	else if (s_point_is_inside(&_pos_confim, &_tmp_dim, event)) {
 
 		if (!s_status_need_confirm(status)) {
-			return;
+			return false;
 		}
 
 		s_status_do_confirm(status);
+
+		s_status_undo_save(fieldset, status);
 
 		dice_print(status);
 	}
@@ -478,4 +490,6 @@ void dice_process_event(s_status *status, const s_point *event) {
 	else {
 		log_debug("outside: %d/%d", event->row, event->col);
 	}
+
+	return false;
 }

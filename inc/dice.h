@@ -35,6 +35,7 @@
 
 #include <ncurses.h>
 
+#include "s_fieldset.h"
 #include "s_status.h"
 #include "s_game_cfg.h"
 #include "lib_s_point.h"
@@ -63,6 +64,6 @@ void dice_free();
 
 void dice_print(const s_status *status);
 
-void dice_process_event(s_status *status, const s_point *event);
+bool dice_process_event(s_fieldset *fieldset, s_status *status, const s_point *event);
 
 #endif /* INC_DICE_H_ */
