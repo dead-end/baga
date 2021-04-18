@@ -23,10 +23,44 @@
  */
 
 #include <stdlib.h>
+#include <string.h>
 
 #include "lib_logging.h"
 #include "s_status.h"
 #include "dice.h"
+
+/******************************************************************************
+ * Definition of structures to save the status to be able to do an undo.
+ *****************************************************************************/
+
+static s_status _status_undo;
+
+// TODO: Maybe s_fieldset should be part of s_status. Do we use s_fieldset without s_status?
+static s_fieldset _fieldset_undo;
+
+/******************************************************************************
+ * The functions saves the status, so that we can do a undo.
+ *****************************************************************************/
+
+void s_status_undo_save(const s_fieldset *fieldset, const s_status *status) {
+
+	log_debug_str("Do save");
+
+	memcpy(&_status_undo, status, sizeof(s_status));
+	memcpy(&_fieldset_undo, fieldset, sizeof(s_fieldset));
+}
+
+/******************************************************************************
+ * The function resets the status on an undo request.
+ *****************************************************************************/
+
+void s_status_undo_reset(s_fieldset *fieldset, s_status *status) {
+
+	log_debug_str("Do reset");
+
+	memcpy(status, &_status_undo, sizeof(s_status));
+	memcpy(fieldset, &_fieldset_undo, sizeof(s_fieldset));
+}
 
 /******************************************************************************
  * The function initializes the status struct, with the game configurations.
