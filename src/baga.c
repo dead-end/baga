@@ -186,13 +186,15 @@ int main() {
 	// Reset the status for a new game.
 	//
 	s_status_start(&status);
+	// TODO: part of setting the dice, so that it is called implicitly.
+	s_status_undo_save(&fieldset, &status);
 
 	//
 	// Print
 	//
-	s_board_print_game(&fieldset);
+	nc_board_points_add_checker(&fieldset);
 
-	nc_board_print();
+	nc_board_print_win();
 
 	dice_print(&status);
 
@@ -217,7 +219,7 @@ int main() {
 
 			log_debug_str("reseize");
 
-			nc_board_print();
+			nc_board_print_win();
 
 		} else if (c == 27) {
 
@@ -254,7 +256,9 @@ int main() {
 
 					} else if (lc_event_stdscr_to_win(layout_win_dice(), event.y, event.x, &m_event)) {
 
-						dice_process_event(&status, &m_event);
+						if (dice_process_event(&fieldset, &status, &m_event)) {
+							nc_board_reset(&fieldset);
+						}
 					}
 
 					continue;
