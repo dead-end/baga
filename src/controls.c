@@ -465,7 +465,7 @@ bool controls_process_event(s_fieldset *fieldset, s_status *status, const s_poin
 		log_debug_str("on undo");
 
 		if (s_dices_can_undo(status->dices)) {
-			s_status_undo_reset(fieldset, status);
+			s_status_undo_reset(status, fieldset);
 			controls_print(status);
 			return true;
 		}
@@ -480,9 +480,7 @@ bool controls_process_event(s_fieldset *fieldset, s_status *status, const s_poin
 			return false;
 		}
 
-		s_status_do_confirm(status);
-
-		s_status_undo_save(fieldset, status);
+		s_status_do_confirm(status, fieldset);
 
 		controls_print(status);
 	}
