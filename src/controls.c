@@ -27,10 +27,6 @@
  * confirm). All 4 buttons have the same size and are build from a template
  * with characters and a foreground and background color, which reflect the
  * status of the button.
- *
- * TODO: undo button does not do anything.
- * TODO: confirm button missing
- * TODO: rename to controls
  *****************************************************************************/
 
 #include <wchar.h>
@@ -461,12 +457,13 @@ bool controls_process_event(s_fieldset *fieldset, s_status *status, const s_poin
 	}
 
 	else if (s_point_is_inside(&_pos_undo, &_tmp_dim, event)) {
-		// TODO: no undo button
 		log_debug_str("on undo");
 
 		if (s_dices_can_undo(status->dices)) {
+
 			s_status_undo_reset(status, fieldset);
 			controls_print(status);
+
 			return true;
 		}
 	}
@@ -476,13 +473,11 @@ bool controls_process_event(s_fieldset *fieldset, s_status *status, const s_poin
 	//
 	else if (s_point_is_inside(&_pos_confim, &_tmp_dim, event)) {
 
-		if (!s_status_need_confirm(status)) {
-			return false;
+		if (s_status_need_confirm(status)) {
+
+			s_status_do_confirm(status, fieldset);
+			controls_print(status);
 		}
-
-		s_status_do_confirm(status, fieldset);
-
-		controls_print(status);
 	}
 
 	else {
