@@ -47,6 +47,13 @@
 #define POINTS_QUARTER 6
 
 //
+// The number of bear off and bar fields.
+//
+#define BARS_NUM 2
+
+#define BEAR_OFF_NUM 2
+
+//
 // The dimension of a checker (gaming piece)
 //
 #define CHECKER_ROW 2
