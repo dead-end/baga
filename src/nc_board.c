@@ -158,17 +158,17 @@ void s_board_points_add_checkers_pos(const s_board *board, s_pos pos, const e_ow
 }
 
 /******************************************************************************
- * The function adds the checkers from the fieldset to the points. No checkers
- * are removed from the board.
+ * The function adds the checkers from the fieldset to the fields of a given
+ * type.
  *****************************************************************************/
 
-void nc_board_points_add_checker(s_fieldset *fieldset) {
+static void nc_board_add_checker(s_fieldset *fieldset, const int num, const e_field_type type) {
 	const s_field *field;
 	s_pos pos_tmp;
 
-	for (int i = 0; i < POINTS_NUM; i++) {
+	for (int i = 0; i < num; i++) {
 
-		field = s_fieldset_get_point(fieldset, i);
+		field = s_fieldset_get(fieldset, type, i);
 
 		//
 		// We ignore fields without checker.
@@ -182,6 +182,21 @@ void nc_board_points_add_checker(s_fieldset *fieldset) {
 			s_board_points_add_checkers_pos(&_board, pos_tmp, field->owner, field->num, E_UNCOMP);
 		}
 	}
+}
+
+/******************************************************************************
+ * The function adds the checkers from the fieldset to the fields of all types.
+ *
+ * No checkers are removed from the board.
+ *****************************************************************************/
+
+void nc_board_points_add_checker(s_fieldset *fieldset) {
+
+	nc_board_add_checker(fieldset, POINTS_NUM, E_FIELD_POINTS);
+
+	nc_board_add_checker(fieldset, BARS_NUM, E_FIELD_BAR);
+
+	nc_board_add_checker(fieldset, BEAR_OFF_NUM, E_FIELD_BEAR_OFF);
 }
 
 /******************************************************************************
