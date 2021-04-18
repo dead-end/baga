@@ -35,10 +35,10 @@
 
 #include <wchar.h>
 
+#include "../inc/controls.h"
 #include "s_color_def.h"
 #include "lib_logging.h"
 #include "s_tarr.h"
-#include "dice.h"
 
 /******************************************************************************
  * The buttons are build with the following characters.
@@ -280,7 +280,7 @@ static short _color_ctrl_bg[BUTTON_STATUS_MAX];
  * colors for the buttons.
  *****************************************************************************/
 
-void dice_init(const s_game_cfg *game_cfg, WINDOW *win) {
+void controls_init(const s_game_cfg *game_cfg, WINDOW *win) {
 
 #ifdef DEBUG
 
@@ -333,7 +333,7 @@ void dice_init(const s_game_cfg *game_cfg, WINDOW *win) {
  * The function does the freeing of the resources.
  *****************************************************************************/
 
-void dice_free() {
+void controls_free() {
 
 	s_tarr_free(&_button_tmpl);
 }
@@ -370,7 +370,7 @@ static void update_button_tmpl(s_tarr *tmpl_button, const wchar_t tmpl_chars[D_R
  * TODO: maybe we need a color for not possible.
  *****************************************************************************/
 
-static void dice_get_color(const s_status *status, const bool active, short *fg, short *bg) {
+static void controls_get_color(const s_status *status, const bool active, short *fg, short *bg) {
 
 	const int idx = active ? E_BUTTON_ACTIVE : E_BUTTON_INACTIVE;
 
@@ -383,21 +383,21 @@ static void dice_get_color(const s_status *status, const bool active, short *fg,
  * 4 buttons (2 dices, undo and confirm).
  *****************************************************************************/
 
-void dice_print(const s_status *status) {
+void controls_print(const s_status *status) {
 
 	short fg, bg;
 
 	//
 	// Dice: 0
 	//
-	dice_get_color(status, s_dices_has_status(status->dices, 0, E_DICE_ACTIVE), &fg, &bg);
+	controls_get_color(status, s_dices_has_status(status->dices, 0, E_DICE_ACTIVE), &fg, &bg);
 	update_button_tmpl(_button_tmpl, _tmpl_dices[status->dices.dice[0].value - 1], fg, bg);
 	s_tarr_print(_win, _button_tmpl, _pos_dice_0);
 
 	//
 	// Dice: 1
 	//
-	dice_get_color(status, s_dices_has_status(status->dices, 1, E_DICE_ACTIVE), &fg, &bg);
+	controls_get_color(status, s_dices_has_status(status->dices, 1, E_DICE_ACTIVE), &fg, &bg);
 	update_button_tmpl(_button_tmpl, _tmpl_dices[status->dices.dice[1].value - 1], fg, bg);
 	s_tarr_print(_win, _button_tmpl, _pos_dice_1);
 
@@ -438,7 +438,7 @@ void dice_print(const s_status *status) {
  * request).
  *****************************************************************************/
 
-bool dice_process_event(s_fieldset *fieldset, s_status *status, const s_point *event) {
+bool controls_process_event(s_fieldset *fieldset, s_status *status, const s_point *event) {
 
 	//
 	// Target: dice action: toogle
@@ -446,7 +446,7 @@ bool dice_process_event(s_fieldset *fieldset, s_status *status, const s_point *e
 	if (s_point_is_inside(&_pos_dice_0, &_tmp_dim, event)) {
 
 		if (s_dice_toggle_active(&status->dices, 0)) {
-			dice_print(status);
+			controls_print(status);
 		}
 	}
 
@@ -456,7 +456,7 @@ bool dice_process_event(s_fieldset *fieldset, s_status *status, const s_point *e
 	else if (s_point_is_inside(&_pos_dice_1, &_tmp_dim, event)) {
 
 		if (s_dice_toggle_active(&status->dices, 1)) {
-			dice_print(status);
+			controls_print(status);
 		}
 	}
 
@@ -466,7 +466,7 @@ bool dice_process_event(s_fieldset *fieldset, s_status *status, const s_point *e
 
 		if (s_dices_can_undo(status->dices)) {
 			s_status_undo_reset(fieldset, status);
-			dice_print(status);
+			controls_print(status);
 			return true;
 		}
 	}
@@ -484,7 +484,7 @@ bool dice_process_event(s_fieldset *fieldset, s_status *status, const s_point *e
 
 		s_status_undo_save(fieldset, status);
 
-		dice_print(status);
+		controls_print(status);
 	}
 
 	else {

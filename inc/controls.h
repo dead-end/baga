@@ -22,8 +22,8 @@
  * SOFTWARE.
  */
 
-#ifndef INC_DICE_H_
-#define INC_DICE_H_
+#ifndef INC_CONTROLS_H_
+#define INC_CONTROLS_H_
 
 /******************************************************************************
  * The header file provides an interface to the window with the 4 buttons:
@@ -58,12 +58,12 @@
  * The definitions of the functions.
  *****************************************************************************/
 
-void dice_init(const s_game_cfg *game_cfg, WINDOW *win);
+void controls_init(const s_game_cfg *game_cfg, WINDOW *win);
 
-void dice_free();
+void controls_free();
 
-void dice_print(const s_status *status);
+void controls_print(const s_status *status);
 
-bool dice_process_event(s_fieldset *fieldset, s_status *status, const s_point *event);
+bool controls_process_event(s_fieldset *fieldset, s_status *status, const s_point *event);
 
-#endif /* INC_DICE_H_ */
+#endif /* INC_CONTROLS_H_ */
