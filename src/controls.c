@@ -434,7 +434,7 @@ void controls_print(const s_status *status) {
  * request).
  *****************************************************************************/
 
-bool controls_process_event(s_fieldset *fieldset, s_status *status, const s_point *event) {
+bool controls_process_event(s_status *status, s_fieldset *fieldset, const s_point *event) {
 
 	//
 	// Target: dice action: toogle

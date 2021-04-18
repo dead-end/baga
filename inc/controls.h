@@ -64,6 +64,6 @@ void controls_free();
 
 void controls_print(const s_status *status);
 
-bool controls_process_event(s_fieldset *fieldset, s_status *status, const s_point *event);
+bool controls_process_event(s_status *status, s_fieldset *fieldset, const s_point *event);
 
 #endif /* INC_CONTROLS_H_ */

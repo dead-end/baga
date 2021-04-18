@@ -254,7 +254,7 @@ int main() {
 
 					} else if (lc_event_stdscr_to_win(layout_win_dice(), event.y, event.x, &m_event)) {
 
-						if (controls_process_event(&fieldset, &status, &m_event)) {
+						if (controls_process_event(&status, &fieldset, &m_event)) {
 							nc_board_reset(&fieldset);
 						}
 					}
