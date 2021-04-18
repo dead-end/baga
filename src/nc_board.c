@@ -381,7 +381,7 @@ static void traveler_mv(s_field *field_src, s_field *field_dst) {
  * The function is called with the s_field_id from a mouse event.
  *****************************************************************************/
 // TODO: working state
-void nc_board_process(s_fieldset *fieldset, s_status *status, const s_field_id id) {
+void nc_board_process(s_status *status, s_fieldset *fieldset, const s_field_id id) {
 
 	//
 	// If the game ended, there is nothing to do.

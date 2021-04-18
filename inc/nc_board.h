@@ -47,6 +47,6 @@ void nc_board_points_add_checker(s_fieldset *fieldset);
 
 void nc_board_reset(s_fieldset *fieldset);
 
-void nc_board_process(s_fieldset *fieldset, s_status *status, const s_field_id field);
+void nc_board_process(s_status *status, s_fieldset *fieldset, const s_field_id field);
 
 #endif /* INC_NC_BOARD_H_ */

@@ -249,7 +249,7 @@ int main() {
 						s_board_areas_mouse_target(m_event, &field_id);
 
 						if (field_id.type != E_FIELD_NONE) {
-							nc_board_process(&fieldset, &status, field_id);
+							nc_board_process(&status, &fieldset, field_id);
 						}
 
 					} else if (lc_event_stdscr_to_win(layout_win_dice(), event.y, event.x, &m_event)) {
