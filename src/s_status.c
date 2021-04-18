@@ -26,8 +26,8 @@
 #include <string.h>
 
 #include "lib_logging.h"
+#include "controls.h"
 #include "s_status.h"
-#include "dice.h"
 
 /******************************************************************************
  * Definition of structures to save the status to be able to do an undo.
@@ -135,5 +135,5 @@ void s_status_next_dice(s_status *status) {
 
 	// TODO: check E_DICE_NOT_POS for the active dice
 
-	dice_print(status);
+	controls_print(status);
 }
