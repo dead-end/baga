@@ -38,12 +38,12 @@
  * Definition of functions and macros.
  *****************************************************************************/
 
-void rules_update_phase(const s_fieldset *fieldset, s_status *status);
+void rules_update_phase(s_status *status, const s_fieldset *fieldset);
 
-int rules_min_rel_idx(const s_fieldset *fieldset, const s_status *status);
+int rules_min_rel_idx(const s_status *status, const s_fieldset *fieldset);
 
-s_field* rules_get_field_src(s_fieldset *fieldset, const s_status *status, const s_field_id id);
+s_field* rules_get_field_src(const s_status *status, s_fieldset *fieldset, const s_field_id id);
 
-s_field* rules_can_mv(s_fieldset *fieldset, const s_status *status, const s_field *field_src);
+s_field* rules_can_mv(const s_status *status, s_fieldset *fieldset, const s_field *field_src);
 
 #endif /* INC_RULES_H_ */

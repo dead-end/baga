@@ -394,7 +394,7 @@ void nc_board_process(s_status *status, s_fieldset *fieldset, const s_field_id i
 	//
 	// Get the source field. It returns NULL is the field is not valid.
 	//
-	s_field *field_src = rules_get_field_src(fieldset, status, id);
+	s_field *field_src = rules_get_field_src(status, fieldset, id);
 	if (field_src == NULL) {
 		return;
 	}
@@ -402,7 +402,7 @@ void nc_board_process(s_status *status, s_fieldset *fieldset, const s_field_id i
 	//
 	// Get the destination field. It returns NULL is the field is not valid.
 	//
-	s_field *field_dst = rules_can_mv(fieldset, status, field_src);
+	s_field *field_dst = rules_can_mv(status, fieldset, field_src);
 	if (field_dst == NULL) {
 		log_debug_str("No target field found");
 		return;
@@ -420,7 +420,7 @@ void nc_board_process(s_status *status, s_fieldset *fieldset, const s_field_id i
 
 	traveler_mv(field_src, field_dst);
 
-	rules_update_phase(fieldset, status);
+	rules_update_phase(status, fieldset);
 
 	s_status_next_dice(status);
 }

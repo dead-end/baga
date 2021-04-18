@@ -44,7 +44,7 @@
  * (unit tested)
  *****************************************************************************/
 
-int rules_min_rel_idx(const s_fieldset *fieldset, const s_status *status) {
+int rules_min_rel_idx(const s_status *status, const s_fieldset *fieldset) {
 	int idx_abs;
 	const s_field *field;
 
@@ -75,7 +75,7 @@ int rules_min_rel_idx(const s_fieldset *fieldset, const s_status *status) {
  * (unit tested)
  *****************************************************************************/
 
-void rules_update_phase(const s_fieldset *fieldset, s_status *status) {
+void rules_update_phase(s_status *status, const s_fieldset *fieldset) {
 
 	//
 	// Check: E_PHASE_BEAR_OFF => E_PHASE_WIN
@@ -94,7 +94,7 @@ void rules_update_phase(const s_fieldset *fieldset, s_status *status) {
 	//
 	// Check: E_PHASE_NORMAL / E_PHASE_BAR  => E_PHASE_BEAR_OFF
 	//
-	else if (rules_min_rel_idx(fieldset, status) >= 3 * POINTS_QUARTER) {
+	else if (rules_min_rel_idx(status, fieldset) >= 3 * POINTS_QUARTER) {
 		status->player_phase[status->turn] = E_PHASE_BEAR_OFF;
 	}
 
@@ -116,7 +116,7 @@ void rules_update_phase(const s_fieldset *fieldset, s_status *status) {
  * (unit tested)
  *****************************************************************************/
 
-s_field* rules_get_field_src(s_fieldset *fieldset, const s_status *status, const s_field_id field_id) {
+s_field* rules_get_field_src(const s_status *status, s_fieldset *fieldset, const s_field_id field_id) {
 
 	//
 	// If a checker reached the bear off area, it cannot moved again.
@@ -211,7 +211,7 @@ static bool rules_is_dest_occupied(const s_field *field_src, const s_field *fiel
  * (Unit tested - 3 functions)
  *****************************************************************************/
 
-s_field* rules_can_mv(s_fieldset *fieldset, const s_status *status, const s_field *field_src) {
+s_field* rules_can_mv(const s_status *status, s_fieldset *fieldset, const s_field *field_src) {
 
 #ifdef DEBUG
 
@@ -278,7 +278,7 @@ s_field* rules_can_mv(s_fieldset *fieldset, const s_status *status, const s_fiel
 	//
 	// If the minimum + dice is outside, then the destination is valid.
 	//
-	const int min_rel_idx = rules_min_rel_idx(fieldset, status);
+	const int min_rel_idx = rules_min_rel_idx(status, fieldset);
 
 #ifdef DEBUG
 	const s_field *tmp = s_fieldset_get_point(fieldset, min_rel_idx);
